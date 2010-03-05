@@ -1,0 +1,6 @@
+--- 
+:version: 0.1.0
+:email: cowboyd@thefrontside.net
+:name: hudson
+:summary: Run a Hudson continuous integration server
+:author: Charles Lowell
