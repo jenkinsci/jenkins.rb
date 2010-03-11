@@ -1,5 +1,5 @@
 --- 
-:version: 0.1.0
+:version: 0.1.349
 :email: cowboyd@thefrontside.net
 :name: hudson
 :summary: Run a Hudson continuous integration server
