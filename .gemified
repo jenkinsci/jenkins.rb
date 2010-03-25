@@ -1,5 +1,6 @@
 --- 
-:version: 0.1.349
+:homepage: http://github.com/cowboyd/hudson.rb
+:version: 0.2.0
 :email: cowboyd@thefrontside.net
 :name: hudson
 :summary: Run a Hudson continuous integration server
