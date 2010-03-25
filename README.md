@@ -1,7 +1,7 @@
 Hudson
 ======
 
-Hudson is a sweet CI server. Hudson.rb makes it super simple
+Hudson is a sweet CI server. Hudson.rb makes it easy
 to run ruby builds by bundling all the ruby-centric plugins 
 (ruby, rake, git, github) and wrapping them in a super simple 
 executeable.
