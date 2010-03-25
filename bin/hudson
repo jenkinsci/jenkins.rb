@@ -11,7 +11,7 @@ options = {
 args = ARGV.dup
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: hudson [options] DIR"
+  opts.banner = "Usage: hudson [options] HUDSON_HOME"
 
   opts.on("-d", "--daemon", "fork into background and run as daemon") do
     options[:daemon] = true

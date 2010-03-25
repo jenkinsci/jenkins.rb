@@ -1,13 +1,10 @@
 Hudson
 ======
 
-Hudson seems to be a pretty cool CI server. Make it easy going for ruby, by
-bundling all the plugins you need to get a ruby build up and running like
-
-* ruby
-* Rake
-* git
-* github
+Hudson is a sweet CI server. Hudson.rb makes it super simple
+to run ruby builds by bundling all the ruby-centric plugins 
+(ruby, rake, git, github) and wrapping them in a super simple 
+executeable.
 
 Install
 =======
@@ -17,5 +14,11 @@ Install
 Use
 ===
 
-    hudson /path/to/run/server
+    Usage: hudson [options] HUDSON_HOME
+        -d, --daemon                     fork into background and run as daemon
+        -p, --port [3001]                run hudson on specified port 
+        -c, --control-port [3002]        set the shutdown/control port
+        -k, --kill                       send shutdown signal to control port
+        -v, --version                    show version information
+        -h, --help
 
