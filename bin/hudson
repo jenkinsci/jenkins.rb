@@ -6,12 +6,13 @@ require 'optparse'
 
 options = {
   :port => 3001,
-  :control => 3002
+  :control => 3002,
+  :home => File.join(ENV['HOME'], '.hudson')
 }
 args = ARGV.dup
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: hudson [options] HUDSON_HOME"
+  opts.banner = "Usage: hudson [options] [HUDSON_HOME]"
 
   opts.on("-d", "--daemon", "fork into background and run as daemon") do
     options[:daemon] = true
@@ -44,11 +45,7 @@ opts = OptionParser.new do |opts|
   
 end
 opts.parse!(args)
-unless dir = args.shift
-  puts "hudson: no directory specified to house hudson"
-  puts opts
-  exit(1)
-end
+dir = args.shift || options[:home]
 FileUtils.mkdir_p dir
 FileUtils.cp_r Hudson::PLUGINS, dir
 ENV['HUDSON_HOME'] = dir
