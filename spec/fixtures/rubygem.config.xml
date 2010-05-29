@@ -1,13 +1,9 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <matrix-project>
   <actions/>
-  <description></description>
+  <description/>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty>
-      <projectUrl>http://github.com/drnic/picasa_plucker/</projectUrl>
-    </com.coravy.hudson.plugins.github.GithubProjectProperty>
-  </properties>
+  <properties/>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
     <remoteRepositories>
@@ -23,7 +19,7 @@
         <string>url</string>
         <string>http://github.com/drnic/picasa_plucker.git</string>
         <string>tagopt</string>
-        <string></string>
+        <string/>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
@@ -42,7 +38,8 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector">
     <hudson.triggers.SCMTrigger>
-      <spec>@hourly</spec>
+      <spec># every minute
+* * * * *</spec>
     </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -50,9 +47,9 @@
   <builders>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>features</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>

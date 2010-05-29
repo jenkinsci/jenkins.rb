@@ -2,20 +2,23 @@ require "builder"
 
 class JobConfigBuilder
   attr_accessor :scm, :git_branches
+  attr_accessor :job_type, :matrix_project
   
   def initialize(options = nil, &block)
     if options.is_a?(Symbol)
-      @job_type = options
+      @job_type = options.to_s
     elsif options.is_a?(Hash)
-      @job_type = options[:job_type]
+      @job_type = options[:job_type].to_s
     end
+    @matrix_project = %w[rubygem].include? job_type
     yield self
+    @git_branches ||= ["**"]
   end
   
   def builder
     b = Builder::XmlMarkup.new :indent => 2
     b.instruct!
-    b.project do
+    b.tag!(matrix_project ? "matrix-project" : "project") do
       b.actions
       b.description
       b.keepDependencies false
@@ -26,9 +29,12 @@ class JobConfigBuilder
       b.blockBuildWhenUpstreamBuilding false
       build_triggers b
       b.concurrentBuild false
+      build_axes b if matrix_project
       build_steps b
       b.publishers
       b.buildWrappers
+      b.runSequentially false if matrix_project
+      
     end
   end
   
@@ -54,7 +60,7 @@ class JobConfigBuilder
             b.string "uploadpack"
             b.string "git-upload-pack"
             b.string "url"
-            b.string "git@codebasehq.com:mocra/misc/mocra-web.git"
+            b.string scm
             b.string "tagopt"
             b.string
           end
@@ -93,19 +99,27 @@ class JobConfigBuilder
     end
   end
   
+  def build_axes(b)
+    b.axes
+  end
+  
   def build_steps(b)
     b.builders do
-      build_ruby_step b, <<-RUBY.gsub(/^      /, '')
-      unless File.exist?("config/database.yml")
-        require 'fileutils'
-        example = Dir["config/database*"].first
-        puts "Using \#{example} for config/database.yml"
-        FileUtils.cp example, "config/database.yml"
+      if job_type == "rails"
+        build_ruby_step b, <<-RUBY.gsub(/^      /, '')
+        unless File.exist?("config/database.yml")
+          require 'fileutils'
+          example = Dir["config/database*"].first
+          puts "Using \#{example} for config/database.yml"
+          FileUtils.cp example, "config/database.yml"
+        end
+        RUBY
+        build_rake_step b, "db:schema:load"
+        build_rake_step b, "features"
+        build_rake_step b, "spec"
+      elsif job_type == "rubygem"
+        build_rake_step b, "features"
       end
-      RUBY
-      build_rake_step b, "db:schema:load"
-      build_rake_step b, "features"
-      build_rake_step b, "spec"
     end
   end
   
