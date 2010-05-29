@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
   <actions/>
-  <description></description>
+  <description/>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -19,7 +19,7 @@
         <string>url</string>
         <string>git@codebasehq.com:mocra/misc/mocra-web.git</string>
         <string>tagopt</string>
-        <string></string>
+        <string/>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
