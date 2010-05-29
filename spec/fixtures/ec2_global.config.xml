@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <version>1.359</version>
+  <numExecutors>2</numExecutors>
+  <mode>NORMAL</mode>
+  <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
+  <securityRealm class="hudson.security.SecurityRealm$None"/>
+  <jdks/>
+  <clouds>
+    <hudson.plugins.ec2.EC2Cloud>
+      <name>ec2-US_EAST_1</name>
+      <accessId>0MVEQ5Q0BNYEGJX898G2</accessId>
+      <secretKey>[REMOVED]</secretKey>
+      <privateKey>
+        <privateKey>[REMOVED]</privateKey>
+      </privateKey>
+      <instanceCap>2147483647</instanceCap>
+      <templates>
+        <hudson.plugins.ec2.SlaveTemplate>
+          <ami>ami-79d43d10</ami>
+          <description>Ubuntu Lucid 10.04 64bit Server</description>
+          <remoteFS>/mnt/hudson</remoteFS>
+          <type>LARGE</type>
+          <labels>Ubuntu-Lucid-10.04-server-amd64 GCC_44</labels>
+          <initScript></initScript>
+          <userData></userData>
+          <numExecutors>4</numExecutors>
+          <remoteAdmin>ubuntu</remoteAdmin>
+          <rootCommandPrefix>sudo</rootCommandPrefix>
+        </hudson.plugins.ec2.SlaveTemplate>
+        <hudson.plugins.ec2.SlaveTemplate>
+          <ami>ami-e7d53c8e</ami>
+          <description>Ubuntu Karmic 9.10 64bit Server</description>
+          <remoteFS>/mnt/hudson</remoteFS>
+          <type>LARGE</type>
+          <labels>Ubuntu-Karmic-9.10-server-amd64 GCC_43</labels>
+          <initScript></initScript>
+          <userData></userData>
+          <numExecutors>4</numExecutors>
+          <remoteAdmin>ubuntu</remoteAdmin>
+          <rootCommandPrefix>sudo</rootCommandPrefix>
+        </hudson.plugins.ec2.SlaveTemplate>
+      </templates>
+      <region>US_EAST_1</region>
+    </hudson.plugins.ec2.EC2Cloud>
+  </clouds>
+  <slaves>
+    <slave>
+      <name>Legolas</name>
+      <description>Legolas Mac Pro</description>
+      <remoteFS>/Users/hudon/work</remoteFS>
+      <numExecutors>2</numExecutors>
+      <mode>NORMAL</mode>
+      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+      <launcher class="hudson.plugins.sshslaves.SSHLauncher">
+        <host>legolas.thefrontside.net</host>
+        <port>22</port>
+        <username>cowboyd</username>
+        <password>[REMOVED]</password>
+        <privatekey></privatekey>
+        <jvmOptions></jvmOptions>
+      </launcher>
+      <label>OSX-Snow-Leopard-10.6.3</label>
+      <nodeProperties/>
+    </slave>
+    <slave>
+      <name>Gimli</name>
+      <description>The Mac Mini Sitting on the bookshelf at the frontside office</description>
+      <remoteFS>/Users/hudson/work</remoteFS>
+      <numExecutors>2</numExecutors>
+      <mode>NORMAL</mode>
+      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+      <launcher class="hudson.plugins.sshslaves.SSHLauncher">
+        <host>gimli.thefrontside.net</host>
+        <port>22</port>
+        <username>hudson</username>
+        <password>[REMOVED]</password>
+        <privatekey></privatekey>
+        <jvmOptions></jvmOptions>
+      </launcher>
+      <label>OSX-Leopard-10.5</label>
+      <nodeProperties/>
+    </slave>
+  </slaves>
+  <quietPeriod>5</quietPeriod>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>All</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+    </hudson.model.AllView>
+  </views>
+  <primaryView>All</primaryView>
+  <slaveAgentPort>0</slaveAgentPort>
+  <label></label>
+  <nodeProperties/>
+  <globalNodeProperties/>
+  <disabledAdministrativeMonitors>
+    <string>OldData</string>
+  </disabledAdministrativeMonitors>
+</hudson>
