@@ -17,7 +17,7 @@ namespace :hudson do
       require "fileutils"
       FileUtils.chdir(File.dirname(__FILE__)) do
         puts "Launching hudson test server at http://localhost:#{port}..."
-        `ruby bin/hudson server ./.test_hudson -p #{port}`
+        `ruby bin/hudson server /tmp/test_hudson -p #{port}`
       end
     end
   end
