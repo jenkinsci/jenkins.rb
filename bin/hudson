@@ -61,9 +61,7 @@ if command = args.shift
         exit
       end
 
-      opts.on_tail("-h", "--help") do
-        display opts
-      end
+      opts.on_tail("-h", "--help") { display opts }
     end
     
     opts.parse!(args)
@@ -81,13 +79,8 @@ if command = args.shift
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson create [project_path] [options]"
 
-      opts.on("-n", "--name [dir_name]", "name of hudson job") do |name|
-        options[:name] = name
-      end
-
-      opts.on_tail("-h", "--help") do
-        display opts
-      end
+      opts.on("-n", "--name [dir_name]", "name of hudson job") { |name| options[:name] = name }
+      opts.on_tail("-h", "--help") { display opts }
     end
     
     opts.parse!(args)
@@ -113,10 +106,7 @@ if command = args.shift
   when :list
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson list [project_path] [options]"
-
-      opts.on_tail("-h", "--help") do
-        display opts
-      end
+      opts.on_tail("-h", "--help") { display opts }
     end
     
     opts.parse!(args)
@@ -125,8 +115,8 @@ if command = args.shift
       host = ENV['HUDSON_HOST'] || 'localhost'
       port = ENV['HUDSON_PORT'] || '3001'
       Hudson::Api.setup_base_url(host, port)
-      list = Hudson::Api.summary
-      list["jobs"].each do |job|
+      summary = Hudson::Api.summary
+      summary["jobs"].each do |job|
         name, url, color = job['name'], job['url'], c.send(job['color'].to_sym)
         print color, name, c.reset, " - ", url, "\n"
       end
