@@ -24,16 +24,23 @@ args = ARGV.dup
 
 c = Term::ANSIColor
 
+def common_hudson_options(opts)
+  opts.on("-p", "--port [3001]", "find hudson on specified port") do |port|
+    options[:port] = port
+  end
+  opts.on("--host [localhost]", "find hudson on specified host") do |host|
+    options[:host] = host
+  end
+  opts.on_tail("-h", "--help") { display opts }
+end
+
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: hudson [command] [options] [HUDSON_HOME]"
 
   opts.on_tail("-v", "--version", "show version information") do
     display "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
   end
-  opts.on_tail("-h", "--help") do
-    display opts
-  end
-  
+  opts.on_tail("-h", "--help") { display opts }
 end
 if command = args.shift
   case command.to_sym
@@ -75,12 +82,12 @@ if command = args.shift
     cmd << "--daemon" if options[:daemon]
     puts cmd.join(" ")
     exec(*cmd)
+    
   when :create
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson create [project_path] [options]"
-
       opts.on("-n", "--name [dir_name]", "name of hudson job") { |name| options[:name] = name }
-      opts.on_tail("-h", "--help") { display opts }
+      common_hudson_options(opts)
     end
     
     opts.parse!(args)
@@ -106,7 +113,7 @@ if command = args.shift
   when :list
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson list [project_path] [options]"
-      opts.on_tail("-h", "--help") { display opts }
+      common_hudson_options(opts)
     end
     
     opts.parse!(args)
