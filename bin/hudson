@@ -15,26 +15,6 @@ args = ARGV.dup
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: hudson [command] [options] [HUDSON_HOME]"
 
-  opts.on("-d", "--daemon", "fork into background and run as daemon") do
-    options[:daemon] = true
-  end
-
-  opts.on("-p", "--port [3001]", "run hudson on specified port ") do |port|
-    options[:port] = port
-  end
-  
-  opts.on("-c", "--control-port [3002]", Integer, "set the shutdown/control port") do |port|
-    options[:control] = cport
-  end
-  
-  opts.on_tail("-k", "--kill", "send shutdown signal to control port") do
-    require 'socket'
-    TCPSocket.open("localhost", options[:control]) do |sock|
-      sock.write("0")
-    end
-    exit
-  end
-  
   opts.on_tail("-v", "--version", "show version information") do
     puts "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
     exit
@@ -48,6 +28,35 @@ end
 if command = args.shift
   case command.to_sym
   when :server
+    opts = OptionParser.new do |opts|
+      opts.banner = "Usage: hudson server [options] [HUDSON_HOME]"
+
+      opts.on("-d", "--daemon", "fork into background and run as daemon") do
+        options[:daemon] = true
+      end
+
+      opts.on("-p", "--port [3001]", "run hudson on specified port ") do |port|
+        options[:port] = port
+      end
+
+      opts.on("-c", "--control-port [3002]", Integer, "set the shutdown/control port") do |port|
+        options[:control] = cport
+      end
+
+      opts.on_tail("-k", "--kill", "send shutdown signal to control port") do
+        require 'socket'
+        TCPSocket.open("localhost", options[:control]) do |sock|
+          sock.write("0")
+        end
+        exit
+      end
+
+      opts.on_tail("-h", "--help") do
+        puts opts
+        exit
+      end
+    end
+    
     opts.parse!(args)
     dir = args.shift || options[:home]
     FileUtils.mkdir_p dir
@@ -60,7 +69,7 @@ if command = args.shift
     puts cmd.join(" ")
     exec(*cmd)
   when :create
-    puts "TODO: implement 'create' command"
+    
   else
     puts "TODO: implement '#{command}' command"
   end
