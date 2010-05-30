@@ -4,6 +4,15 @@ require File.dirname(__FILE__) + '/../lib/hudson'
 require 'un'
 require 'optparse'
 
+def display(text)
+  puts text
+  exit
+end
+
+def error(text)
+  $stderr.puts "ERROR: #{text}"
+  exit
+end
 
 options = {
   :port => 3001,
@@ -16,12 +25,10 @@ opts = OptionParser.new do |opts|
   opts.banner = "Usage: hudson [command] [options] [HUDSON_HOME]"
 
   opts.on_tail("-v", "--version", "show version information") do
-    puts "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
-    exit
+    display "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
   end
   opts.on_tail("-h", "--help") do
-    puts opts
-    exit
+    display opts
   end
   
 end
@@ -52,8 +59,7 @@ if command = args.shift
       end
 
       opts.on_tail("-h", "--help") do
-        puts opts
-        exit
+        display opts
       end
     end
     
@@ -69,9 +75,23 @@ if command = args.shift
     puts cmd.join(" ")
     exec(*cmd)
   when :create
+    opts = OptionParser.new do |opts|
+      opts.banner = "Usage: hudson create [project_path] [options]"
+
+      opts.on_tail("-h", "--help") do
+        display opts
+      end
+    end
     
+    opts.parse!(args)
+    project_path = args.shift || "."
+    FileUtils.chdir(project_path) do
+      unless scm = ProjectScm.discover
+        error "Cannot determine project SCM. Currently supported: #{ProjectScm.supported}"
+      end
+    end
   else
-    puts "TODO: implement '#{command}' command"
+    error "Unknown command '#{command}'"
   end
 else
   puts opts

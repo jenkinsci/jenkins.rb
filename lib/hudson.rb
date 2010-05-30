@@ -6,3 +6,4 @@ module Hudson
 end
 
 require 'hudson/job_config_builder'
+require 'hudson/project_scm'
