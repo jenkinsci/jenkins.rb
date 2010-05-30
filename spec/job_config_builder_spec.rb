@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe JobConfigBuilder do
+describe Hudson::JobConfigBuilder do
   include ConfigFixtureLoaders
   
   describe "rails job; single axis; block syntax" do
     before do
-      @config = JobConfigBuilder.new(:rails) do |c|
+      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
         c.git_branches = %w[master]
       end
@@ -18,7 +18,7 @@ describe JobConfigBuilder do
 
   describe "rubygem job; single axis; block syntax" do
     before do
-      @config = JobConfigBuilder.new(:rubygem) do |c|
+      @config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
       end
     end

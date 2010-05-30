@@ -9,9 +9,13 @@ Feature: Create jobs
   
   Scenario: Discover Ruby project, on git scm, and create job
     Given I am in the "ruby" project folder
+    And the project uses "git" scm
     When I run local executable "hudson" with arguments "create ."
     Then I should see "Added project 'ruby' to Hudson. Attempting initial build..."
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
   
-  
+  Scenario: Attempt to create project without scm
+    Given I am in the "ruby" project folder
+    When I run local executable "hudson" with arguments "create ."
+    Then I should see "Cannot determine project SCM. Currently supported:"

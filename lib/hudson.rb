@@ -5,5 +5,6 @@ module Hudson
   PLUGINS        = File.expand_path(File.dirname(__FILE__) + "/hudson/plugins")
 end
 
+require 'hudson/api'
 require 'hudson/job_config_builder'
 require 'hudson/project_scm'

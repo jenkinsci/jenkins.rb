@@ -78,6 +78,10 @@ if command = args.shift
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson create [project_path] [options]"
 
+      opts.on("-n", "--name [dir_name]", "name of hudson job") do |name|
+        options[:name] = name
+      end
+
       opts.on_tail("-h", "--help") do
         display opts
       end
@@ -86,9 +90,22 @@ if command = args.shift
     opts.parse!(args)
     project_path = args.shift || "."
     FileUtils.chdir(project_path) do
-      unless scm = ProjectScm.discover
-        error "Cannot determine project SCM. Currently supported: #{ProjectScm.supported}"
+      unless scm = Hudson::ProjectScm.discover
+        error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
       end
+      job_config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
+        c.scm = scm.url
+      end
+      name = options[:name] || File.basename(FileUtils.pwd)
+      host = ENV['HUDSON_HOST'] || 'localhost'
+      port = ENV['HUDSON_PORT'] || '3001'
+      Hudson::Api.setup_base_url(host, port)
+      job = Hudson::Api.create_job(name, job_config)
+      require "pp"
+      puts job.body
+      puts job.code
+      puts job.message
+      puts job.headers
     end
   else
     error "Unknown command '#{command}'"

@@ -1,9 +1,22 @@
-class ProjectScm
+module Hudson
+  class ProjectScm
   
-  def self.discover
-    "git" if File.exist?(".git") && File.directory?(".git")
+    def self.discover
+      ProjectScmGit.new if File.exist?(".git") && File.directory?(".git")
+    end
+  
+    def self.supported
+      %w[git]
+    end
   end
-  def self.supported
-    %w[git]
+
+  class ProjectScmGit < ProjectScm
+    def initialize(url = nil)
+      @url = nil
+    end
+  
+    def url
+      @url ||= `git config remote.origin.url`.strip
+    end
   end
 end
