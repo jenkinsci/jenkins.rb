@@ -8,3 +8,17 @@ desc "Clean up"
 task :clean do
   sh "rm -rf *.gem"
 end
+
+namespace :hudson do
+  namespace :server do
+    desc "Run a server for tests"
+    task :test do
+      port = 3010
+      require "fileutils"
+      FileUtils.chdir(File.dirname(__FILE__)) do
+        puts "Launching hudson test server at http://localhost:#{port}..."
+        `ruby bin/hudson server ./.test_hudson -p #{port}`
+      end
+    end
+  end
+end
