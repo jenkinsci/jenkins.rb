@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/hudson.rb")))
 require File.dirname(__FILE__) + '/../lib/hudson'
 require 'un'
 require 'optparse'
@@ -12,7 +13,7 @@ options = {
 args = ARGV.dup
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: hudson [options] [HUDSON_HOME]"
+  opts.banner = "Usage: hudson [command] [options] [HUDSON_HOME]"
 
   opts.on("-d", "--daemon", "fork into background and run as daemon") do
     options[:daemon] = true
@@ -44,15 +45,24 @@ opts = OptionParser.new do |opts|
   end
   
 end
-opts.parse!(args)
-dir = args.shift || options[:home]
-FileUtils.mkdir_p dir
-FileUtils.cp_r Hudson::PLUGINS, dir
-ENV['HUDSON_HOME'] = dir
-cmd = ["java", "-jar", Hudson::WAR]
-cmd << "--httpPort=#{options[:port]}"
-cmd << "--controlPort=#{options[:control]}"
-cmd << "--daemon" if options[:daemon]
-puts cmd.join(" ")
-exec(*cmd)
+if command = args.shift
+  case command.to_sym
+  when :server
+    opts.parse!(args)
+    dir = args.shift || options[:home]
+    FileUtils.mkdir_p dir
+    FileUtils.cp_r Hudson::PLUGINS, dir
+    ENV['HUDSON_HOME'] = dir
+    cmd = ["java", "-jar", Hudson::WAR]
+    cmd << "--httpPort=#{options[:port]}"
+    cmd << "--controlPort=#{options[:control]}"
+    cmd << "--daemon" if options[:daemon]
+    puts cmd.join(" ")
+    exec(*cmd)
+  when :add
+  when :list
+  end
+else
+  puts opts
+end
 
