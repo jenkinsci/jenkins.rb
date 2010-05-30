@@ -59,8 +59,10 @@ if command = args.shift
     cmd << "--daemon" if options[:daemon]
     puts cmd.join(" ")
     exec(*cmd)
-  when :add
-  when :list
+  when :create
+    puts "TODO: implement 'create' command"
+  else
+    puts "TODO: implement '#{command}' command"
   end
 else
   puts opts

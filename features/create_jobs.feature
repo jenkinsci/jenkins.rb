@@ -8,10 +8,10 @@ Feature: Create jobs
     And the Hudson server has no current jobs
   
   Scenario: Discover Ruby project, on git scm, and create job
-    Given I am in the "rubygem" project folder
+    Given I am in the "ruby" project folder
     When I run local executable "hudson" with arguments "create ."
-    Then I should see "Added project 'rubygem' to Hudson. Attempting initial build..."
+    Then I should see "Added project 'ruby' to Hudson. Attempting initial build..."
     When I run local executable "hudson" with arguments "list"
-    Then I should see "rubygem"
+    Then I should see "ruby"
   
   
