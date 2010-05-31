@@ -103,12 +103,11 @@ if command = args.shift
       host = ENV['HUDSON_HOST'] || 'localhost'
       port = ENV['HUDSON_PORT'] || '3001'
       Hudson::Api.setup_base_url(host, port)
-      job = Hudson::Api.create_job(name, job_config)
-      require "pp"
-      puts job.body
-      puts job.code
-      puts job.message
-      puts job.headers
+      if Hudson::Api.create_job(name, job_config)
+        puts "Added project '#{name}' to Hudson. Attempting initial build..."
+      else
+        error "Failed to create project '#{name}'"
+      end
     end
   when :list
     opts = OptionParser.new do |opts|

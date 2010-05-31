@@ -13,18 +13,14 @@ Given /^I have a Hudson server running$/ do
 end
 
 Given /^the Hudson server has no current jobs$/ do
-  if ENV['HUDSON_PORT']
+  if port = ENV['HUDSON_PORT']
     require "open-uri"
     require "yajl"
     hudson_info = Yajl::Parser.new.parse(open("http://localhost:#{ENV['HUDSON_PORT']}/api/json"))
 
-    require "pp"
-    print "Jobs to delete: "
-    pp hudson_info['jobs']
-
     hudson_info['jobs'].each do |job|
       job_url = job['url']
-      %x{curl -v -F Submit=Yes "#{job_url}doDelete/api/json"}
+      res = Net::HTTP.start("localhost", port) { |http| http.post("#{job_url}doDelete/api/json", {}) }
     end
     hudson_info = Yajl::Parser.new.parse(open("http://localhost:#{ENV['HUDSON_PORT']}/api/json"))
     hudson_info['jobs'].should == []
