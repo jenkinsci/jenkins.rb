@@ -11,6 +11,11 @@ Install
 
     gem install hudson
 
+Example
+=======
+
+Hudson.rb is continuously tested using Hudson at [http://hudson.thefrontside.net/job/hudson.rb/](http://hudson.thefrontside.net/job/hudson.rb/).
+
 Usage
 =====
 
