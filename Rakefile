@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
     manifest.exclude "tmp", "**/*.gem"
   end.to_a
   s.add_dependency("term-ansicolor", [">= 1.0.4"])
-  s.add_dependency("yajl", [">= 0.7.6"])
+  s.add_dependency("yajl-ruby", [">= 0.7.6"])
   s.add_dependency("httparty", ["~> 0.5.2"])
   s.add_dependency("builder", ["~> 2.1.2"])
   s.add_development_dependency("cucumber", ["~> 0.7.3"])

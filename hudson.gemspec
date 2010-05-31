@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Charles Lowell", "Dr Nic Williams"]
-  s.date = %q{2010-05-31}
+  s.date = %q{2010-06-01}
   s.default_executable = %q{hudson}
   s.description = %q{A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI}
   s.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
@@ -24,14 +24,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<term-ansicolor>, [">= 1.0.4"])
-      s.add_runtime_dependency(%q<yajl>, [">= 0.7.6"])
+      s.add_runtime_dependency(%q<yajl-ruby>, [">= 0.7.6"])
       s.add_runtime_dependency(%q<httparty>, ["~> 0.5.2"])
       s.add_runtime_dependency(%q<builder>, ["~> 2.1.2"])
       s.add_development_dependency(%q<cucumber>, ["~> 0.7.3"])
       s.add_development_dependency(%q<rspec>, ["~> 1.3.0"])
     else
       s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
-      s.add_dependency(%q<yajl>, [">= 0.7.6"])
+      s.add_dependency(%q<yajl-ruby>, [">= 0.7.6"])
       s.add_dependency(%q<httparty>, ["~> 0.5.2"])
       s.add_dependency(%q<builder>, ["~> 2.1.2"])
       s.add_dependency(%q<cucumber>, ["~> 0.7.3"])
@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
-    s.add_dependency(%q<yajl>, [">= 0.7.6"])
+    s.add_dependency(%q<yajl-ruby>, [">= 0.7.6"])
     s.add_dependency(%q<httparty>, ["~> 0.5.2"])
     s.add_dependency(%q<builder>, ["~> 2.1.2"])
     s.add_dependency(%q<cucumber>, ["~> 0.7.3"])
