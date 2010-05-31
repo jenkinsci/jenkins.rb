@@ -61,6 +61,10 @@ if command = args.shift
         options[:control] = port
       end
 
+      opts.on("-l", "--logfile PATH", String, "redirect log messages to this file") do |path|
+        options[:logfile] = path
+      end
+
       opts.on_tail("-k", "--kill", "send shutdown signal to control port") do
         require 'socket'
         TCPSocket.open("localhost", options[:control]) do |sock|
@@ -81,6 +85,7 @@ if command = args.shift
     cmd << "--httpPort=#{options[:port]}"
     cmd << "--controlPort=#{options[:control]}"
     cmd << "--daemon" if options[:daemon]
+    cmd << "--logfile=#{options[:logfile]}" if options[:logfile]
     puts cmd.join(" ")
     exec(*cmd)
     
