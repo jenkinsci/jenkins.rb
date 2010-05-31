@@ -16,6 +16,12 @@ Gem::Specification.new do |gemspec|
   gemspec.files = Rake::FileList.new("**/*").tap do |manifest|
     manifest.exclude "tmp", "**/*.gem"
   end.to_a
+  s.add_dependency("term-ansicolor", [">= 1.0.4"])
+  s.add_dependency("yajl", [">= 0.7.6"])
+  s.add_dependency("httparty", ["~> 0.5.2"])
+  s.add_dependency("builder", ["~> 2.1.2"])
+  s.add_development_dependency("cucumber", ["~> 0.7.3"])
+  s.add_development_dependency("rspec", ["~> 1.3.0"])
 end
 
 desc "Build gem"
