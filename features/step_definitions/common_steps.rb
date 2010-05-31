@@ -166,3 +166,8 @@ Then /^gem spec key "(.*)" contains \/(.*)\// do |key, regex|
     spec_value.to_s.should match(/#{regex}/)
   end
 end
+
+Then /^the file "([^\"]*)" is a valid gemspec$/ do |filename|
+  spec = eval(File.read(filename))
+  spec.validate
+end

@@ -1,12 +1,54 @@
+$:.unshift('lib')
+require 'hudson'
+require 'rubygems'
 
-desc "Grab the latest hudson.war from hudson-ci.org"
-task :getwar do
-  sh "cd lib/hudson && rm hudson.war && wget http://hudson-ci.org/latest/hudson.war"
+Gem::Specification.new do |gemspec|
+  $gemspec = gemspec
+  gemspec.name = gemspec.rubyforge_project = "hudson"
+  gemspec.version = Hudson::VERSION
+  gemspec.summary = "Painless Continuous Integration with Hudson Server"
+  gemspec.description = "A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI"
+  gemspec.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
+  gemspec.homepage = "http://github.com/cowboyd/hudson.rb"
+  gemspec.authors = ["Charles Lowell", "Nic Williams"]
+  gemspec.executables = ["hudson"]
+  gemspec.require_paths = ["lib"]
+  gemspec.files = Rake::FileList.new("**/*").tap do |manifest|
+    manifest.exclude "tmp", "**/*.gem"
+  end.to_a
+end
+
+desc "Build gem"
+task :gem => :gemspec do
+  Gem::Builder.new($gemspec).build
+end
+
+desc "Build gemspec"
+task :gemspec => :clean do
+  File.open("#{$gemspec.name}.gemspec", "w") do |f|
+    f.write($gemspec.to_ruby)
+  end
 end
 
 desc "Clean up"
 task :clean do
   sh "rm -rf *.gem"
+end
+
+desc "Start test server; Run Cucumber; Kill Test Server;"
+task :default => ["hudson:server:killtest", "hudson:server:test"] do
+  begin
+    puts "waiting for 10 seconds for the server to start"
+    sleep(10)
+    require 'cucumber/rake/task'
+    Cucumber::Rake::Task.new
+    Rake::Task["cucumber"].invoke
+  ensure
+    Rake::Task["hudson:server:killtest"].tap do |task|
+      task.reenable
+      task.invoke
+    end
+  end
 end
 
 namespace :hudson do
@@ -33,21 +75,13 @@ namespace :hudson do
         `ruby bin/hudson server -c 3011 -k 2>/dev/null`
       end
     end
-  end
-
-  desc "Start test server. Run Cucumber. Kill Test Server. Helpful for CI"
-  task :selftest => ["hudson:server:killtest", "hudson:server:test"] do
-    begin
-      puts "waiting for 10 seconds for the server to start"
-      sleep(10)
-      require 'cucumber/rake/task'
-      Cucumber::Rake::Task.new
-      Rake::Task["cucumber"].invoke
-    ensure
-      Rake::Task["hudson:server:killtest"].tap do |task|
-        task.reenable
-        task.invoke
-      end
+    
+    desc "Grab the latest hudson.war from hudson-ci.org"
+    task :getwar do
+      sh "cd lib/hudson && rm hudson.war && wget http://hudson-ci.org/latest/hudson.war"
     end
+    
   end
 end
+
+
