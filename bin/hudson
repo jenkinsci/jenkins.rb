@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/hudson.rb")))
-require File.dirname(__FILE__) + '/../lib/hudson'
+require 'rubygems'
 require 'un'
 require 'optparse'
 require 'term/ansicolor' # gem: term-ansicolor
+$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/hudson.rb")))
+require File.dirname(__FILE__) + '/../lib/hudson'
 
 def display(text)
   puts text
@@ -57,7 +58,7 @@ if command = args.shift
       end
 
       opts.on("-c", "--control-port [3002]", Integer, "set the shutdown/control port") do |port|
-        options[:control] = cport
+        options[:control] = port
       end
 
       opts.on_tail("-k", "--kill", "send shutdown signal to control port") do
