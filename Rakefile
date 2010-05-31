@@ -2,18 +2,18 @@ $:.unshift('lib')
 require 'hudson'
 require 'rubygems'
 
-Gem::Specification.new do |gemspec|
-  $gemspec = gemspec
-  gemspec.name = gemspec.rubyforge_project = "hudson"
-  gemspec.version = Hudson::VERSION
-  gemspec.summary = "Painless Continuous Integration with Hudson Server"
-  gemspec.description = "A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI"
-  gemspec.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
-  gemspec.homepage = "http://github.com/cowboyd/hudson.rb"
-  gemspec.authors = ["Charles Lowell", "Dr Nic Williams"]
-  gemspec.executables = ["hudson"]
-  gemspec.require_paths = ["lib"]
-  gemspec.files = Rake::FileList.new("**/*").tap do |manifest|
+Gem::Specification.new do |s|
+  $gemspec = s
+  s.name = s.rubyforge_project =  "hudson"
+  s.version = Hudson::VERSION
+  s.summary = "Painless Continuous Integration with Hudson Server"
+  s.description = "A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI"
+  s.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
+  s.homepage = "http://github.com/cowboyd/hudson.rb"
+  s.authors = ["Charles Lowell", "Dr Nic Williams"]
+  s.executables = ["hudson"]
+  s.require_paths = ["lib"]
+  s.files = Rake::FileList.new("**/*").tap do |manifest|
     manifest.exclude "tmp", "**/*.gem"
   end.to_a
   s.add_dependency("term-ansicolor", [">= 1.0.4"])
