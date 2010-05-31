@@ -10,7 +10,7 @@ Gem::Specification.new do |gemspec|
   gemspec.description = "A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI"
   gemspec.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
   gemspec.homepage = "http://github.com/cowboyd/hudson.rb"
-  gemspec.authors = ["Charles Lowell", "Nic Williams"]
+  gemspec.authors = ["Charles Lowell", "Dr Nic Williams"]
   gemspec.executables = ["hudson"]
   gemspec.require_paths = ["lib"]
   gemspec.files = Rake::FileList.new("**/*").tap do |manifest|
