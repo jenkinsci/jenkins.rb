@@ -14,7 +14,7 @@ namespace :hudson do
     require 'fileutils'
 
     desc "Run a server for tests"
-    task :test => :killtest do
+    task :test do
       port = 3010
       control = 3011
 
@@ -33,6 +33,21 @@ namespace :hudson do
         `ruby bin/hudson server -c 3011 -k 2>/dev/null`
       end
     end
+  end
 
+  desc "Start test server. Run Cucumber. Kill Test Server. Helpful for CI"
+  task :selftest => ["hudson:server:killtest", "hudson:server:test"] do
+    begin
+      puts "waiting for 10 seconds for the server to start"
+      sleep(10)
+      require 'cucumber/rake/task'
+      Cucumber::Rake::Task.new
+      Rake::Task["cucumber"].invoke
+    ensure
+      Rake::Task["hudson:server:killtest"].tap do |task|
+        task.reenable
+        task.invoke
+      end
+    end
   end
 end
