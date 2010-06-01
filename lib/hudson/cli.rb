@@ -109,7 +109,7 @@ module Hudson
       list = printable_tasks
       shell.say <<-USEAGE
 Hudson.rb is a smart set of utilities for making
-continuous integration as simple as possible"
+continuous integration as simple as possible
 
 Usage: hudson command [arguments] [options]      
 
