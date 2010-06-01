@@ -58,10 +58,22 @@ task :cucumber => 'cucumber:ok'
 
 desc "Start test server; Run cucumber:ok; Kill Test Server;"
 task :default => ["hudson:server:killtest", "hudson:server:test"] do
+  require 'socket'
+  print "waiting for at most 30 seconds for the server to start"
+  tries = 1
   begin
-    puts "waiting for 10 seconds for the server to start"
+    print "."; $stdout.flush
+    tries += 1
+    Net::HTTP.start("localhost", "3010") { |http| http.get('/') }
     sleep(10)
+    puts ""
     Rake::Task["cucumber:ok"].invoke
+  rescue Exception => e
+    if tries <= 15
+      sleep 2
+      retry
+    end
+    raise
   ensure
     Rake::Task["hudson:server:killtest"].tap do |task|
       task.reenable
