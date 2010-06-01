@@ -1,7 +1,9 @@
 require 'thor'
+require 'hudson/cli/formatting'
 
 module Hudson
   class CLI < Thor
+    extend CLI::Formatting
     
     map "-v" => :version, "--version" => :version, "-h" => :help, "--help" => :help
     
@@ -102,25 +104,7 @@ module Hudson
     def version
       shell.say "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
     end
-    
-    def self.print_options(shell, options, grp = nil)
-      return if options.empty?
-      # shell.say "Options:"
-      table = options.map do |option|
-        prototype = if option.default
-          " [#{option.default}]"
-        elsif option.boolean
-          ""
-        elsif option.required?
-          " #{option.banner}"
-        else
-          " [#{option.banner}]"
-        end
-        ["--#{option.name}#{prototype}", "\t",option.description]
-      end
-      shell.print_table(table, :ident => 2)
-    end
-    
+
     def self.help(shell)
       list = printable_tasks
       shell.say <<-USEAGE
@@ -136,25 +120,12 @@ USEAGE
       shell.say
       class_options_help(shell)
     end
-
-    def self.task_help(shell, task_name)
-      meth = normalize_task_name(task_name)
-      task = all_tasks[meth]
-      handle_no_task_error(meth) unless task
-      
-      shell.say "usage: #{banner(task)}"
-      shell.say
-      class_options_help(shell, nil => task.options.map { |_, o| o })
-      # shell.say task.description
-      # shell.say
-    end
     
-    private 
+    private
     
     def error(text)
       shell.say "ERROR: #{text}"
       exit
     end
-    
   end
 end
