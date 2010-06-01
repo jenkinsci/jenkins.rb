@@ -9,7 +9,7 @@ Feature: Running a Hudson Server
       And there is nothing listening on port 5001
       And there is nothing listening on port 5002
       And I cleanup any hudson processes with control port 5002
-    When I run hudson server with arguments "-p 5001 -c 5002 -d --logfile=server.log"
+    When I run hudson server with arguments "--port 5001 --control 5002 --daemon --logfile=server.log"
     Then I should see a hudson server on port 5001
       And folder "home/.hudson/server" is created
       And folder "home/.hudson/server/javatmp" is created

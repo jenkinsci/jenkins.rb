@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency("yajl-ruby", [">= 0.7.6"])
   s.add_dependency("httparty", ["~> 0.5.2"])
   s.add_dependency("builder", ["~> 2.1.2"])
+  s.add_dependency("thor", ["~> 0.13.6"])
   s.add_development_dependency("cucumber", ["~> 0.7.3"])
   s.add_development_dependency("rspec", ["~> 1.3.0"])
   s.add_development_dependency("json", ["~>1.4.0"])
@@ -95,7 +96,7 @@ namespace :hudson do
         logfile = File.join("/tmp", "test_hudson.log")
         puts "Launching hudson test server at http://localhost:#{port}..."
         puts "  output will be logged to #{logfile}"
-        `ruby bin/hudson server /tmp/test_hudson -p #{port} -c #{control} --daemon -l #{logfile}`
+        `ruby bin/hudson server --home /tmp/test_hudson --port #{port} --control #{control} --daemon --logfile #{logfile}`
       end
     end
 
@@ -103,7 +104,7 @@ namespace :hudson do
     task :killtest do
       FileUtils.chdir(File.dirname(__FILE__)) do
         puts "Killing any running server processes..."
-        `ruby bin/hudson server -c 3011 -k 2>/dev/null`
+        `ruby bin/hudson server --control 3011 --kill 2>/dev/null`
       end
     end
     
