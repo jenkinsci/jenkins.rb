@@ -41,14 +41,26 @@ task :clean do
   sh "rm -rf *.gem"
 end
 
-desc "Start test server; Run Cucumber; Kill Test Server;"
+namespace :cucumber do
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new(:wip, 'Run features that are being worked on') do |t|
+    t.cucumber_opts = "--tags @wip"
+  end
+  Cucumber::Rake::Task.new(:ok, 'Run features that should be working') do |t|
+    t.cucumber_opts = "--tags ~@wip"
+  end
+  task :all => [:ok, :wip]
+end
+
+desc 'Alias for cucumber:ok'
+task :cucumber => 'cucumber:ok'
+
+desc "Start test server; Run cucumber:ok; Kill Test Server;"
 task :default => ["hudson:server:killtest", "hudson:server:test"] do
   begin
     puts "waiting for 10 seconds for the server to start"
     sleep(10)
-    require 'cucumber/rake/task'
-    Cucumber::Rake::Task.new
-    Rake::Task["cucumber"].invoke
+    Rake::Task["cucumber:ok"].invoke
   ensure
     Rake::Task["hudson:server:killtest"].tap do |task|
       task.reenable
