@@ -17,15 +17,16 @@ def error(text)
 end
 
 options = {
-  :port => 3001,
-  :control => 3002,
+  :port => ENV['HUDSON_PORT'] || '3001',
+  :control => ENV['HUDSON_CONTROL'] || '3002',
+  :host => ENV['HUDSON_HOST'] || 'localhost',
   :home => File.join(ENV['HOME'], '.hudson')
 }
 args = ARGV.dup
 
 c = Term::ANSIColor
 
-def common_hudson_options(opts)
+def common_hudson_options(opts, options)
   opts.on("-p", "--port [3001]", "find hudson on specified port") do |port|
     options[:port] = port
   end
@@ -94,7 +95,7 @@ if command = args.shift
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson create [project_path] [options]"
       opts.on("-n", "--name [dir_name]", "name of hudson job") { |name| options[:name] = name }
-      common_hudson_options(opts)
+      common_hudson_options(opts, options)
     end
     
     opts.parse!(args)
@@ -107,11 +108,9 @@ if command = args.shift
         c.scm = scm.url
       end
       name = options[:name] || File.basename(FileUtils.pwd)
-      host = ENV['HUDSON_HOST'] || 'localhost'
-      port = ENV['HUDSON_PORT'] || '3001'
-      Hudson::Api.setup_base_url(host, port)
+      Hudson::Api.setup_base_url(options[:host], options[:port])
       if Hudson::Api.create_job(name, job_config)
-        build_url = "http://#{host}:#{port}/job/#{name}/build"
+        build_url = "http://#{options[:host]}:#{options[:port]}/job/#{name}/build"
         puts "Added project '#{name}' to Hudson."
         puts "Trigger builds via: #{build_url}"
       else
@@ -121,19 +120,24 @@ if command = args.shift
   when :list
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson list [project_path] [options]"
-      common_hudson_options(opts)
+      common_hudson_options(opts, options)
     end
     
     opts.parse!(args)
     project_path = args.shift || "."
     FileUtils.chdir(project_path) do
-      host = ENV['HUDSON_HOST'] || 'localhost'
-      port = ENV['HUDSON_PORT'] || '3001'
-      Hudson::Api.setup_base_url(host, port)
-      summary = Hudson::Api.summary
-      summary["jobs"].each do |job|
-        name, url, color = job['name'], job['url'], c.send(job['color'].to_sym)
-        print color, name, c.reset, " - ", url, "\n"
+      Hudson::Api.setup_base_url(options[:host], options[:port])
+      if summary = Hudson::Api.summary
+        if summary["jobs"]
+          summary["jobs"].each do |job|
+            name, url, color = job['name'], job['url'], c.send(job['color'].to_sym)
+            print color, name, c.reset, " - ", url, "\n"
+          end
+        else
+          display "No jobs found on #{options[:host]}:#{options[:port]}"
+        end
+      else
+        error "Failed connection to #{options[:host]}:#{options[:port]}"
       end
     end
   else

@@ -16,6 +16,15 @@ Example
 
 Hudson.rb is continuously tested using Hudson at [http://hudson.thefrontside.net/job/hudson.rb/](http://hudson.thefrontside.net/job/hudson.rb/).
 
+The `hudson` application allows you to see the projects/jobs and their statuses:
+
+    $ hudson list --host hudson.thefrontside.net --port 80
+    hudson.rb - http://hudson.thefrontside.net/job/hudson.rb/
+    TheRubyRacer - http://hudson.thefrontside.net/job/TheRubyRacer/
+    
+    # alternately use environment variables
+    $ HUDSON_HOST=hudson.thefrontside.net HUDSON_PORT=80 hudson list
+
 Usage
 =====
 

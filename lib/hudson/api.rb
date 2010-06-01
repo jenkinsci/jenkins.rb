@@ -5,8 +5,8 @@ module Hudson
   class Api
     include HTTParty
 
-    headers 'content-type' => 'application/xml'
-    format :xml
+    headers 'content-type' => 'application/json'
+    format :json
     # http_proxy 'localhost', '8888'
     
     def self.setup_base_url(host, port)
@@ -16,7 +16,7 @@ module Hudson
     # returns true if successfully create a new job on Hudson
     def self.create_job(name, job_config)
       res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
-        :body => job_config.to_xml
+        :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
       }
       res.code == 200
     end
@@ -27,7 +27,7 @@ module Hudson
     
     # Return hash of job sta
     def self.job(name)
-      get "/job/#{name}/api/xml"
+      get "/job/#{name}/api/json"
     end
   end
 end
