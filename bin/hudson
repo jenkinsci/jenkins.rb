@@ -110,7 +110,7 @@ if command = args.shift
       name = options[:name] || File.basename(FileUtils.pwd)
       Hudson::Api.setup_base_url(options[:host], options[:port])
       if Hudson::Api.create_job(name, job_config)
-        build_url = "http://#{options[:host]}:#{options[:port]}/job/#{name}/build"
+        build_url = "http://#{options[:host]}:#{options[:port]}/job/#{name.gsub(/\s/,'%20')}/build"
         puts "Added project '#{name}' to Hudson."
         puts "Trigger builds via: #{build_url}"
       else
