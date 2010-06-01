@@ -36,6 +36,21 @@ def common_hudson_options(opts, options)
   opts.on_tail("-h", "--help") { display opts }
 end
 
+def help(opts)
+  puts "Hudson.rb is a smart set of utilities for making\ncontinuous integration as simple as possible\n\n"
+  puts <<-USAGE
+  Usage:
+    hudson -h/--help
+    hudson -v/--version
+    hudson (server|create|list|help) [arguments...] [options...]
+
+  Examples:
+    hudson server --port 8080
+    hudson remote list
+    hudson help server
+USAGE
+end
+
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: hudson [command] [options] [HUDSON_HOME]"
 
@@ -47,6 +62,8 @@ end
 
 if command = args.shift
   case command.to_sym
+  when :help
+    help(opts)
   when :server
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: hudson server [options] [HUDSON_HOME]"
@@ -71,7 +88,7 @@ if command = args.shift
         options[:kill] = true
       end
 
-      opts.on_tail("-h", "--help") { p "hi"; display opts }
+      opts.on_tail("-h", "--help") { display opts }
     end
 
     opts.parse!(args)
@@ -155,6 +172,6 @@ if command = args.shift
     error "Unknown command '#{command}'"
   end
 else
-  puts opts
+  help(opts)
 end
 
