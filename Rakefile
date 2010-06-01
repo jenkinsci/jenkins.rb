@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency("builder", ["~> 2.1.2"])
   s.add_development_dependency("cucumber", ["~> 0.7.3"])
   s.add_development_dependency("rspec", ["~> 1.3.0"])
+  s.add_development_dependency("json", ["~>1.4.0"])
 end
 
 desc "Build gem"

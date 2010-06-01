@@ -2,7 +2,10 @@ Given /^this project is active project folder/ do
   @active_project_folder = File.expand_path(File.dirname(__FILE__) + "/../..")
 end
 
-Given /^env variable \$([\w_]+) set to "(.*)"/ do |env_var, value|
+Given /^env variable \$([\w_]+) set to( project path |)"(.*)"/ do |env_var, path, value|
+  in_project_folder {
+    value = File.expand_path(value)
+  } unless path.empty?
   ENV[env_var] = value
 end
 
