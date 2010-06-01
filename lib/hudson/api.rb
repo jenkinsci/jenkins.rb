@@ -15,14 +15,19 @@ module Hudson
     
     # returns true if successfully create a new job on Hudson
     def self.create_job(name, job_config)
-      res = post "/createItem/api/json?name=#{CGI.escape(name)}", {
-        :body => job_config.to_xml,
+      res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
+        :body => job_config.to_xml
       }
       res.code == 200
     end
     
     def self.summary
       get "/api/json"
+    end
+    
+    # Return hash of job sta
+    def self.job(name)
+      get "/job/#{name}/api/xml"
     end
   end
 end

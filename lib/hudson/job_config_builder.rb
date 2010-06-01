@@ -35,7 +35,6 @@ module Hudson
         b.publishers
         b.buildWrappers
         b.runSequentially false if matrix_project
-      
       end
     end
   

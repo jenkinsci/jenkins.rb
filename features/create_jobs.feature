@@ -11,7 +11,8 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create ."
-    Then I should see "Added project 'ruby' to Hudson. Attempting initial build..."
+    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "http://localhost:3010/job/ruby/build"
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
   
