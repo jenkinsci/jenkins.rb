@@ -43,6 +43,7 @@ opts = OptionParser.new do |opts|
   end
   opts.on_tail("-h", "--help") { display opts }
 end
+
 if command = args.shift
   case command.to_sym
   when :server
@@ -73,7 +74,7 @@ if command = args.shift
         exit
       end
 
-      opts.on_tail("-h", "--help") { display opts }
+      opts.on_tail("-h", "--help") { p "hi"; display opts }
     end
     
     opts.parse!(args)
@@ -134,6 +135,7 @@ if command = args.shift
       end
     end
   else
+    opts.parse!([command, *args])
     error "Unknown command '#{command}'"
   end
 else
