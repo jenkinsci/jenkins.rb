@@ -67,7 +67,7 @@ namespace :hudson do
       control = 3011
 
       FileUtils.chdir(File.dirname(__FILE__)) do
-        logfile = File.join(File.dirname(__FILE__), "tmp", "test_hudson.log")
+        logfile = File.join("/tmp", "test_hudson.log")
         puts "Launching hudson test server at http://localhost:#{port}..."
         puts "  output will be logged to #{logfile}"
         `ruby bin/hudson server /tmp/test_hudson -p #{port} -c #{control} --daemon -l #{logfile}`
