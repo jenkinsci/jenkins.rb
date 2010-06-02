@@ -77,9 +77,8 @@ module Hudson
             summary["jobs"].each do |job|
               color = job['color']
               color = 'green' if color == 'blue'
-              color = 'reset' unless Term::ANSIColor.respond_to?(color.to_sym)
-              name, url, color = job['name'], job['url'], c.send(color)
-              print color, name, c.reset, " - ", url, "\n"
+              shell.say job['name'], color.to_sym, false
+              shell.say " - #{job['url']}"
             end
           else
             display "No jobs found on #{options[:host]}:#{options[:port]}"
