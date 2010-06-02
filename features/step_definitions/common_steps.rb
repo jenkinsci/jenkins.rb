@@ -111,6 +111,11 @@ Then /^I should see "([^\"]*)"$/ do |text|
   actual_output.should contain(text)
 end
 
+Then /^I should not see "([^\"]*)"$/ do |text|
+  actual_output = File.read(@stdout)
+  actual_output.should_not contain(text)
+end
+
 Then /^I should see$/ do |text|
   actual_output = File.read(@stdout)
   actual_output.should contain(text)
