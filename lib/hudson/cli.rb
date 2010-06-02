@@ -15,10 +15,10 @@ module Hudson
     
     desc "server [options]", "run a hudson server"
     method_option :home, :type => :string, :default => File.join(ENV['HOME'], ".hudson", "server"), :banner => "PATH", :desc => "use this directory to store server data"
-    method_option :port, :type => :numeric, :default => 3001, :desc => "run hudson server on this port"
-    method_option :control, :type => :numeric, :default => 3002, :desc => "set the shutdown/control port"
+    method_option :port, :type => :numeric, :default => 3001, :desc => "run hudson server on this port", :aliases => "-p"
+    method_option :control, :type => :numeric, :default => 3002, :desc => "set the shutdown/control port", :aliases => "-c"
     method_option :daemon, :type => :boolean, :default => false, :desc => "fork into background and run as a daemon"
-    method_option :kill, :type => :boolean, :desc => "send shutdown signal to control port"
+    method_option :kill, :type => :boolean, :desc => "send shutdown signal to control port", :aliases => "-k"
     method_option :logfile, :type => :string, :banner => "PATH", :desc => "redirect log messages to this file"
     def server
       if options[:kill]

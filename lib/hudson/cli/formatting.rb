@@ -19,7 +19,6 @@ module Hudson
 
         def print_options(shell, options, grp = nil)
           return if options.empty?
-          # shell.say "Options:"
           table = options.map do |option|
             prototype = if option.default
               " [#{option.default}]"
@@ -30,9 +29,11 @@ module Hudson
             else
               " [#{option.banner}]"
             end
-            ["--#{option.name}#{prototype}", "\t",option.description]
+            aliases = option.aliases.empty? ? "" : option.aliases.join(" ") + ","
+            [aliases, "--#{option.name}#{prototype}", "\t",option.description]
           end
           shell.print_table(table, :ident => 2)
+          shell.say
         end
       end
 
