@@ -10,13 +10,13 @@ Feature: Create jobs
   Scenario: Discover Ruby project, on git scm, and create job
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create ."
+    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Added project 'ruby' to Hudson."
     Then I should see "http://localhost:3010/job/ruby/build"
-    When I run local executable "hudson" with arguments "list"
+    When I run local executable "hudson" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
   
   Scenario: Attempt to create project without scm
     Given I am in the "ruby" project folder
-    When I run local executable "hudson" with arguments "create ."
+    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"

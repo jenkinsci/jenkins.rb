@@ -3,7 +3,7 @@ require 'hudson/cli/formatting'
 
 module Hudson
   class CLI < Thor
-    extend CLI::Formatting
+    include CLI::Formatting
     
     map "-v" => :version, "--version" => :version, "-h" => :help, "--help" => :help
     

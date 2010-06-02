@@ -10,8 +10,9 @@ module Hudson
     # http_proxy 'localhost', '8888'
     
     def self.setup_base_url(options)
-      server_name, host, port = options[:server], options[:host], options[:post]
+      server_name, host, port = options[:server], options[:host], options[:port]
       return false unless host || server_name
+      p "http://#{host}:#{port}"
       base_uri "http://#{host}:#{port}"
     end
     
@@ -20,7 +21,14 @@ module Hudson
       res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
         :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
       }
-      res.code == 200
+      if res.code == 200
+        true
+      else
+        require "hpricot"
+        puts "Server error:"
+        puts Hpricot(res.body).search("//body").text
+        false
+      end
     end
     
     def self.summary
