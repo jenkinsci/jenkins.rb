@@ -9,7 +9,9 @@ module Hudson
     format :json
     # http_proxy 'localhost', '8888'
     
-    def self.setup_base_url(host, port)
+    def self.setup_base_url(options)
+      server_name, host, port = options[:server], options[:host], options[:post]
+      return false unless host || server_name
       base_uri "http://#{host}:#{port}"
     end
     

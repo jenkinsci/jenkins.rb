@@ -8,8 +8,9 @@ module Hudson
     map "-v" => :version, "--version" => :version, "-h" => :help, "--help" => :help
     
     def self.common_options
-      method_option :host, :default => ENV['HUDSON_HOST'] || 'localhost', :desc => 'connect to hudson server on this host'
-      method_option :port, :default => ENV['HUDSON_PORT'] || '3001', :desc => 'connect to hudson server on this port'
+      method_option :host, :desc => 'connect to hudson server on this host'
+      method_option :port, :desc => 'connect to hudson server on this port'
+      method_option :server, :desc => 'connect to remote hudson server by search'
     end
     
     desc "server [options]", "run a hudson server"
@@ -47,6 +48,7 @@ module Hudson
     common_options
     method_option :name, :banner => "dir_name", :desc => "name of the build"
     def create(project_path = ".")
+      select_hudson_server(options)
       FileUtils.chdir(project_path) do
         unless scm = Hudson::ProjectScm.discover
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
@@ -55,7 +57,6 @@ module Hudson
           c.scm = scm.url
         end
         name = options[:name] || File.basename(FileUtils.pwd)
-        Hudson::Api.setup_base_url(options[:host], options[:port])
         if Hudson::Api.create_job(name, job_config)
           build_url = "http://#{options[:host]}:#{options[:port]}/job/#{name.gsub(/\s/,'%20')}/build"
           puts "Added project '#{name}' to Hudson."
@@ -69,8 +70,8 @@ module Hudson
     desc "list [project_path] [options]", "list builds on a hudson server"
     common_options
     def list(project_path = ".")
+      select_hudson_server(options)
       FileUtils.chdir(project_path) do
-        Hudson::Api.setup_base_url(options[:host], options[:port])
         if summary = Hudson::Api.summary
           if summary["jobs"]
             summary["jobs"].each do |job|
@@ -123,6 +124,16 @@ USEAGE
     
     private
     
+    def select_hudson_server(options)
+      unless Hudson::Api.setup_base_url(options)
+        error "Either use --host or add remote servers."
+      end
+    end
+    def display(text)
+      shell.say text
+      exit
+    end
+
     def error(text)
       shell.say "ERROR: #{text}"
       exit
