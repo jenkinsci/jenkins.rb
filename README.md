@@ -63,7 +63,7 @@ Developer Instructions
 The dependencies for the gem and for developing the gem are managed by bundler.
 
     gem install bundler
-    cd .../hudson.rb
+    git clone http://github.com/cowboyd/hudson.rb.git
     bundle install
 
 The test suite is run with:
