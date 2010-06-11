@@ -57,6 +57,27 @@ To add Project (create a Job) on a Hudson server:
 
 For all commands, if flags for `host:port` are not provided, it will use `$HUDSON_HOST` and `$HUDSON_PORT` if available.
 
+Developer Instructions
+======================
+
+The dependencies for the gem and for developing the gem are managed by bundler.
+
+    gem install bundler
+    cd .../hudson.rb
+    bundle install
+
+The test suite is run with:
+
+    rake
+
+This launches a Hudson server, runs cucumber features, and kills the Hudson server.
+
+Alternately, manually launch the Hudson server, run features and close the Hudson server:
+
+    rake hudson:server:test
+    rake cucumber:ok
+    rake hudson:server:killtest
+
 License
 =======
 
