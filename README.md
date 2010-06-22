@@ -10,6 +10,7 @@ Install
 =======
 
     gem install hudson
+    gem install hudson --pre (bleeding edge)
 
 Example
 =======
