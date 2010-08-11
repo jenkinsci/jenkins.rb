@@ -89,7 +89,7 @@ module Hudson
       end      
     end
     
-    desc "remote command [options]", "manage integration with hudson servers"
+    desc "remote command [options]", "manage remote servers (comming sometime to a theater near you)"
     def remote(command)
       puts command
     end
