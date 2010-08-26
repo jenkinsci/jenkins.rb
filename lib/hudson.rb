@@ -1,6 +1,6 @@
 module Hudson
-  VERSION        = "0.2.6"
-  HUDSON_VERSION = "1.371"
+  VERSION        = "0.2.7"
+  HUDSON_VERSION = "1.373"
   WAR            = File.expand_path(File.dirname(__FILE__) + "/hudson/hudson.war")
   PLUGINS        = File.expand_path(File.dirname(__FILE__) + "/hudson/plugins")
 end
