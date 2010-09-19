@@ -1,15 +1,18 @@
 Hudson
 ======
 
-Hudson is a sweet CI server. Hudson.rb makes it easy
-to run ruby builds by bundling all the ruby-centric plugins 
-(ruby, rake, git, github) and wrapping them in a super simple 
-executeable.
+Hudson is a sweet continuous integration platform. Hudson.rb makes it easy
+to bundles all the things you need to easily run a hudson server from Ruby,
+as well as talk to a running hudson servers from Ruby and the command line.
+
+  * Email: [http://groups.google.com/group/hudsonrb](http://groups.google.com/group/hudsonrb)
+  * IRC:  [irc://irc.freenode.net/hudson.rb](irc://irc.freenode.net/hudson.rb)
 
 Install
 =======
 
     gem install hudson
+    gem install hudson --pre (bleeding edge)
 
 Example
 =======
