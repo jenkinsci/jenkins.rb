@@ -1,2 +1,4 @@
 hudson-*.gem
 tmp
+*.rbc
+.bundle

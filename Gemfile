@@ -8,6 +8,7 @@ gem "builder", "~> 2.1.2"
 gem "thor", "~> 0.13.6"
 
 # Development requirements
-gem "cucumber", "~> 0.7.3"
+gem "cucumber", "~> 0.8.5"
 gem "rspec", "~> 1.3.0"
 gem "json", "~>1.4.0"
+gem "rake"
