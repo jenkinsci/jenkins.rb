@@ -22,7 +22,7 @@ module Hudson
           table = options.map do |option|
             prototype = if option.default
               " [#{option.default}]"
-            elsif option.boolean
+            elsif option.boolean?
               ""
             elsif option.required?
               " #{option.banner}"
