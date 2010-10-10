@@ -1,4 +1,3 @@
-# A sample Gemfile
-source :gemcutter
+source 'http://rubygems.org'
 
 gemspec
