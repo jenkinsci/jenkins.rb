@@ -44,6 +44,9 @@ task :clean do
   sh "rm -rf *.gem"
 end
 
+require "rspec/core/rake_task"
+RSpec::Core::RakeTask.new(:spec)
+
 namespace :cucumber do
   require 'cucumber/rake/task'
   Cucumber::Rake::Task.new(:wip, 'Run features that are being worked on') do |t|
