@@ -12,7 +12,6 @@ module Hudson
     def self.setup_base_url(options)
       server_name, host, port = options[:server], options[:host], options[:port]
       return false unless host || server_name
-      p "http://#{host}:#{port}"
       base_uri "http://#{host}:#{port}"
     end
     
