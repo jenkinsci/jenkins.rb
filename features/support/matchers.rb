@@ -1,10 +1,8 @@
 
 module Matchers
-  def contain(expected)
-    Spec::Matchers::SimpleMatcher.new("contain #{expected.inspect}") do |given, matcher|
-      matcher.failure_message = "expected #{given.inspect} to contain #{expected.inspect}"
-      matcher.negative_failure_message = "expected #{given.inspect} not to contain #{expected.inspect}"
-      given.index expected
+  RSpec::Matchers.define :contain do |expected_text|
+    match do |text|
+      text.index expected_text
     end
   end
 end

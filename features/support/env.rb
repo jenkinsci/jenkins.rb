@@ -1,10 +1,7 @@
 $:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../../lib/hudson.rb")))
 require File.dirname(__FILE__) + "/../../lib/hudson.rb"
 
-gem 'cucumber'
-require 'cucumber'
-gem 'rspec'
-require 'spec'
+require 'bundler/setup'
 
 Before do
   @tmp_root = File.dirname(__FILE__) + "/../../tmp"
