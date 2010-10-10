@@ -1,5 +1,6 @@
 require 'httparty'
 require 'cgi'
+require 'uri'
 
 module Hudson
   class Api
@@ -10,9 +11,14 @@ module Hudson
     # http_proxy 'localhost', '8888'
     
     def self.setup_base_url(options)
-      server_name, host, port = options[:server], options[:host], options[:port]
-      return false unless host || server_name
-      base_uri "http://#{host}:#{port}"
+      options[:host] ||= ENV['HUDSON_HOST']
+      options[:port] ||= ENV['HUDSON_PORT']
+      return false unless options[:host]
+      # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
+      options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
+      uri = URI::HTTP.build(options.to_hash)
+      base_uri uri.to_s
+      uri
     end
     
     # returns true if successfully create a new job on Hudson

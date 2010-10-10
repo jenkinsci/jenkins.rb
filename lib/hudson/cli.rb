@@ -58,7 +58,7 @@ module Hudson
         end
         name = options[:name] || File.basename(FileUtils.pwd)
         if Hudson::Api.create_job(name, job_config)
-          build_url = "http://#{options[:host]}:#{options[:port]}/job/#{name.gsub(/\s/,'%20')}/build"
+          build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
           puts "Added project '#{name}' to Hudson."
           puts "Trigger builds via: #{build_url}"
         else
@@ -81,10 +81,10 @@ module Hudson
             shell.say " - #{job['url']}"
           end
         else
-          display "No jobs found on #{options[:host]}:#{options[:port]}"
+          display "No jobs found on #{@uri}"
         end
       else
-        error "Failed connection to #{options[:host]}:#{options[:port]}"
+        error "Failed connection to #{@uri}"
       end
     end
     
@@ -92,11 +92,10 @@ module Hudson
     common_options
     def add_remote(name)
       select_hudson_server(options)
-      url = "http://#{options[:host]}:#{options[:port]}/"
       if Hudson::Remote.add_server(name, options)
-        display "Added remote server '#{name}' for #{url}"
+        display "Added remote server '#{name}' for #{@uri}"
       else
-        error "Could not add remote server for '#{url}'"
+        error "Could not add remote server for '#{@uri}'"
       end
     end
     
@@ -130,10 +129,11 @@ USEAGE
     private
     
     def select_hudson_server(options)
-      unless Hudson::Api.setup_base_url(options)
+      unless @uri = Hudson::Api.setup_base_url(options)
         error "Either use --host or add remote servers."
       end
     end
+    
     def display(text)
       shell.say text
       exit

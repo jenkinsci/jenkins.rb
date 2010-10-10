@@ -16,6 +16,17 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
   
+  Scenario: Create job via $HUDSON_HOST and $HUDSON_PORT
+    Given I am in the "ruby" project folder
+    And the project uses "git" scm
+    And env variable $HUDSON_HOST set to "localhost"
+    And env variable $HUDSON_PORT set to "3010"
+    When I run local executable "hudson" with arguments "create ."
+    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "http://localhost:3010/job/ruby/build"
+    When I run local executable "hudson" with arguments "list"
+    Then I should see "ruby"
+
   Scenario: Attempt to create project without scm
     Given I am in the "ruby" project folder
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
