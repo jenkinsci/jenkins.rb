@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<cucumber>, ["~> 0.9.0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.0.0.beta"])
       s.add_development_dependency(%q<json>, ["~> 1.4.0"])
+      s.add_development_dependency(%q<awesome_print>, [">= 0"])
     else
       s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
       s.add_dependency(%q<yajl-ruby>, [">= 0.7.6"])
@@ -44,6 +45,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<cucumber>, ["~> 0.9.0"])
       s.add_dependency(%q<rspec>, ["~> 2.0.0.beta"])
       s.add_dependency(%q<json>, ["~> 1.4.0"])
+      s.add_dependency(%q<awesome_print>, [">= 0"])
     end
   else
     s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
@@ -56,5 +58,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<cucumber>, ["~> 0.9.0"])
     s.add_dependency(%q<rspec>, ["~> 2.0.0.beta"])
     s.add_dependency(%q<json>, ["~> 1.4.0"])
+    s.add_dependency(%q<awesome_print>, [">= 0"])
   end
 end

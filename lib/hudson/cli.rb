@@ -88,9 +88,16 @@ module Hudson
       end
     end
     
-    desc "remote command [options]", "manage remote servers (comming sometime to a theater near you)"
-    def remote(command)
-      puts command
+    desc "add_remote name [options]", "manage remote servers (comming sometime to a theater near you)"
+    common_options
+    def add_remote(name)
+      select_hudson_server(options)
+      url = "http://#{options[:host]}:#{options[:port]}/"
+      if Hudson::Remote.add_server(name, options)
+        display "Added remote server '#{name}' for #{url}"
+      else
+        error "Could not add remote server for '#{url}'"
+      end
     end
     
     

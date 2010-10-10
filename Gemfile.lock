@@ -12,6 +12,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    awesome_print (0.2.1)
     builder (2.1.2)
     crack (0.1.6)
     cucumber (0.9.0)
@@ -47,6 +48,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   builder (~> 2.1.2)
   cucumber (~> 0.9.0)
   hpricot
