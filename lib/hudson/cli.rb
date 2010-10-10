@@ -67,26 +67,25 @@ module Hudson
       end
     end
     
-    desc "list [project_path] [options]", "list builds on a hudson server"
+    desc "list [server] [options]", "list builds on a hudson server"
     common_options
-    def list(project_path = ".")
+    def list(server = nil)
       select_hudson_server(options)
-      FileUtils.chdir(project_path) do
-        if summary = Hudson::Api.summary
-          if summary["jobs"]
-            summary["jobs"].each do |job|
-              color = job['color']
-              color = 'green' if color == 'blue'
-              shell.say job['name'], color.to_sym, false
-              shell.say " - #{job['url']}"
-            end
-          else
-            display "No jobs found on #{options[:host]}:#{options[:port]}"
+      if summary = Hudson::Api.summary
+        if summary["jobs"]
+          summary["jobs"].each do |job|
+            color = job['color']
+            color = 'green' if color == 'blue'
+            color = 'yellow' if color == 'grey'
+            shell.say job['name'], color.to_sym, false
+            shell.say " - #{job['url']}"
           end
         else
-          error "Failed connection to #{options[:host]}:#{options[:port]}"
+          display "No jobs found on #{options[:host]}:#{options[:port]}"
         end
-      end      
+      else
+        error "Failed connection to #{options[:host]}:#{options[:port]}"
+      end
     end
     
     desc "remote command [options]", "manage remote servers (comming sometime to a theater near you)"
