@@ -87,7 +87,7 @@ module Hudson
           display "#{@uri} - no jobs"
         end
       else
-        error "Failed connection to #{@uri}"
+        shell.say "#{@uri} - no connection", :red
       end
     end
     

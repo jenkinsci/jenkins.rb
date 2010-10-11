@@ -37,7 +37,11 @@ module Hudson
     end
     
     def self.summary
-      get "/api/json"
+      begin
+        get "/api/json"
+      rescue Errno::ECONNREFUSED => e
+        false
+      end
     end
     
     # Return hash of job sta
