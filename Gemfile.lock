@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     hudson (0.3.0.beta.1)
+      activesupport (~> 3.0.0)
       builder (~> 2.1.2)
       hpricot
       httparty (~> 0.5.2)
@@ -12,6 +13,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    activesupport (3.0.0)
     awesome_print (0.2.1)
     builder (2.1.2)
     crack (0.1.6)
@@ -48,6 +50,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport (~> 3.0.0)
   awesome_print
   builder (~> 2.1.2)
   cucumber (~> 0.9.0)

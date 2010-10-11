@@ -1,5 +1,6 @@
 require 'thor'
 require 'hudson/cli/formatting'
+require 'active_support/core_ext/object/blank'
 
 module Hudson
   class CLI < Thor
@@ -72,16 +73,18 @@ module Hudson
     def list(server = nil)
       select_hudson_server(options)
       if summary = Hudson::Api.summary
-        if summary["jobs"]
+        unless summary["jobs"].blank?
+          shell.say "#{@uri} -"
           summary["jobs"].each do |job|
             color = job['color']
+            color = 'red' if color == 'red_anime'
             color = 'green' if color == 'blue'
             color = 'yellow' if color == 'grey'
             shell.say job['name'], color.to_sym, false
-            shell.say " - #{job['url']}"
           end
+          shell.say ""
         else
-          display "No jobs found on #{@uri}"
+          display "#{@uri} - no jobs"
         end
       else
         error "Failed connection to #{@uri}"
