@@ -1,6 +1,8 @@
+require 'rubygems'
+require 'bundler/setup'
+
 $:.unshift('lib')
 require 'hudson'
-require 'rubygems'
 
 Gem::Specification.new do |s|
   $gemspec = s
