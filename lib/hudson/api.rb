@@ -11,12 +11,12 @@ module Hudson
     # http_proxy 'localhost', '8888'
     
     def self.setup_base_url(options)
+      # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
+      options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
       options[:host] ||= ENV['HUDSON_HOST']
       options[:port] ||= ENV['HUDSON_PORT']
       return false unless options[:host]
-      # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
-      options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
-      uri = URI::HTTP.build(options.to_hash)
+      uri = URI::HTTP.build(options)
       base_uri uri.to_s
       uri
     end
@@ -44,7 +44,7 @@ module Hudson
       end
     end
     
-    # Return hash of job sta
+    # Return hash of job statuses
     def self.job(name)
       get "/job/#{name}/api/json"
     end

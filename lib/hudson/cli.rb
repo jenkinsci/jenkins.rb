@@ -1,6 +1,7 @@
 require 'thor'
-require 'hudson/cli/formatting'
 require 'active_support/core_ext/object/blank'
+require 'hudson/cli/formatting'
+require 'hudson/remote'
 
 module Hudson
   class CLI < Thor
@@ -95,7 +96,7 @@ module Hudson
     common_options
     def add_remote(name)
       select_hudson_server(options)
-      if Hudson::Remote.add_server(name, options)
+      if Hudson::Remote.add_server(name, @uri)
         display "Added remote server '#{name}' for #{@uri}"
       else
         error "Could not add remote server for '#{@uri}'"
