@@ -70,9 +70,9 @@ module Hudson
       end
     end
     
-    desc "list [server] [options]", "list builds on a hudson server"
+    desc "list [options]", "list builds on a hudson server"
     common_options
-    def list(server = nil)
+    def list
       select_hudson_server(options)
       if summary = Hudson::Api.summary
         unless summary["jobs"].blank?
