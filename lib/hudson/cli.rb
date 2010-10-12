@@ -81,8 +81,8 @@ module Hudson
             color = job['color']
             color = 'red' if color == 'red_anime'
             color = 'green' if color == 'blue'
-            color = 'yellow' if color == 'grey'
-            shell.say job['name'], color.to_sym, false
+            color = 'yellow' if color == 'grey' || color == 'disabled'
+            shell.say job['name'], color.to_sym, true
           end
           shell.say ""
         else
