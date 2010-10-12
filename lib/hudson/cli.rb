@@ -80,7 +80,7 @@ module Hudson
           summary["jobs"].each do |job|
             color = job['color']
             color = 'red' if color == 'red_anime'
-            color = 'green' if color == 'blue'
+            color = 'green' if color == 'blue' || color == 'blue_anime'
             color = 'yellow' if color == 'grey' || color == 'disabled'
             shell.say job['name'], color.to_sym, true
           end
