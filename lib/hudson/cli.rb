@@ -92,17 +92,16 @@ module Hudson
       end
     end
     
-    desc "add_remote name [options]", "manage remote servers (comming sometime to a theater near you)"
-    common_options
-    def add_remote(name)
-      select_hudson_server(options)
-      if Hudson::Remote.add_server(name, @uri)
-        display "Added remote server '#{name}' for #{@uri}"
-      else
-        error "Could not add remote server for '#{@uri}'"
-      end
-    end
-    
+    # desc "add_remote name [options]", "manage remote servers (comming sometime to a theater near you)"
+    # common_options
+    # def add_remote(name)
+    #   select_hudson_server(options)
+    #   if Hudson::Remote.add_server(name, @uri)
+    #     display "Added remote server '#{name}' for #{@uri}"
+    #   else
+    #     error "Could not add remote server for '#{@uri}'"
+    #   end
+    # end
     
     desc "help [command]", "show help for hudson or for a specific command"
     def help(*args)
