@@ -1,6 +1,7 @@
 require 'httparty'
 require 'cgi'
 require 'uri'
+require 'json'
 
 module Hudson
   class Api
@@ -15,8 +16,8 @@ module Hudson
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
       options[:host] ||= ENV['HUDSON_HOST']
       options[:port] ||= ENV['HUDSON_PORT']
-      return false unless options[:host]
-      uri = URI::HTTP.build(options)
+      return false unless options[:host] || Hudson::Config.config["base_uri"]
+      uri = options[:host] ? URI::HTTP.build(options) : Hudson::Config.config["base_uri"]
       base_uri uri.to_s
       uri
     end
@@ -27,6 +28,7 @@ module Hudson
         :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
       }
       if res.code == 200
+        cache_base_uri
         true
       else
         require "hpricot"
@@ -47,6 +49,12 @@ module Hudson
     # Return hash of job statuses
     def self.job(name)
       get "/job/#{name}/api/json"
+    end
+    
+    private
+    def self.cache_base_uri
+      Hudson::Config.config["base_uri"] = base_uri
+      Hudson::Config.store!
     end
   end
 end

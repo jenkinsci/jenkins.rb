@@ -11,7 +11,6 @@ Feature: Listing jobs
     When I run local executable "hudson" with arguments "list test --host localhost --port 3010"
     Then I should see "localhost:3010 - no jobs"
   
-  @wip
   Scenario: List jobs on a server with jobs
     Given I have a Hudson server running
     And the Hudson server has no current jobs

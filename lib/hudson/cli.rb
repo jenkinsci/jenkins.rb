@@ -1,6 +1,7 @@
 require 'thor'
 require 'active_support/core_ext/object/blank'
 require 'hudson/cli/formatting'
+require 'hudson/config'
 require 'hudson/remote'
 
 module Hudson
@@ -143,7 +144,7 @@ USEAGE
     end
 
     def error(text)
-      shell.say "ERROR: #{text}"
+      shell.say "ERROR: #{text}", :red
       exit
     end
   end
