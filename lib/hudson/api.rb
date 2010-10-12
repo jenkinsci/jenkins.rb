@@ -50,9 +50,13 @@ module Hudson
     
     # Return hash of job statuses
     def self.job(name)
-      json = get "/job/#{name}/api/json"
-      cache_base_uri
-      json
+      begin
+        json = get "/job/#{name}/api/json"
+        cache_base_uri
+        json
+      rescue Errno::ECONNREFUSED => e
+        false
+      end
     end
     
     private

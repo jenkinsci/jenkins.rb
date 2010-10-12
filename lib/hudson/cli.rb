@@ -89,7 +89,19 @@ module Hudson
           display "#{@uri} - no jobs"
         end
       else
-        shell.say "#{@uri} - no connection", :red
+        error "#{@uri} - no connection"
+      end
+    end
+    
+    desc "job name [options]", "display job status"
+    common_options
+    def job(name)
+      select_hudson_server(options)
+      if job = Hudson::Api.job(name)
+        require "ap"
+        ap job
+      else
+        error "#{@uri} - no connection"
       end
     end
     
