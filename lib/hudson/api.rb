@@ -16,6 +16,7 @@ module Hudson
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
       options[:host] ||= ENV['HUDSON_HOST']
       options[:port] ||= ENV['HUDSON_PORT']
+      options[:port] &&= options[:port].to_i
       return false unless options[:host] || Hudson::Config.config["base_uri"]
       uri = options[:host] ? URI::HTTP.build(options) : Hudson::Config.config["base_uri"]
       base_uri uri.to_s
