@@ -29,6 +29,26 @@ Given /^the Hudson server has no current jobs$/ do
   end
 end
 
+Given /^the Hudson server has no slaves$/ do
+  if port = @hudson_port
+    require "open-uri"
+    require "yajl"
+    base_url    = "http://#{@hudson_host}:#{@hudson_port}"
+    hudson_info = Yajl::Parser.new.parse(open("#{base_url}/computer/api/json"))
+
+    hudson_info['computer'].each do |node|
+      name = node["displayName"]
+      next if name == "master"
+      job_url = "#{base_url}/computer/#{CGI::escape(name).gsub('+', '%20')}"
+      res = Net::HTTP.start("localhost", port) { |http| http.post("#{job_url}/doDelete/api/json", {}) }
+    end
+    hudson_info = Yajl::Parser.new.parse(open("http://#{@hudson_host}:#{@hudson_port}/api/json"))
+    hudson_info['jobs'].should == []
+  else
+    puts "WARNING: Run 'I have a Hudson server running' step first."
+  end
+end
+
 Given /^there is nothing listening on port (\d+)$/ do |port|
   lambda {
     TCPSocket.open("localhost", port) {}

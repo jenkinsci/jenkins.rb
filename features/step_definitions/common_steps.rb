@@ -18,7 +18,7 @@ When /^I invoke "(.*)" generator with arguments "(.*)"$/ do |generator, argument
   in_project_folder do
     if Object.const_defined?("APP_ROOT")
       APP_ROOT.replace(FileUtils.pwd)
-    else 
+    else
       APP_ROOT = FileUtils.pwd
     end
     run_generator(generator, arguments.split(' '), SOURCES, :stdout => @stdout)
@@ -94,52 +94,52 @@ Then /gem file "(.*)" and generated file "(.*)" should be the same/ do |gem_file
 end
 
 Then /^(does|does not) invoke generator "(.*)"$/ do |does_invoke, generator|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   does_invoke == "does" ?
     actual_output.should(match(/dependency\s+#{generator}/)) :
     actual_output.should_not(match(/dependency\s+#{generator}/))
 end
 
 Then /help options "(.*)" and "(.*)" are displayed/ do |opt1, opt2|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should match(/#{opt1}/)
   actual_output.should match(/#{opt2}/)
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should contain(text)
 end
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  actual_output = File.read(@stdout)
+  actual_output =
   actual_output.should_not contain(text)
 end
 
 Then /^I should see$/ do |text|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should contain(text)
 end
 
 Then /^I should not see$/ do |text|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should_not contain(text)
 end
 
 Then /^I should see exactly$/ do |text|
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should == text
 end
 
 Then /^I should see all (\d+) tests pass/ do |expected_test_count|
   expected = %r{^#{expected_test_count} tests, \d+ assertions, 0 failures, 0 errors}
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should match(expected)
 end
 
 Then /^I should see all (\d+) examples pass/ do |expected_test_count|
   expected = %r{^#{expected_test_count} examples?, 0 failures}
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should match(expected)
 end
 
@@ -155,13 +155,13 @@ Then /^Rakefile can display tasks successfully/ do
   in_project_folder do
     system "rake -T > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should match(/^rake\s+\w+\s+#\s.*/)
 end
 
 Then /^task "rake (.*)" is executed successfully/ do |task|
   @stdout.should_not be_nil
-  actual_output = File.read(@stdout)
+  actual_output = get_command_output
   actual_output.should_not match(/^Don't know how to build task '#{task}'/)
   actual_output.should_not match(/Error/i)
 end
@@ -178,4 +178,14 @@ end
 Then /^the file "([^\"]*)" is a valid gemspec$/ do |filename|
   spec = eval(File.read(filename))
   spec.validate
+end
+
+When /^I create a new node with the following options on "http:\/\/(.+?):(\d+)":$/ do |host, port, table|
+  options = table.raw.inject({}) do |options, (key, value)|
+    options[(key.to_sym rescue key) || key] = value
+    options
+  end
+
+  Hudson::Api.setup_base_url(:host => host, :port => port.to_i)
+  Hudson::Api.add_node(options)
 end

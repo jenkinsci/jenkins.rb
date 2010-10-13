@@ -1,9 +1,10 @@
 module CommonHelpers
-  def capture_output(&block)
-    stderr, stdout = $stderr, $stdout
-    $stderr = $stdout = @stdout = StringIO.new
-    yield
-    $stderr, $stdout = stderr, stdout
+  def get_command_output
+    strip_color_codes(File.read(@stdout)).chomp
+  end
+
+  def strip_color_codes(text)
+    text.gsub(/\e\[\d+m/, '')
   end
 
   def in_tmp_folder(&block)
