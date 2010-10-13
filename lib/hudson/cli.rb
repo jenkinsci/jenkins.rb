@@ -70,7 +70,7 @@ module Hudson
       end
     end
 
-    desc "list [options]", "list builds on a hudson server"
+    desc "list [options]", "list jobs on a hudson server"
     common_options
     def list
       select_hudson_server(options)
