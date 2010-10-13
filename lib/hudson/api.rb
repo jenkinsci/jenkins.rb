@@ -4,7 +4,7 @@ require 'uri'
 require 'json'
 
 module Hudson
-  class Api
+  module Api
     include HTTParty
 
     headers 'content-type' => 'application/json'
