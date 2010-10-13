@@ -32,14 +32,14 @@ end
 When /^I run executable "(.*)" with arguments "(.*)"/ do |executable, arguments|
   @stdout = File.expand_path(File.join(@tmp_root, "executable.out"))
   in_project_folder do
-    system "#{executable} #{arguments} > #{@stdout} 2> #{@stdout}"
+    system "#{executable.inspect} #{arguments} > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
 end
 
 When /^I run project executable "(.*)" with arguments "(.*)"/ do |executable, arguments|
   @stdout = File.expand_path(File.join(@tmp_root, "executable.out"))
   in_project_folder do
-    system "ruby #{executable} #{arguments} > #{@stdout} 2> #{@stdout}"
+    system "ruby #{executable.inspect} #{arguments} > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
 end
 
@@ -47,14 +47,14 @@ When /^I run local executable "(.*)" with arguments "(.*)"/ do |executable, argu
   @stdout = File.expand_path(File.join(@tmp_root, "executable.out"))
   executable = File.expand_path(File.join(File.dirname(__FILE__), "/../../bin", executable))
   in_project_folder do
-    system "ruby #{executable} #{arguments} > #{@stdout} 2> #{@stdout}"
+    system "ruby #{executable.inspect} #{arguments} > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
 end
 
 When /^I invoke task "rake (.*)"/ do |task|
   @stdout = File.expand_path(File.join(@tmp_root, "tests.out"))
   in_project_folder do
-    system "rake #{task} --trace > #{@stdout} 2> #{@stdout}"
+    system "rake #{task} --trace > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
 end
 
@@ -153,7 +153,7 @@ end
 Then /^Rakefile can display tasks successfully/ do
   @stdout = File.expand_path(File.join(@tmp_root, "rakefile.out"))
   in_project_folder do
-    system "rake -T > #{@stdout} 2> #{@stdout}"
+    system "rake -T > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
   actual_output = File.read(@stdout)
   actual_output.should match(/^rake\s+\w+\s+#\s.*/)

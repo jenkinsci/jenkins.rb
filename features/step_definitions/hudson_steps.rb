@@ -56,7 +56,7 @@ When /^I run hudson server with arguments "(.*)"/ do |arguments|
   @stdout = File.expand_path(File.join(@tmp_root, "executable.out"))
   executable = File.expand_path(File.join(File.dirname(__FILE__), "/../../bin","hudson"))
   in_project_folder do
-    system "ruby #{executable} server #{arguments} > #{@stdout} 2>#{@stdout}"
+    system "ruby #{executable.inspect} server #{arguments} > #{@stdout.inspect} 2> #{@stdout.inspect}"
   end
 end
 

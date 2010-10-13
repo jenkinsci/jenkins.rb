@@ -1,4 +1,11 @@
 module CommonHelpers
+  def capture_output(&block)
+    stderr, stdout = $stderr, $stdout
+    $stderr = $stdout = @stdout = StringIO.new
+    yield
+    $stderr, $stdout = stderr, stdout
+  end
+
   def in_tmp_folder(&block)
     FileUtils.chdir(@tmp_root, &block)
   end
