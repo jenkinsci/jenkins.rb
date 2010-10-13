@@ -137,7 +137,7 @@ module Hudson
       shell.say "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
     end
 
-    def self.help(shell)
+    def self.help(shell, *)
       list = printable_tasks
       shell.say <<-USEAGE
 Hudson.rb is a smart set of utilities for making
