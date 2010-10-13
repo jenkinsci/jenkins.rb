@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 $:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/hudson.rb")))
-require File.dirname(__FILE__) + '/../lib/hudson'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/hudson')
 require 'hudson/cli'
 
 Hudson::CLI.start
