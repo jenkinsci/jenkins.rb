@@ -80,7 +80,7 @@ module Hudson
         :exclusive   => true
       )
 
-      options         = default_options.merge(options)
+      options = default_options.merge(options)
 
       name = options[:name]
       type = "hudson.slaves.DumbSlave$DescriptorImpl"
