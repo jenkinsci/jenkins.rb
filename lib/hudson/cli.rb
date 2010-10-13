@@ -7,15 +7,15 @@ require 'hudson/remote'
 module Hudson
   class CLI < Thor
     include CLI::Formatting
-    
+
     map "-v" => :version, "--version" => :version, "-h" => :help, "--help" => :help
-    
+
     def self.common_options
       method_option :host, :desc => 'connect to hudson server on this host'
       method_option :port, :desc => 'connect to hudson server on this port'
       method_option :server, :desc => 'connect to remote hudson server by search'
     end
-    
+
     desc "server [options]", "run a hudson server"
     method_option :home, :type => :string, :default => File.join(ENV['HOME'], ".hudson", "server"), :banner => "PATH", :desc => "use this directory to store server data"
     method_option :port, :type => :numeric, :default => 3001, :desc => "run hudson server on this port", :aliases => "-p"
@@ -69,7 +69,7 @@ module Hudson
         end
       end
     end
-    
+
     desc "list [options]", "list builds on a hudson server"
     common_options
     def list
@@ -92,7 +92,18 @@ module Hudson
         error "#{@uri} - no connection"
       end
     end
-    
+
+    desc "nodes", "list hudson server nodes"
+    common_options
+    def nodes
+      select_hudson_server(options)
+      nodes = Hudson::Api.nodes
+      nodes["computer"].each do |node|
+        color = node["offline"] ? :red : :green
+        shell.say node["displayName"], color
+      end
+    end
+
     desc "job name [options]", "display job status"
     common_options
     def job(name)
@@ -104,7 +115,7 @@ module Hudson
         error "#{@uri} - no connection"
       end
     end
-    
+
     # desc "add_remote name [options]", "manage remote servers (comming sometime to a theater near you)"
     # common_options
     # def add_remote(name)
@@ -115,12 +126,12 @@ module Hudson
     #     error "Could not add remote server for '#{@uri}'"
     #   end
     # end
-    
+
     desc "help [command]", "show help for hudson or for a specific command"
     def help(*args)
       super(*args)
     end
-    
+
     desc "version", "show version information"
     def version
       shell.say "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
@@ -132,7 +143,7 @@ module Hudson
 Hudson.rb is a smart set of utilities for making
 continuous integration as simple as possible
 
-Usage: hudson command [arguments] [options]      
+Usage: hudson command [arguments] [options]
 
 USEAGE
 
@@ -141,15 +152,15 @@ USEAGE
       shell.say
       class_options_help(shell)
     end
-    
+
     private
-    
+
     def select_hudson_server(options)
       unless @uri = Hudson::Api.setup_base_url(options)
         error "Either use --host or add remote servers."
       end
     end
-    
+
     def display(text)
       shell.say text
       exit
