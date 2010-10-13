@@ -5,7 +5,6 @@ Feature: Adding slave nodes
 
   Background:
     Given I have a Hudson server running
-    And the Hudson server has no current jobs
     And the Hudson server has no slaves
 
   Scenario: Add a slave with no authentication required
