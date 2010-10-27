@@ -1,5 +1,5 @@
 require 'thor'
-require 'active_support/core_ext/object/blank'
+require 'hudson/core_ext/object/blank'
 require 'hudson/cli/formatting'
 require 'hudson/config'
 require 'hudson/remote'
