@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <matrix-project>
   <actions/>
-  <description></description>
+  <description/>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -19,7 +19,7 @@
         <string>url</string>
         <string>git@codebasehq.com:mocra/dash/web-app.git</string>
         <string>tagopt</string>
-        <string></string>
+        <string/>
       </org.spearce.jgit.transport.RemoteConfig>
     </remoteRepositories>
     <branches>
@@ -59,25 +59,25 @@ end</command>
     </hudson.plugins.ruby.Ruby>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>db:schema:load</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>features</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>spec</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>

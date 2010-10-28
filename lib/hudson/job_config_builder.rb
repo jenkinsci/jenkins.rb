@@ -108,7 +108,7 @@ module Hudson
     def build_steps(b)
       b.builders do
         if job_type == "rails"
-          build_ruby_step b, <<-RUBY.gsub(/^      /, '')
+          build_ruby_step b, <<-RUBY.gsub(/^          /, '')
           unless File.exist?("config/database.yml")
             require 'fileutils'
             example = Dir["config/database*"].first
@@ -135,7 +135,9 @@ module Hudson
     # </hudson.plugins.ruby.Ruby>
     def build_ruby_step(b, command)
       b.tag! "hudson.plugins.ruby.Ruby" do
-        b.command command
+        b.command do
+          b << command.to_xs.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+        end
       end
     end
   

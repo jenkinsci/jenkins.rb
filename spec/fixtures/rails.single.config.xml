@@ -45,34 +45,36 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.plugins.ruby.Ruby>
-      <command>unless File.exist?(&quot;config/database.yml&quot;)
+      <command>
+unless File.exist?(&quot;config/database.yml&quot;)
   require &apos;fileutils&apos;
   example = Dir[&quot;config/database*&quot;].first
   puts &quot;Using #{example} for config/database.yml&quot;
   FileUtils.cp example, &quot;config/database.yml&quot;
-end</command>
+end
+      </command>
     </hudson.plugins.ruby.Ruby>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>db:schema:load</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>features</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile></rakeFile>
-      <rakeLibDir></rakeLibDir>
-      <rakeWorkingDir></rakeWorkingDir>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
       <tasks>spec</tasks>
       <silent>false</silent>
     </hudson.plugins.rake.Rake>
