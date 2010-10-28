@@ -11,7 +11,9 @@ module Hudson
 
     headers 'content-type' => 'application/json'
     format :json
-    # http_proxy 'localhost', '8888'
+    http_proxy 'localhost', '8888'
+    
+    JobAlreadyExistsError = Class.new(Exception)
 
     def self.setup_base_url(options)
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
@@ -26,7 +28,14 @@ module Hudson
     end
 
     # returns true if successfully create a new job on Hudson
-    def self.create_job(name, job_config)
+    # +job_config+ is a Hudson::JobConfigBuilder instance
+    # +options+ are:
+    #   :override - true, will delete any existing job with same name, else error
+    #
+    # returns true if successful, else false
+    #
+    # TODO Exceptions?
+    def self.create_job(name, job_config, options = {})
       res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
         :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
       }
@@ -34,11 +43,26 @@ module Hudson
         cache_base_uri
         true
       else
-        require "hpricot"
-        puts "Server error:"
-        puts Hpricot(res.body).search("//body").text
+        if res.body =~ /A job already exists with the name/
+          if options[:override]
+            delete_job(name)
+            return create_job(name, job_config)
+          else
+            raise JobAlreadyExistsError.new(name)
+          end
+        else
+          require "hpricot"
+          puts "Server error:"
+          puts Hpricot(res.body).search("//body").text
+        end
         false
       end
+    end
+    
+    # Attempts to delete a job +name+
+    def self.delete_job(name)
+      post "/job/#{name}/doDelete/api/json"
+    rescue Crack::ParseError
     end
 
     def self.summary

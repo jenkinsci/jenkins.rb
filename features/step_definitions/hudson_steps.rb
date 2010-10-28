@@ -89,10 +89,11 @@ Then /^I should see a hudson server on port (\d+)$/ do |port|
   end
 end
 
-When /^I create a job$/ do
+When /^I (re|)create a job$/ do |override|
+  override = override.blank? ? "" : " --override"
   steps <<-CUCUMBER
     When the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+    When I run local executable "hudson" with arguments "create . --host localhost --port 3010#{override}"
   CUCUMBER
 end
 

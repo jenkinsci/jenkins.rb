@@ -49,6 +49,7 @@ module Hudson
     desc "create [project_path] [options]", "create a continuous build for your project"
     common_options
     method_option :name, :banner => "dir_name", :desc => "name of the build"
+    method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
     def create(project_path = ".")
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
@@ -59,7 +60,7 @@ module Hudson
           c.scm = scm.url
         end
         name = options[:name] || File.basename(FileUtils.pwd)
-        if Hudson::Api.create_job(name, job_config)
+        if Hudson::Api.create_job(name, job_config, {:override => options[:override]})
           build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
           puts "Added project '#{name}' to Hudson."
           puts "Trigger builds via: #{build_url}"

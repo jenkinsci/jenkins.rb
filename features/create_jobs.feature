@@ -37,8 +37,8 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
-    When I create a job
-    Then I should see "Re-added project 'ruby' to Hudson."
+    When I recreate a job
+    Then I should see "Added project 'ruby' to Hudson."
   
   
   
