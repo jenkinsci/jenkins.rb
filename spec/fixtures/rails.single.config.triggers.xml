@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<matrix-project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
   <actions/>
   <description/>
   <keepDependencies>false</keepDependencies>
@@ -17,7 +17,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git@codebasehq.com:mocra/dash/web-app.git</string>
+        <string>git@codebasehq.com:mocra/misc/mocra-web.git</string>
         <string>tagopt</string>
         <string/>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -36,20 +36,23 @@
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector">
+    <hudson.triggers.SCMTrigger>
+      <spec># every minute
+* * * * *</spec>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <axes>
-  </axes>
   <builders>
-    <hudson.tasks.Shell>
-      <command>echo &quot;Running steps...&quot;</command>
-    </hudson.tasks.Shell>
     <hudson.plugins.ruby.Ruby>
-      <command>unless File.exist?(&quot;config/database.yml&quot;)
+      <command>
+unless File.exist?(&quot;config/database.yml&quot;)
   require &apos;fileutils&apos;
   example = Dir[&quot;config/database*&quot;].first
   puts &quot;Using #{example} for config/database.yml&quot;
   FileUtils.cp example, &quot;config/database.yml&quot;
-end</command>
+end
+      </command>
     </hudson.plugins.ruby.Ruby>
     <hudson.plugins.rake.Rake>
       <rakeInstallation>(Default)</rakeInstallation>
@@ -78,5 +81,4 @@ end</command>
   </builders>
   <publishers/>
   <buildWrappers/>
-  <runSequentially>false</runSequentially>
-</matrix-project>
+</project>

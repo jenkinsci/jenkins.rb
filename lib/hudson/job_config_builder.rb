@@ -30,7 +30,7 @@ module Hudson
         b.canRoam true
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
-        build_triggers b
+        # build_triggers b
         b.concurrentBuild false
         build_axes b if matrix_project
         build_steps b
