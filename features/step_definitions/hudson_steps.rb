@@ -89,3 +89,12 @@ Then /^I should see a hudson server on port (\d+)$/ do |port|
   end
 end
 
+When /^I create a job$/ do
+  steps <<-CUCUMBER
+    When the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+  CUCUMBER
+end
+
+
+

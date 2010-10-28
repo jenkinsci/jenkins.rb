@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hudson (0.3.0.beta.3)
+    hudson (0.3.0.beta.4)
       builder (~> 2.1.2)
       hpricot
       httparty (~> 0.5.2)
@@ -56,7 +56,7 @@ DEPENDENCIES
   hudson!
   json (~> 1.4.0)
   rake (~> 0.8.7)
-  rspec (~> 2.0.0.beta)
+  rspec (~> 2.0.0)
   term-ansicolor (>= 1.0.4)
   thor (= 0.14.2)
   yajl-ruby (>= 0.7.6)
