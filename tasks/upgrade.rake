@@ -25,9 +25,26 @@ class Hudson::Progress
   def ok(msg = nil)
     raise Ok.new(msg)
   end
-  
+
   class Ok < StandardError
   end
+
+end
+
+class Hudson::FetchPlugin
+  def initialize(progress, latest)
+    @progress, @latest = progress, latest
+  end
+
+  def fetch(plugin)
+    plugin = plugin.to_s
+    metadata = OpenStruct.new(@latest['plugins'][plugin])
+    @progress.means "upgrading #{plugin} plugin" do |step|
+      system("cd lib/hudson/plugins && curl -L --silent #{metadata.url} > #{plugin}.hpi")
+      step.ok(metadata.version)
+    end
+  end
+
 end
 
 namespace :hudson do
@@ -59,6 +76,12 @@ EOF
       else
         step.ok("Up-to-date at #{current_version}")
       end
+    end
+
+    plugins = Hudson::FetchPlugin.new(progress, latest)
+
+    Dir['lib/hudson/plugins/*.hpi'].each do |plugin_file|
+      plugins.fetch File.basename(plugin_file, ".hpi")
     end
   end
 end
