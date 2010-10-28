@@ -32,12 +32,10 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"
 
-  Scenario: Recreate job
+  Scenario: Recreate a job
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
     When I recreate a job
     Then I should see "Added project 'ruby' to Hudson."
-  
-  
   
