@@ -41,9 +41,7 @@ module Hudson
         res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
           :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
         }
-        p res.code
-        puts res.body
-        if res.code == 200
+        if res.code.to_i == 200
           cache_base_uri
           true
         else
