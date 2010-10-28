@@ -62,8 +62,12 @@ module Hudson
     
     # Attempts to delete a job +name+
     def self.delete_job(name)
-      uri = URI.parse base_uri
-      res = Net::HTTP.start(uri.host, uri.port) { |http| http.post("#{job_url name}/doDelete", {}) }
+      res = post_plain "#{job_url name}/doDelete"
+      res.code.to_i == 302
+    end
+    
+    def self.build_job(name)
+      res = get_plain "/job/#{name}/build"
       res.code.to_i == 302
     end
 
@@ -151,6 +155,16 @@ module Hudson
       end
     end
 
+    def self.post_plain(path, options = {})
+      uri = URI.parse base_uri
+      res = Net::HTTP.start(uri.host, uri.port) { |http| http.post(path, options) }
+    end
+    
+    def self.get_plain(path, options = {})
+      uri = URI.parse base_uri
+      res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
+    end
+    
     private
     def self.cache_base_uri
       Hudson::Config.config["base_uri"] = base_uri

@@ -32,6 +32,17 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"
 
+  Scenario: Trigger a job build
+    Given I am in the "ruby" project folder
+    When I create a job
+    When I run local executable "hudson" with arguments "build"
+    Then I should see "Build for 'ruby' running now..."
+  
+  Scenario: Trigger a job build on invaild project
+    Given I am in the "ruby" project folder
+    When I run local executable "hudson" with arguments "build . --host localhost --port 3010"
+    Then I should see "ERROR: No job 'ruby' on server."
+  
   Scenario: Recreate a job
     Given I am in the "ruby" project folder
     When I create a job
@@ -43,7 +54,7 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
-    When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
+    When I run local executable "hudson" with arguments "remove ."
     Then I should see "Removed project 'ruby' from Hudson."
   
   Scenario: Remove a job that doesn't exist gives error

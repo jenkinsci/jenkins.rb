@@ -69,6 +69,20 @@ module Hudson
       end
     end
     
+    desc "build [PROJECT_PATH]", "trigger build of this project's build job"
+    common_options
+    def build(project_path = ".")
+      select_hudson_server(options)
+      FileUtils.chdir(project_path) do
+        name = File.basename(FileUtils.pwd)
+        if Hudson::Api.build_job(name)
+          puts "Build for '#{name}' running now..."
+        else
+          error "No job '#{name}' on server."
+        end
+      end
+    end
+    
     desc "remove PROJECT_PATH", "remove this project's build job from Hudson"
     common_options
     def remove(project_path)
