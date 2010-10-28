@@ -39,3 +39,17 @@ Feature: Create jobs
     When I recreate a job
     Then I should see "Added project 'ruby' to Hudson."
   
+  Scenario: Remove a job
+    Given I am in the "ruby" project folder
+    When I create a job
+    Then I should see "Added project 'ruby' to Hudson."
+    When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
+    Then I should see "Removed project 'ruby' from Hudson."
+  
+  Scenario: Remove a job that doesn't exist gives error
+    Given I am in the "ruby" project folder
+    When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
+    Then I should see "ERROR: Failed to delete project 'ruby'."
+  
+  
+  

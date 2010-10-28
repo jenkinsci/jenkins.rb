@@ -53,12 +53,11 @@ To list Jobs/Projects on a Hudson server:
 To add Project (create a Job) on a Hudson server:
 
     Usage: hudson create [project_path] [options]
-        -n, --name [dir_name]            name of hudson job
         -p, --port [3001]                find hudson on specified port
             --host [localhost]           find hudson on specified host
         -h, --help
 
-For all commands, if flags for `host:port` are not provided, it will use `$HUDSON_HOST` and `$HUDSON_PORT` if available.
+For all commands, if flags for `host:port` are not provided, it will use either `$HUDSON_HOST` and `$HUDSON_PORT` or the previous target Hudson CI server.
 
 Developer Instructions
 ======================

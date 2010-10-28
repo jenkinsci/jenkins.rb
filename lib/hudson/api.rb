@@ -62,8 +62,9 @@ module Hudson
     
     # Attempts to delete a job +name+
     def self.delete_job(name)
-      post "/job/#{name}/doDelete/api/json"
-    rescue Crack::ParseError
+      uri = URI.parse base_uri
+      res = Net::HTTP.start(uri.host, uri.port) { |http| http.post("#{job_url name}/doDelete", {}) }
+      res.code.to_i == 302
     end
 
     def self.summary
@@ -154,6 +155,10 @@ module Hudson
     def self.cache_base_uri
       Hudson::Config.config["base_uri"] = base_uri
       Hudson::Config.store!
+    end
+    
+    def self.job_url(name)
+      "#{base_uri}/job/#{name}"
     end
   end
 end
