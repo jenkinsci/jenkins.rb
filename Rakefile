@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency("rspec", ["~> 2.0.0"])
   s.add_development_dependency("json", ["~>1.4.0"])
   s.add_development_dependency("awesome_print")
-  s.add_development_dependency("rubyzip")
 end
 
 desc "Build gem"
