@@ -1,3 +1,4 @@
 module Hudson
-  HUDSON_VERSION = "1.380"
+  HUDSON_VERSION = "1.381"
 end
+
