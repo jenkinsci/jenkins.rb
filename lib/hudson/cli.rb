@@ -49,13 +49,17 @@ module Hudson
     desc "create project_path [options]", "create a build for your project"
     common_options
     method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
+    method_option :assigned_node, :desc => "only use slave nodes with this label"
     def create(project_path)
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
         unless scm = Hudson::ProjectScm.discover
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
-        job_config = Hudson::JobConfigBuilder.new(:rubygem) { |c| c.scm = scm.url }
+        job_config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
+          c.scm = scm.url
+          c.assigned_node = options[:assigned_node] if options[:assigned_node]
+        end
         name = File.basename(FileUtils.pwd)
         begin
           if Hudson::Api.create_job(name, job_config, options)
