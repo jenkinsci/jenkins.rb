@@ -43,7 +43,7 @@ module Hudson
         cache_base_uri
         true
       else
-        puts res.body
+        p res.code
         if res.body =~ /A job already exists with the name/
           if options[:override]
             delete_job(name)
@@ -52,9 +52,13 @@ module Hudson
             raise JobAlreadyExistsError.new(name)
           end
         else
-          require "hpricot"
           puts "Server error:"
-          puts Hpricot(res.body).search("//body").text
+          begin
+            require "hpricot"
+            puts Hpricot(res.body).search("//body").text
+          rescue
+            puts res.body
+          end
         end
         false
       end
