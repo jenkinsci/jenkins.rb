@@ -27,7 +27,7 @@ module Hudson
         b.properties
         build_scm b
         b.assignedNode assigned_node if assigned_node
-        b.canRoam true
+        b.canRoam !assigned_node
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
         # build_triggers b

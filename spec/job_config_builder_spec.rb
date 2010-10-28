@@ -37,6 +37,7 @@ describe Hudson::JobConfigBuilder do
     it "builds config.xml" do
       Hpricot.XML(@config.to_xml).search("assignedNode").size.should == 1
       Hpricot.XML(@config.to_xml).search("assignedNode").text.should == "my-slave"
+      Hpricot.XML(@config.to_xml).search("canRoam").text.should == "false"
     end
   end
   
