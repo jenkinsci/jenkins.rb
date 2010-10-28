@@ -11,7 +11,7 @@ module Hudson
 
     headers 'content-type' => 'application/json'
     format :json
-    # http_proxy 'localhost', '8888'
+    http_proxy 'localhost', '8888'
     
     JobAlreadyExistsError = Class.new(Exception)
 
@@ -36,31 +36,26 @@ module Hudson
     #
     # TODO Exceptions?
     def self.create_job(name, job_config, options = {})
-      res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
-        :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
-      }
-      if res.code == 200
-        cache_base_uri
-        true
-      else
+      delete_job(name) if options[:override]
+      begin
+        res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
+          :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+        }
         p res.code
-        if res.body =~ /A job already exists with the name/
-          if options[:override]
-            delete_job(name)
-            return create_job(name, job_config)
-          else
-            raise JobAlreadyExistsError.new(name)
-          end
+        puts res.body
+        if res.code == 200
+          cache_base_uri
+          true
         else
+          # TODO - what are the errors we get?
           puts "Server error:"
-          begin
-            require "hpricot"
-            puts Hpricot(res.body).search("//body").text
-          rescue
-            puts res.body
-          end
+          p res.code
+          puts res.body
+          false
         end
-        false
+      rescue REXML::ParseException => e
+        # For some reason, if the job exists we get back half a page of HTML
+        raise JobAlreadyExistsError.new(name)
       end
     end
     

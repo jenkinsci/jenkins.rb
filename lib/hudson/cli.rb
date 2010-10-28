@@ -55,16 +55,18 @@ module Hudson
         unless scm = Hudson::ProjectScm.discover
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
-        job_config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
-          c.scm = scm.url
-        end
+        job_config = Hudson::JobConfigBuilder.new(:rubygem) { |c| c.scm = scm.url }
         name = File.basename(FileUtils.pwd)
-        if Hudson::Api.create_job(name, job_config, {:override => options[:override]})
-          build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
-          puts "Added project '#{name}' to Hudson."
-          puts "Trigger builds via: #{build_url}"
-        else
-          error "Failed to create project '#{name}'"
+        begin
+          if Hudson::Api.create_job(name, job_config, options)
+            build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
+            puts "Added project '#{name}' to Hudson."
+            puts "Trigger builds via: #{build_url}"
+          else
+            error "Failed to create project '#{name}'"
+          end
+        rescue Hudson::Api::JobAlreadyExistsError
+          error "Job '#{name} already exists."
         end
       end
     end
