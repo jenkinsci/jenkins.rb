@@ -11,7 +11,7 @@ module Hudson
 
     headers 'content-type' => 'application/json'
     format :json
-    http_proxy 'localhost', '8888'
+    # http_proxy 'localhost', '8888'
     
     JobAlreadyExistsError = Class.new(Exception)
 
