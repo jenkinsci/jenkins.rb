@@ -43,6 +43,7 @@ module Hudson
         cache_base_uri
         true
       else
+        puts res.body
         if res.body =~ /A job already exists with the name/
           if options[:override]
             delete_job(name)
