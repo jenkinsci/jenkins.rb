@@ -1,13 +1,9 @@
-begin
-  require 'rspec'
-rescue LoadError
-  require 'rubygems' unless ENV['NO_RUBYGEMS']
-  gem 'rspec'
-  require 'rspec'
-end
+require "bundler"
+Bundler.setup
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'hudson'
+require 'hpricot'
 
 module ConfigFixtureLoaders
   def config_xml(name, variation = nil)

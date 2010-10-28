@@ -4,6 +4,7 @@ module Hudson
   class JobConfigBuilder
     attr_accessor :scm, :git_branches
     attr_accessor :job_type, :matrix_project
+    attr_accessor :assigned_node
   
     def initialize(options = nil, &block)
       if options.is_a?(Symbol)
@@ -25,6 +26,7 @@ module Hudson
         b.keepDependencies false
         b.properties
         build_scm b
+        b.assignedNode assigned_node if assigned_node
         b.canRoam true
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false

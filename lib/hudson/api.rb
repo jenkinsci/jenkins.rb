@@ -3,6 +3,8 @@ require 'cgi'
 require 'uri'
 require 'json'
 
+require 'hudson/config'
+
 module Hudson
   module Api
     include HTTParty
@@ -73,7 +75,7 @@ module Hudson
       default_options = Hash.new("")
       default_options.merge!(
         :slave_port  => 22,
-        :master_key  => "/home/hudson/.ssh/hudson",
+        :master_key  => "/home/hudson/.ssh/id_rsa", # FIXME - hardcoded master username assumption
         :remote_fs   => "/data/hudson-slave/",
         :description => "Automatically created by Hudson.rb",
         :executors   => 2,

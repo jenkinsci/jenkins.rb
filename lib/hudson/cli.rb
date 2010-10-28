@@ -1,7 +1,6 @@
 require 'thor'
 require 'hudson/core_ext/object/blank'
 require 'hudson/cli/formatting'
-require 'hudson/config'
 require 'hudson/remote'
 
 module Hudson
