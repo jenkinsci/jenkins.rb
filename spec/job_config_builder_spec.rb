@@ -11,8 +11,7 @@ describe Hudson::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      config_xml = config_xml("rails", "single")
-      config_xml.should == @config.to_xml
+      config_xml("rails", "single").should == @config.to_xml
     end
   end
   
@@ -23,8 +22,7 @@ describe Hudson::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      config_xml = config_xml("rubygem")
-      config_xml.should == @config.to_xml
+      config_xml("rubygem").should == @config.to_xml
     end
   end
   
