@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("rspec", ["~> 2.0.0"])
   s.add_development_dependency("json", ["~>1.4.0"])
   s.add_development_dependency("awesome_print")
+  s.add_development_dependency("rubyzip")
 end
 
 desc "Build gem"
@@ -115,13 +116,10 @@ namespace :hudson do
         `ruby bin/hudson server --control 3011 --kill 2>/dev/null`
       end
     end
-    
-    desc "Grab the latest hudson.war from hudson-ci.org"
-    task :getwar do
-      sh "cd lib/hudson && rm hudson.war && wget http://hudson-ci.org/latest/hudson.war"
-    end
-    
+
   end
 end
+
+Dir['tasks/**/*.rake'].each {|f| load f}
 
 
