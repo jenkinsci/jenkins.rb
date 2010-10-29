@@ -1,6 +1,5 @@
-$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../../lib/hudson.rb")))
-require File.dirname(__FILE__) + "/../../lib/hudson.rb"
-
+$:.unshift(File.expand_path(File.dirname(__FILE__) + "/../../lib"))
+require 'hudson.rb'
 require 'bundler/setup'
 
 Before do
