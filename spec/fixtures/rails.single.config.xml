@@ -38,6 +38,9 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <hudson.tasks.Shell>
+      <command>bundle install</command>
+    </hudson.tasks.Shell>
     <hudson.plugins.ruby.Ruby>
       <command>
 unless File.exist?(&quot;config/database.yml&quot;)
@@ -48,30 +51,12 @@ unless File.exist?(&quot;config/database.yml&quot;)
 end
       </command>
     </hudson.plugins.ruby.Ruby>
-    <hudson.plugins.rake.Rake>
-      <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile/>
-      <rakeLibDir/>
-      <rakeWorkingDir/>
-      <tasks>db:schema:load</tasks>
-      <silent>false</silent>
-    </hudson.plugins.rake.Rake>
-    <hudson.plugins.rake.Rake>
-      <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile/>
-      <rakeLibDir/>
-      <rakeWorkingDir/>
-      <tasks>features</tasks>
-      <silent>false</silent>
-    </hudson.plugins.rake.Rake>
-    <hudson.plugins.rake.Rake>
-      <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile/>
-      <rakeLibDir/>
-      <rakeWorkingDir/>
-      <tasks>spec</tasks>
-      <silent>false</silent>
-    </hudson.plugins.rake.Rake>
+    <hudson.tasks.Shell>
+      <command>bundle exec rake db:schema:load</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>bundle exec rake</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers/>

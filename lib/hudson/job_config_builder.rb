@@ -108,6 +108,7 @@ module Hudson
     def build_steps(b)
       b.builders do
         if job_type == "rails"
+          build_shell_step b, "bundle install"
           build_ruby_step b, <<-RUBY.gsub(/^          /, '')
           unless File.exist?("config/database.yml")
             require 'fileutils'
@@ -116,15 +117,23 @@ module Hudson
             FileUtils.cp example, "config/database.yml"
           end
           RUBY
-          build_rake_step b, "db:schema:load"
-          build_rake_step b, "features"
-          build_rake_step b, "spec"
+          build_shell_step b, "bundle exec rake db:schema:load"
+          build_shell_step b, "bundle exec rake"
         elsif job_type == "rubygem"
           build_rake_step b, "features"
         end
       end
     end
   
+    # <hudson.tasks.Shell>
+    #   <command>bundle install</command>
+    # </hudson.tasks.Shell>
+    def build_shell_step(b, command)
+      b.tag! "hudson.tasks.Shell" do
+        b.command command.to_xs.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+      end
+    end
+
     # <hudson.plugins.ruby.Ruby>
     #   <command>unless File.exist?(&quot;config/database.yml&quot;)
     #   require &apos;fileutils&apos;
