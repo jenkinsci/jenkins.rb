@@ -56,7 +56,7 @@ module Hudson
         unless scm = Hudson::ProjectScm.discover
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
-        job_config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
+        job_config = Hudson::JobConfigBuilder.new(:rails) do |c|
           c.scm = scm.url
           c.assigned_node = options[:assigned_node] if options[:assigned_node]
         end
