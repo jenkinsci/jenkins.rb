@@ -56,6 +56,9 @@ module Hudson
         unless scm = Hudson::ProjectScm.discover
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
+        unless File.exists?("Gemfile")
+          error "Ruby/Rails projects without a Gemfile are currently unsupported."
+        end
         job_config = Hudson::JobConfigBuilder.new(:rails) do |c|
           c.scm = scm.url
           c.assigned_node = options[:assigned_node] if options[:assigned_node]

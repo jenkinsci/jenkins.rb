@@ -26,6 +26,12 @@ Feature: Create jobs
     Then I should see "http://localhost:3010/job/ruby/build"
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
+  
+  Scenario: Reject projects that don't use bundler
+    Given I am in the "non-bundler" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+    Then I should see "Ruby/Rails projects without a Gemfile are currently unsupported."
 
   Scenario: Attempt to create project without scm
     Given I am in the "ruby" project folder
@@ -61,6 +67,4 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
     Then I should see "ERROR: Failed to delete project 'ruby'."
-  
-  
   
