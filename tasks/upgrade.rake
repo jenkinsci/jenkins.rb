@@ -53,11 +53,7 @@ namespace :hudson do
   task :upgrade do
     progress = Hudson::Progress.new
     latest = progress.means "grabbing the latest metadata from hudson-ci.org" do |step|
-      JSON.parse(HTTParty.get("http://hudson-ci.org/update-center.json").lines.to_a[1..-2].join("\n").tap {|json|
-        File.open("update.center.json", "w+") do |f|
-          f.write(json)
-        end
-      })
+      JSON.parse(HTTParty.get("http://hudson-ci.org/update-center.json").lines.to_a[1..-2].join("\n"))
     end
     progress.means "upgrading hudson server" do |step|
       latest_version = latest["core"]["version"]
