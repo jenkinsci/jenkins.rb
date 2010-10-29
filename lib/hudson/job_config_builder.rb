@@ -62,7 +62,7 @@ module Hudson
               b.string "uploadpack"
               b.string "git-upload-pack"
               b.string "url"
-              b.string scm
+              b.string public_only_git_scm(scm) # FIXME remove when we have deploy keys
               b.string "tagopt"
               b.string
             end
@@ -78,11 +78,19 @@ module Hudson
             end
           end
         
+          b.localBranch
           b.mergeOptions
+          b.recursiveSubmodules false
           b.doGenerateSubmoduleConfigurations false
+          b.authorOrCommitter false
           b.clean false
-          b.choosingStrategy "Default"
+          b.wipeOutWorkspace false
+          b.buildChooser :class => "hudson.plugins.git.util.DefaultBuildChooser"
+          b.gitTool "Default"
           b.submoduleCfg :class => "list"
+          b.relativeTargetDir
+          b.excludedRegions
+          b.excludedUsers
         end
       end
     end
@@ -168,6 +176,15 @@ module Hudson
         b.rakeWorkingDir
         b.tasks tasks
         b.silent false
+      end
+    end
+    
+    # Converts git@github.com:drnic/newgem.git into git://github.com/drnic/newgem.git
+    def public_only_git_scm(scm_url)
+      if scm_url =~ /git@([\w\-_.]+):(.+)\.git/
+        "git://#{$1}/#{$2}.git"
+      else
+        scm_url
       end
     end
   end

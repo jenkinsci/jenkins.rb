@@ -27,11 +27,19 @@
         <name>**</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
+    <localBranch/>
     <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
     <clean>false</clean>
-    <choosingStrategy>Default</choosingStrategy>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
     <submoduleCfg class="list"/>
+    <relativeTargetDir/>
+    <excludedRegions/>
+    <excludedUsers/>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>

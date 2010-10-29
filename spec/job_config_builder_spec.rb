@@ -6,7 +6,7 @@ describe Hudson::JobConfigBuilder do
   describe "rails job; single axis; block syntax" do
     before do
       @config = Hudson::JobConfigBuilder.new(:rails) do |c|
-        c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
+        c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.git_branches = %w[master]
       end
     end
@@ -48,4 +48,19 @@ describe Hudson::JobConfigBuilder do
       Hpricot.XML(@config.to_xml).search("assignedNode").size.should == 0
     end
   end
+  
+  describe "temporary:" do
+    describe "convert git@ into git:// until we have deploy keys" do
+      before do
+        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+          c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
+          c.git_branches = %w[master]
+        end
+      end
+      it "builds config.xml" do
+        config_xml("rails", "single").should == @config.to_xml
+      end
+    end
+  end
+
 end
