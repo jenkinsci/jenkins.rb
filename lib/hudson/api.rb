@@ -84,7 +84,9 @@ module Hudson
         json = get "/job/#{name}/api/json"
         cache_base_uri
         json
-      rescue Errno::ECONNREFUSED => e
+      rescue Errno::ECONNREFUSED
+        false
+      rescue Errno::EAFNOSUPPORT
         false
       end
     end
@@ -94,6 +96,8 @@ module Hudson
       cache_base_uri
       json
     rescue Errno::ECONNREFUSED => e
+      false
+    rescue Errno::EAFNOSUPPORT
       false
     end
 
