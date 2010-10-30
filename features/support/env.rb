@@ -1,6 +1,7 @@
 $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../../lib"))
 require 'hudson.rb'
 require 'bundler/setup'
+require 'ap'
 
 Before do
   @tmp_root = File.dirname(__FILE__) + "/../../tmp"
