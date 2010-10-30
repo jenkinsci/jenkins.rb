@@ -9,4 +9,5 @@ Before do
   FileUtils.rm_rf   @tmp_root
   FileUtils.mkdir_p @home_path
   ENV['HOME'] = @home_path
+  ENV['CUCUMBER_RUNNING'] = 'oooh yes'
 end

@@ -11,8 +11,14 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
-    Then I should see "Added ruby project 'ruby' to Hudson."
-    Then I should see "http://localhost:3010/job/ruby/build"
+    Then I should see exactly
+      """
+      Added ruby project 'ruby' to Hudson.
+      Triggering initial build...
+      Trigger additional builds via:
+        URL: http://localhost:3010/job/ruby/build
+        CLI: hudson build ruby
+      """
     When I run local executable "hudson" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
   
@@ -22,11 +28,22 @@ Feature: Create jobs
     And env variable $HUDSON_HOST set to "localhost"
     And env variable $HUDSON_PORT set to "3010"
     When I run local executable "hudson" with arguments "create ."
-    Then I should see "Added ruby project 'ruby' to Hudson."
     Then I should see "http://localhost:3010/job/ruby/build"
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
   
+  Scenario: Don't trigger initial job build (hudson create --no-build)
+    Given I am in the "ruby" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --no-build --host localhost --port 3010"
+    Then I should see exactly
+      """
+      Added ruby project 'ruby' to Hudson.
+      Trigger builds via:
+        URL: http://localhost:3010/job/ruby/build
+        CLI: hudson build ruby
+      """
+
   Scenario: Setup hudson job for a specific node label (hudson create --assigned_node)
     Given I am in the "ruby" project folder
     And the project uses "git" scm

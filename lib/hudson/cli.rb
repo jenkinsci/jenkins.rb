@@ -42,12 +42,13 @@ module Hudson
       cmd << "--logfile=#{File.expand_path(options[:logfile])}" if options[:logfile]
       cmd << "--httpPort=#{options[:port]}"
       cmd << "--controlPort=#{options[:control]}"
-      puts cmd.join(" ")
+      shell.say cmd.join(" ")
       exec(*cmd)
     end
 
     desc "create project_path [options]", "create a build for your project"
     common_options
+    method_option :"no-build", :desc => "create job without initial build", :type => :boolean, :default => false
     method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
     method_option :assigned_node, :desc => "only use slave nodes with this label"
     method_option :template, :desc => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
@@ -69,8 +70,16 @@ module Hudson
           name = File.basename(FileUtils.pwd)
           if Hudson::Api.create_job(name, job_config, options)
             build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
-            puts "Added #{template} project '#{name}' to Hudson."
-            puts "Trigger builds via: #{build_url}"
+            shell.say "Added #{template} project '#{name}' to Hudson.", :green
+            unless options[:"no-build"]
+              shell.say "Triggering initial build..."
+              Hudson::Api.build_job(name)
+              shell.say "Trigger additional builds via:"
+            else
+              shell.say "Trigger builds via:"
+            end
+            shell.say "  URL: "; shell.say "#{build_url}", :yellow
+            shell.say "  CLI: "; shell.say "#{cmd} build #{name}", :yellow
           else
             error "Failed to create project '#{name}'"
           end
@@ -89,7 +98,7 @@ module Hudson
       FileUtils.chdir(project_path) do
         name = File.basename(FileUtils.pwd)
         if Hudson::Api.build_job(name)
-          puts "Build for '#{name}' running now..."
+          shell.say "Build for '#{name}' running now..."
         else
           error "No job '#{name}' on server."
         end
@@ -103,7 +112,7 @@ module Hudson
       FileUtils.chdir(project_path) do
         name = File.basename(FileUtils.pwd)
         if Hudson::Api.delete_job(name)
-          puts "Removed project '#{name}' from Hudson."
+          shell.say "Removed project '#{name}' from Hudson."
         else
           error "Failed to delete project '#{name}'."
         end
@@ -209,6 +218,10 @@ USEAGE
     def error(text)
       shell.say "ERROR: #{text}", :red
       exit
+    end
+    
+    def cmd
+      ENV['CUCUMBER_RUNNING'] ? 'hudson' : $0
     end
   end
 end
