@@ -11,7 +11,7 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
     Then I should see "http://localhost:3010/job/ruby/build"
     When I run local executable "hudson" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
@@ -22,7 +22,7 @@ Feature: Create jobs
     And env variable $HUDSON_HOST set to "localhost"
     And env variable $HUDSON_PORT set to "3010"
     When I run local executable "hudson" with arguments "create ."
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
     Then I should see "http://localhost:3010/job/ruby/build"
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
@@ -31,7 +31,13 @@ Feature: Create jobs
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --assigned_node my_node --host localhost --port 3010"
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
+
+  Scenario: Select 'rails3' project type (hudson create --template rails3)
+    Given I am in the "rails-3" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --template rails3 --host localhost --port 3010"
+    Then I should see "Added rails3 project 'rails-3' to Hudson."
 
   Scenario: Reject projects that don't use bundler (hudson create)
     Given I am in the "non-bundler" project folder
@@ -47,9 +53,9 @@ Feature: Create jobs
   Scenario: Recreate a job (hudson create --override)
     Given I am in the "ruby" project folder
     When I create a job
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
     When I recreate a job
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
 
   Scenario: Trigger a job build (hudson build)
     Given I am in the "ruby" project folder
@@ -65,7 +71,7 @@ Feature: Create jobs
   Scenario: Remove a job (hudson remove)
     Given I am in the "ruby" project folder
     When I create a job
-    Then I should see "Added project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Hudson."
     When I run local executable "hudson" with arguments "remove ."
     Then I should see "Removed project 'ruby' from Hudson."
   

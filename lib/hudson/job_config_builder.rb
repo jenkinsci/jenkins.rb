@@ -5,14 +5,15 @@ module Hudson
     attr_accessor :scm, :git_branches
     attr_accessor :job_type, :matrix_project
     attr_accessor :assigned_node
-  
+    
+    InvalidTemplate = Class.new(StandardError)
+    
     def initialize(options = nil, &block)
-      if options.is_a?(Symbol)
+      if options.is_a?(String) || options.is_a?(Symbol)
         @job_type = options.to_s
       elsif options.is_a?(Hash)
         @job_type = options[:job_type].to_s
       end
-      @matrix_project = %w[rubygem].include? job_type
       yield self
       @git_branches ||= ["**"]
     end
@@ -32,11 +33,11 @@ module Hudson
         b.blockBuildWhenUpstreamBuilding false
         # build_triggers b
         b.concurrentBuild false
-        build_axes b if matrix_project
+        build_axes b if matrix_project?
         build_steps b
         b.publishers
         b.buildWrappers
-        b.runSequentially false if matrix_project
+        b.runSequentially false if matrix_project?
       end
     end
   
@@ -45,6 +46,10 @@ module Hudson
     end
   
     protected
+    
+    def matrix_project?
+      %w[ruby].include? job_type
+    end
   
     # <scm class="hudson.plugins.git.GitSCM"> ... </scm>
     def build_scm(b)
@@ -112,10 +117,14 @@ module Hudson
     def build_axes(b)
       b.axes
     end
-  
+    
+    # TODO modularise this
+    # TODO how to customize? e.g. EngineYard template?
+    VALID_JOB_TEMPLATES = %w[rails rails3 ruby rubygem]
     def build_steps(b)
       b.builders do
-        if job_type == "rails"
+        raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type)
+        if job_type == "rails3"
           build_shell_step b, "bundle install"
           build_ruby_step b, <<-RUBY.gsub(/^          /, '')
           unless File.exist?("config/database.yml")
@@ -127,8 +136,12 @@ module Hudson
           RUBY
           build_shell_step b, "bundle exec rake db:schema:load"
           build_shell_step b, "bundle exec rake"
+        elsif job_type == "ruby"
+          build_shell_step b, "bundle install"
+          build_shell_step b, "bundle exec rake"
         elsif job_type == "rubygem"
-          build_rake_step b, "features"
+          build_shell_step b, "bundle install"
+          build_shell_step b, "bundle exec rake"
         end
       end
     end

@@ -50,6 +50,7 @@ module Hudson
     common_options
     method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
     method_option :assigned_node, :desc => "only use slave nodes with this label"
+    method_option :template, :desc => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     def create(project_path)
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
@@ -59,21 +60,24 @@ module Hudson
         unless File.exists?("Gemfile")
           error "Ruby/Rails projects without a Gemfile are currently unsupported."
         end
-        job_config = Hudson::JobConfigBuilder.new(:rails) do |c|
-          c.scm = scm.url
-          c.assigned_node = options[:assigned_node] if options[:assigned_node]
-        end
-        name = File.basename(FileUtils.pwd)
         begin
+          template = options[:template]
+          job_config = Hudson::JobConfigBuilder.new(template) do |c|
+            c.scm = scm.url
+            c.assigned_node = options[:assigned_node] if options[:assigned_node]
+          end
+          name = File.basename(FileUtils.pwd)
           if Hudson::Api.create_job(name, job_config, options)
             build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
-            puts "Added project '#{name}' to Hudson."
+            puts "Added #{template} project '#{name}' to Hudson."
             puts "Trigger builds via: #{build_url}"
           else
             error "Failed to create project '#{name}'"
           end
+        rescue Hudson::JobConfigBuilder::InvalidTemplate
+          error "Invalid job template '#{template}'."
         rescue Hudson::Api::JobAlreadyExistsError
-          error "Job '#{name} already exists."
+          error "Job '#{name}' already exists."
         end
       end
     end
