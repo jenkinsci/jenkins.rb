@@ -89,7 +89,7 @@ task :default => ["hudson:server:killtest", "hudson:server:test"] do
       task.invoke
     end
   end
-  result
+  raise unless result
 end
 
 namespace :hudson do
