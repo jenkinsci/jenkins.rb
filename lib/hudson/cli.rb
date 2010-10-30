@@ -128,10 +128,10 @@ module Hudson
         shell.say "#{@uri}:", :bold
         summary["jobs"].each do |job|
           color = job['color']
+          bold  = color =~ /anime/
           color = 'red' if color == 'red_anime'
           color = 'green' if color == 'blue' || color == 'blue_anime'
           color = 'yellow' if color == 'grey' || color == 'disabled'
-          bold  = color =~ /anime/
           shell.say "* "; shell.say(shell.set_color(job['name'], color.to_sym, bold), nil, true)
         end
         shell.say ""
