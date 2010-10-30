@@ -3,13 +3,19 @@ Feature: Listing jobs
 
   Scenario: List jobs on a non-existent server (hudson list)
     When I run local executable "hudson" with arguments "list --host localhost --port 9999"
-    Then I should see "localhost:9999 - no connection"
+    Then I should see exactly
+      """
+      No connection available to the server.
+      """
   
   Scenario: List jobs on a server with no jobs (hudson list)
     Given I have a Hudson server running
     And the Hudson server has no current jobs
     When I run local executable "hudson" with arguments "list --host localhost --port 3010"
-    Then I should see "localhost:3010 - no jobs"
+    Then I should see exactly
+      """
+      http://localhost:3010: no jobs
+      """
   
   Scenario: List jobs on a server with jobs (hudson list)
     Given I have a Hudson server running
@@ -18,12 +24,11 @@ Feature: Listing jobs
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     When I run local executable "hudson" with arguments "list"
-    Then I should see "localhost:3010 -"
-    Then I should see "ruby"
-    When I run local executable "hudson" with arguments "list --host localhost --port 3010"
-    Then I should see "localhost:3010 -"
-    Then I should see "ruby"
-  
-  
+    Then I should see exactly
+      """
+      http://localhost:3010:
+      * ruby
+
+      """
   
   

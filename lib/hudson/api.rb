@@ -73,10 +73,6 @@ module Hudson
         json = get "/api/json"
         cache_base_uri
         json
-      rescue Errno::ECONNREFUSED
-        false
-      rescue Errno::EAFNOSUPPORT
-        false
       end
     end
 

@@ -123,22 +123,19 @@ module Hudson
     common_options
     def list
       select_hudson_server(options)
-      if summary = Hudson::Api.summary
-        unless summary["jobs"].blank?
-          shell.say "#{@uri} -"
-          summary["jobs"].each do |job|
-            color = job['color']
-            color = 'red' if color == 'red_anime'
-            color = 'green' if color == 'blue' || color == 'blue_anime'
-            color = 'yellow' if color == 'grey' || color == 'disabled'
-            shell.say job['name'], color.to_sym, true
-          end
-          shell.say ""
-        else
-          display "#{@uri} - no jobs"
+      summary = Hudson::Api.summary
+      unless summary["jobs"].blank?
+        shell.say "#{@uri}:", :bold
+        summary["jobs"].each do |job|
+          color = job['color']
+          color = 'red' if color == 'red_anime'
+          color = 'green' if color == 'blue' || color == 'blue_anime'
+          color = 'yellow' if color == 'grey' || color == 'disabled'
+          shell.say "* "; shell.say job['name'], color.to_sym, true
         end
+        shell.say ""
       else
-        error "#{@uri} - no connection"
+        shell.say "#{@uri}: "; shell.say "no jobs", :yellow
       end
     end
 

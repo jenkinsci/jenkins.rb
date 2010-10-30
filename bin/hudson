@@ -7,5 +7,5 @@ require 'hudson/cli'
 begin
   Hudson::CLI.start
 rescue Errno::ECONNREFUSED, Errno::EAFNOSUPPORT
-  Hudson::CLI.new.shell.say "No connection available to server.", :red
+  Hudson::CLI.new.shell.say "No connection available to the server.", :red
 end
