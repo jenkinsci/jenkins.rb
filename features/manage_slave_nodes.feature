@@ -7,7 +7,7 @@ Feature: Adding slave nodes
     Given I have a Hudson server running
     And the Hudson server has no slaves
 
-  Scenario: Add a slave with no authentication required
+  Scenario: Add a slave with no authentication required (hudson nodes)
     When I run local executable "hudson" with arguments "nodes --host localhost --port 3010"
     Then I should see exactly
       """

@@ -3,7 +3,7 @@ Feature: Running a Hudson Server
   I want to be able to easily control a hudson server 
   In order to spend my time on how the process operates, not how to start stop and control it. 
   
-  Scenario: Start a Hudson Server
+  Scenario: Start a Hudson Server (hudson server)
     Given env variable $HOME set to project path "home"
       And "home/.hudson" folder is deleted
       And there is nothing listening on port 5001

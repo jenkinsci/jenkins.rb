@@ -7,7 +7,7 @@ Feature: Create jobs
     Given I have a Hudson server running
     And the Hudson server has no current jobs
   
-  Scenario: Discover Ruby project, on git scm, and create job
+  Scenario: Discover Ruby project, on git scm, and create job (hudson create)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
@@ -16,7 +16,7 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
   
-  Scenario: Create job via $HUDSON_HOST and $HUDSON_PORT
+  Scenario: Create job via $HUDSON_HOST and $HUDSON_PORT (hudson create)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     And env variable $HUDSON_HOST set to "localhost"
@@ -27,43 +27,43 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
   
-  Scenario: Reject projects that don't use bundler
+  Scenario: Reject projects that don't use bundler (hudson create)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Ruby/Rails projects without a Gemfile are currently unsupported."
 
-  Scenario: Attempt to create project without scm
+  Scenario: Attempt to create project without scm (hudson create)
     Given I am in the "ruby" project folder
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"
 
-  Scenario: Trigger a job build
-    Given I am in the "ruby" project folder
-    When I create a job
-    When I run local executable "hudson" with arguments "build"
-    Then I should see "Build for 'ruby' running now..."
-  
-  Scenario: Trigger a job build on invaild project
-    Given I am in the "ruby" project folder
-    When I run local executable "hudson" with arguments "build . --host localhost --port 3010"
-    Then I should see "ERROR: No job 'ruby' on server."
-  
-  Scenario: Recreate a job
+  Scenario: Recreate a job (hudson create)
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
     When I recreate a job
     Then I should see "Added project 'ruby' to Hudson."
+
+  Scenario: Trigger a job build (hudson build)
+    Given I am in the "ruby" project folder
+    When I create a job
+    When I run local executable "hudson" with arguments "build"
+    Then I should see "Build for 'ruby' running now..."
   
-  Scenario: Remove a job
+  Scenario: Trigger a job build on invaild project (hudson build)
+    Given I am in the "ruby" project folder
+    When I run local executable "hudson" with arguments "build . --host localhost --port 3010"
+    Then I should see "ERROR: No job 'ruby' on server."
+  
+  Scenario: Remove a job (hudson remove)
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
     When I run local executable "hudson" with arguments "remove ."
     Then I should see "Removed project 'ruby' from Hudson."
   
-  Scenario: Remove a job that doesn't exist gives error
+  Scenario: Remove a job that doesn't exist gives error (hudson remove)
     Given I am in the "ruby" project folder
     When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
     Then I should see "ERROR: Failed to delete project 'ruby'."
