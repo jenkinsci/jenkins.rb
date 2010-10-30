@@ -76,7 +76,7 @@ task :default => ["hudson:server:killtest", "hudson:server:test"] do
     Net::HTTP.start("localhost", "3010") { |http| http.get('/') }
     sleep(10)
     puts ""
-    Rake::Task["cucumber:ok"].invoke
+    result = Rake::Task["cucumber:ok"].invoke
   rescue Exception => e
     if tries <= 15
       sleep 2
@@ -89,6 +89,7 @@ task :default => ["hudson:server:killtest", "hudson:server:test"] do
       task.invoke
     end
   end
+  result
 end
 
 namespace :hudson do
