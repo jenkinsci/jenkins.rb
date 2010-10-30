@@ -7,7 +7,7 @@ Feature: Create jobs
     Given I have a Hudson server running
     And the Hudson server has no current jobs
   
-  Scenario: Discover Ruby project, on git scm, and create job (hudson create)
+  Scenario: Setup hudson job for git scm (hudson create)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
@@ -27,6 +27,12 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "list"
     Then I should see "ruby"
   
+  Scenario: Setup hudson job for a specific node label (hudson create --assigned_node)
+    Given I am in the "ruby" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --assigned_node my_node --host localhost --port 3010"
+    Then I should see "Added project 'ruby' to Hudson."
+
   Scenario: Reject projects that don't use bundler (hudson create)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm
@@ -38,7 +44,7 @@ Feature: Create jobs
     When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"
 
-  Scenario: Recreate a job (hudson create)
+  Scenario: Recreate a job (hudson create --override)
     Given I am in the "ruby" project folder
     When I create a job
     Then I should see "Added project 'ruby' to Hudson."
