@@ -47,14 +47,12 @@
   <concurrentBuild>false</concurrentBuild>
   <axes/>
   <builders>
-    <hudson.plugins.rake.Rake>
-      <rakeInstallation>(Default)</rakeInstallation>
-      <rakeFile/>
-      <rakeLibDir/>
-      <rakeWorkingDir/>
-      <tasks>features</tasks>
-      <silent>false</silent>
-    </hudson.plugins.rake.Rake>
+    <hudson.tasks.Shell>
+      <command>bundle install</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>bundle exec rake</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers/>

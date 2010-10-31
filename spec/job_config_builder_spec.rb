@@ -49,17 +49,16 @@ describe Hudson::JobConfigBuilder do
     end
   end
   
-  describe "temporary:" do
-    describe "convert git@ into git:// until we have deploy keys" do
-      before do
-        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
-          c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
-          c.git_branches = %w[master]
-        end
+  describe "public_scm = true => convert git@ into git:// until we have deploy keys" do
+    before do
+      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+        c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
+        c.git_branches = %w[master]
+        c.public_scm = true
       end
-      it "builds config.xml" do
-        config_xml("rails", "single").should == @config.to_xml
-      end
+    end
+    it "builds config.xml" do
+      config_xml("rails", "single").should == @config.to_xml
     end
   end
 
