@@ -74,6 +74,10 @@ module Hudson
       json
     end
     
+    def self.job_names
+      summary["jobs"].map {|job| job["name"]}
+    end
+
     # Return hash of job statuses
     def self.job(name)
       begin
