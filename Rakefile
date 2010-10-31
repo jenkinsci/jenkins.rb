@@ -66,7 +66,7 @@ desc 'Alias for cucumber:ok'
 task :cucumber => 'cucumber:ok'
 
 desc "Start test server; Run cucumber:ok; Kill Test Server;"
-task :default => ["hudson:server:killtest", "hudson:server:test"] do
+task :default => [:spec, "hudson:server:killtest", "hudson:server:test"] do
   require 'socket'
   print "waiting for at most 30 seconds for the server to start"
   tries = 1
