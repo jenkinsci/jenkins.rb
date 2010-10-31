@@ -69,13 +69,11 @@ module Hudson
     end
 
     def self.summary
-      begin
-        json = get "/api/json"
-        cache_base_uri
-        json
-      end
+      json = get "/api/json"
+      cache_base_uri
+      json
     end
-
+    
     # Return hash of job statuses
     def self.job(name)
       begin
