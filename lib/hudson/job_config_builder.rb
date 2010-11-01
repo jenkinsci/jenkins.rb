@@ -10,12 +10,14 @@ module Hudson
     
     def initialize(options = nil, &block)
       if options.is_a?(String) || options.is_a?(Symbol)
-        @job_type = options.to_s
+        self.job_type = options.to_s
       elsif options.is_a?(Hash)
-        @job_type = options[:job_type].to_s
+        self.job_type = options[:job_type].to_s
       end
+      
       yield self
-      @git_branches ||= ["**"]
+
+      self.git_branches ||= ["master"]
     end
   
     def builder
@@ -115,7 +117,8 @@ module Hudson
         end
       end
     end
-  
+
+    # TODO
     def build_axes(b)
       b.axes
     end
