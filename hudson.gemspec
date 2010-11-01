@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{hudson}
-  s.version = "0.3.0.beta.13"
+  s.version = "0.3.0.beta.14"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Charles Lowell", "Dr Nic Williams"]
-  s.date = %q{2010-10-31}
+  s.date = %q{2010-11-01}
   s.default_executable = %q{hudson}
   s.description = %q{A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI}
   s.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
