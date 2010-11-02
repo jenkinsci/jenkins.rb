@@ -3,11 +3,26 @@ require File.dirname(__FILE__) + "/spec_helper"
 describe Hudson::JobConfigBuilder do
   include ConfigFixtureLoaders
   
-  describe "rails job; single axis; block syntax" do
+  describe "explicit steps to match a ruby job" do
+    before do
+      @config = Hudson::JobConfigBuilder.new do |c|
+        c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
+        c.steps = [
+          [:build_shell_step, "bundle install"],
+          [:build_shell_step, "bundle exec rake"]
+        ]
+      end
+    end
+    it "builds config.xml" do
+      config_xml("ruby", "single").should == @config.to_xml
+    end
+  end
+  
+  
+  describe "rails job; single axis" do
     before do
       @config = Hudson::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
-        c.git_branches = %w[master]
       end
     end
     it "builds config.xml" do
@@ -15,7 +30,9 @@ describe Hudson::JobConfigBuilder do
     end
   end
   
-  describe "rubygem job; single axis; block syntax" do
+  
+  
+  describe "rubygem job; single axis" do
     before do
       @config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
@@ -53,7 +70,6 @@ describe Hudson::JobConfigBuilder do
     before do
       @config = Hudson::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
-        c.git_branches = %w[master]
         c.public_scm = true
       end
     end
@@ -62,4 +78,17 @@ describe Hudson::JobConfigBuilder do
     end
   end
 
+  describe "select specific git cmd" do
+    before do
+      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+        c.scm      = "git://codebasehq.com/mocra/misc/mocra-web.git"
+        c.git_tool = "xyz"
+        c.steps    = []
+      end
+    end
+    it "builds config.xml" do
+      Hpricot.XML(@config.to_xml).search("gitTool").size.should == 1
+      Hpricot.XML(@config.to_xml).search("gitTool").text.should == "xyz"
+    end
+  end
 end

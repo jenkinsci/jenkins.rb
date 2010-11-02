@@ -2,18 +2,19 @@ require "builder"
 
 module Hudson
   class JobConfigBuilder
-    attr_accessor :scm, :git_branches, :public_scm
+    attr_accessor :scm, :git_branches, :public_scm, :git_tool
     attr_accessor :job_type, :matrix_project
     attr_accessor :assigned_node
+    attr_accessor :steps
     
     InvalidTemplate = Class.new(StandardError)
     
-    def initialize(options = nil, &block)
-      if options.is_a?(String) || options.is_a?(Symbol)
-        self.job_type = options.to_s
-      elsif options.is_a?(Hash)
-        self.job_type = options[:job_type].to_s
-      end
+    # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
+    #   - Default is based on +job_type+.
+    # +git_branches+ - array of branches to run builds. Default: ['master']
+    # +git_tool+  - key reference for Hudson CI git command. Default: 'Default'
+    def initialize(job_type = :ruby, &block)
+      self.job_type = job_type.to_s if job_type
       
       yield self
 
@@ -95,7 +96,7 @@ module Hudson
           b.clean false
           b.wipeOutWorkspace false
           b.buildChooser :class => "hudson.plugins.git.util.DefaultBuildChooser"
-          b.gitTool "Default"
+          b.gitTool git_tool ? git_tool : "Default"
           b.submoduleCfg :class => "list"
           b.relativeTargetDir
           b.excludedRegions
@@ -128,22 +129,29 @@ module Hudson
     VALID_JOB_TEMPLATES = %w[rails rails3 ruby rubygem]
     def build_steps(b)
       b.builders do
-        raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type)
-        if job_type == "rails" || job_type == "rails3"
-          build_shell_step b, "bundle install"
-          build_ruby_step b, <<-RUBY.gsub(/^          /, '')
-          unless File.exist?("config/database.yml")
-            require 'fileutils'
-            example = Dir["config/database*"].first
-            puts "Using \#{example} for config/database.yml"
-            FileUtils.cp example, "config/database.yml"
+        if job_type
+          raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type)
+          if job_type == "rails" || job_type == "rails3"
+            build_shell_step b, "bundle install"
+            build_ruby_step b, <<-RUBY.gsub(/^            /, '')
+            unless File.exist?("config/database.yml")
+              require 'fileutils'
+              example = Dir["config/database*"].first
+              puts "Using \#{example} for config/database.yml"
+              FileUtils.cp example, "config/database.yml"
+            end
+            RUBY
+            build_shell_step b, "bundle exec rake db:schema:load"
+            build_shell_step b, "bundle exec rake"
+          else
+            build_shell_step b, "bundle install"
+            build_shell_step b, "bundle exec rake"
           end
-          RUBY
-          build_shell_step b, "bundle exec rake db:schema:load"
-          build_shell_step b, "bundle exec rake"
         else
-          build_shell_step b, "bundle install"
-          build_shell_step b, "bundle exec rake"
+          steps.each do |step|
+            method, cmd = step
+            send(method.to_sym, b, cmd)
+          end
         end
       end
     end
