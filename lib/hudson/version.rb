@@ -1,3 +1,3 @@
 module Hudson
-  VERSION = "0.3.0.beta.15"
+  VERSION = "0.3.0.beta.16"
 end
