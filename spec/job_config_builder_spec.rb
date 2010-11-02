@@ -78,4 +78,23 @@ describe Hudson::JobConfigBuilder do
     end
   end
 
+  describe "setup ENV variables via envfile plugin" do
+    before do
+      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+        c.scm      = "git://codebasehq.com/mocra/misc/mocra-web.git"
+        c.steps    = []
+        c.envfile  = "/path/to/env/file"
+      end
+    end
+    it "builds config.xml" do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <buildWrappers>
+          <hudson.plugins.envfile.EnvFileBuildWrapper>
+            <filePath>/path/to/env/file</filePath>
+          </hudson.plugins.envfile.EnvFileBuildWrapper>
+        </buildWrappers>
+      XML
+      Hpricot.XML(@config.to_xml).search("buildWrappers").to_s.should == xml_bite.strip
+    end
+  end
 end

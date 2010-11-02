@@ -6,6 +6,7 @@ module Hudson
     attr_accessor :steps
     attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node
+    attr_accessor :envfile
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -42,7 +43,7 @@ module Hudson
         build_axes b if matrix_project?
         build_steps b
         b.publishers
-        b.buildWrappers
+        build_wrappers b
         b.runSequentially false if matrix_project?
       end
     end
@@ -125,6 +126,27 @@ module Hudson
     # TODO
     def build_axes(b)
       b.axes
+    end
+    
+    # Example:
+    # <buildWrappers>
+    #   <hudson.plugins.envfile.EnvFileBuildWrapper>
+    #     <filePath>/path/to/env/file</filePath>
+    #   </hudson.plugins.envfile.EnvFileBuildWrapper>
+    # </buildWrappers>
+    def build_wrappers(b)
+      if envfile
+        b.buildWrappers do
+          self.envfile = [envfile] unless envfile.is_a?(Array)
+          b.tag! "hudson.plugins.envfile.EnvFileBuildWrapper" do
+            envfile.each do |file|
+              b.filePath file
+            end
+          end
+        end
+      else
+        b.buildWrappers
+      end
     end
     
     # TODO modularise this
