@@ -156,11 +156,13 @@ module Hudson
       end
     end
 
+    # Helper for POST that don't barf at Hudson's crappy API responses
     def self.post_plain(path, options = {})
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.post(path, options) }
     end
     
+    # Helper for GET that don't barf at Hudson's crappy API responses
     def self.get_plain(path, options = {})
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
