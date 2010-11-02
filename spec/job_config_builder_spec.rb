@@ -78,17 +78,4 @@ describe Hudson::JobConfigBuilder do
     end
   end
 
-  describe "select specific git cmd" do
-    before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
-        c.scm      = "git://codebasehq.com/mocra/misc/mocra-web.git"
-        c.git_tool = "xyz"
-        c.steps    = []
-      end
-    end
-    it "builds config.xml" do
-      Hpricot.XML(@config.to_xml).search("gitTool").size.should == 1
-      Hpricot.XML(@config.to_xml).search("gitTool").text.should == "xyz"
-    end
-  end
 end

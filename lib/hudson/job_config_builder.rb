@@ -4,7 +4,7 @@ module Hudson
   class JobConfigBuilder
     attr_accessor :job_type, :matrix_project
     attr_accessor :steps
-    attr_accessor :scm, :public_scm, :git_branches, :git_tool
+    attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node
     
     InvalidTemplate = Class.new(StandardError)
@@ -15,7 +15,6 @@ module Hudson
     # +scm+           - URL to the repository. Currently only support git URLs.
     # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Hudson job config.
     # +git_branches+  - array of branches to run builds. Default: ['master']
-    # +git_tool+      - key reference for Hudson CI git command. Default: 'Default'
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
@@ -100,7 +99,7 @@ module Hudson
           b.clean false
           b.wipeOutWorkspace false
           b.buildChooser :class => "hudson.plugins.git.util.DefaultBuildChooser"
-          b.gitTool git_tool ? git_tool : "Default"
+          b.gitTool "Default"
           b.submoduleCfg :class => "list"
           b.relativeTargetDir
           b.excludedRegions
