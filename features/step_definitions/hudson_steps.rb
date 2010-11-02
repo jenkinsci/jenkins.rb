@@ -26,16 +26,14 @@ end
 
 Given /^the Hudson server has no slaves$/ do
   if port = @hudson_port
-    summary = Hudson::Api.summary
-    (summary['jobs'] || []).each do |job|
+    Hudson::Api.summary['jobs'].each do |job|
       Hudson::Api.delete_job(job['name'])
     end
     Hudson::Api.summary['jobs'].should == []
 
     Hudson::Api.nodes['computer'].each do |node|
       name = node['displayName']
-      next if name == "master"
-      Hudson::Api.delete_node(name)
+      Hudson::Api.delete_node(name) unless name == "master"
     end
     Hudson::Api.nodes['computer'].size.should == 1
   else
