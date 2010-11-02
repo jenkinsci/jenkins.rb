@@ -76,6 +76,7 @@ end
 Then /^I should see a hudson server on port (\d+)$/ do |port|
   require 'json'
   try(15, 2) do
+    Hudson::Api.base_uri "http://localhost:#{port}"
     Hudson::Api.summary['nodeDescription'].should == "the master Hudson node"
   end
 end
