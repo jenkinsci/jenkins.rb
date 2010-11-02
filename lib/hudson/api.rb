@@ -155,6 +155,10 @@ module Hudson
         false
       end
     end
+    
+    def self.delete_node(name)
+      post_plain("#{base_uri}/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
+    end
 
     # Helper for POST that don't barf at Hudson's crappy API responses
     def self.post_plain(path, options = {})
