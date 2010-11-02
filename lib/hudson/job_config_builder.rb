@@ -2,17 +2,21 @@ require "builder"
 
 module Hudson
   class JobConfigBuilder
-    attr_accessor :scm, :git_branches, :public_scm, :git_tool
     attr_accessor :job_type, :matrix_project
-    attr_accessor :assigned_node
     attr_accessor :steps
+    attr_accessor :scm, :public_scm, :git_branches, :git_tool
+    attr_accessor :assigned_node
     
     InvalidTemplate = Class.new(StandardError)
     
+    # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
     #   - Default is based on +job_type+.
-    # +git_branches+ - array of branches to run builds. Default: ['master']
-    # +git_tool+  - key reference for Hudson CI git command. Default: 'Default'
+    # +scm+           - URL to the repository. Currently only support git URLs.
+    # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Hudson job config.
+    # +git_branches+  - array of branches to run builds. Default: ['master']
+    # +git_tool+      - key reference for Hudson CI git command. Default: 'Default'
+    # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
       
