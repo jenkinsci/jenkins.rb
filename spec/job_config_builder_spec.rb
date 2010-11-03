@@ -5,16 +5,17 @@ describe Hudson::JobConfigBuilder do
   
   describe "explicit steps to match a ruby job" do
     before do
-      @config = Hudson::JobConfigBuilder.new do |c|
+      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.steps = [
-          [:build_shell_step, "bundle install"],
-          [:build_shell_step, "bundle exec rake"]
+          [:build_shell_step, "step 1"],
+          [:build_shell_step, "step 2"]
         ]
       end
     end
     it "builds config.xml" do
-      config_xml("ruby", "single").should == @config.to_xml
+      steps = Hpricot.XML(@config.to_xml).search("command")
+      steps.map(&:inner_text).should == ["step 1", "step 2"]
     end
   end
   

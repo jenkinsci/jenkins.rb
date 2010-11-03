@@ -138,8 +138,9 @@ module Hudson
       end
     end
     
-    # TODO modularise this
-    # TODO how to customize? e.g. EngineYard template?
+    # The important sequence of steps that are run to process a job build.
+    # Can be defaulted by the +job_type+ using +default_steps(job_type)+,
+    # or customized via +steps+ array.
     def build_steps(b)
       b.builders do
         self.steps ||= default_steps(job_type)
