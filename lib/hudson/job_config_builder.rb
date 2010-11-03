@@ -111,20 +111,6 @@ module Hudson
         end
       end
     end
-  
-    #   <triggers class="vector">
-    #     <hudson.triggers.SCMTrigger>
-    #       <spec># every minute
-    #         * * * * *</spec>
-    #     </hudson.triggers.SCMTrigger>
-    #   </triggers>
-    def build_triggers(b)
-      b.triggers :class => "vector" do
-        b.tag! "hudson.triggers.SCMTrigger" do
-          b.spec "# every minute\n* * * * *"
-        end
-      end
-    end
 
     # TODO
     def build_axes(b)
