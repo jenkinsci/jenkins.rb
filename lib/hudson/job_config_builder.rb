@@ -10,6 +10,8 @@ module Hudson
     
     InvalidTemplate = Class.new(StandardError)
     
+    VALID_JOB_TEMPLATES = %w[rails rails3 ruby rubygem]
+    
     # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
     #   - Default is based on +job_type+.
@@ -23,6 +25,7 @@ module Hudson
       yield self
 
       self.git_branches ||= ["master"]
+      raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type.to_s)
     end
   
     def builder
@@ -151,14 +154,22 @@ module Hudson
     
     # TODO modularise this
     # TODO how to customize? e.g. EngineYard template?
-    VALID_JOB_TEMPLATES = %w[rails rails3 ruby rubygem]
     def build_steps(b)
       b.builders do
-        if job_type
-          raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type)
-          if job_type == "rails" || job_type == "rails3"
-            build_shell_step b, "bundle install"
-            build_ruby_step b, <<-RUBY.gsub(/^            /, '')
+        self.steps ||= default_steps(job_type)
+        steps.each do |step|
+          method, cmd = step
+          send(method.to_sym, b, cmd) # e.g. build_shell_step(b, "bundle install")
+        end
+      end
+    end
+    
+    def default_steps(job_type)
+      case job_type.to_sym
+      when :rails, :rails3
+        [
+          [:build_shell_step, "bundle install"],
+          [:build_ruby_step, <<-RUBY.gsub(/^            /, '')],
             unless File.exist?("config/database.yml")
               require 'fileutils'
               example = Dir["config/database*"].first
@@ -166,18 +177,14 @@ module Hudson
               FileUtils.cp example, "config/database.yml"
             end
             RUBY
-            build_shell_step b, "bundle exec rake db:schema:load"
-            build_shell_step b, "bundle exec rake"
-          else
-            build_shell_step b, "bundle install"
-            build_shell_step b, "bundle exec rake"
-          end
-        else
-          steps.each do |step|
-            method, cmd = step
-            send(method.to_sym, b, cmd)
-          end
-        end
+          [:build_shell_step, "bundle exec rake db:schema:load"],
+          [:build_shell_step, "bundle exec rake"]
+        ]
+      else
+        [
+          [:build_shell_step, "bundle install"],
+          [:build_shell_step, "bundle exec rake"]
+        ]
       end
     end
   
