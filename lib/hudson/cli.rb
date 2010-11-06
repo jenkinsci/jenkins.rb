@@ -1,5 +1,6 @@
 require 'thor'
 require 'hudson/core_ext/object/blank'
+require 'hudson/core_ext/hash'
 require 'hudson/cli/formatting'
 require 'hudson/remote'
 
@@ -50,8 +51,8 @@ module Hudson
     common_options
     method_option :"no-build", :desc => "create job without initial build", :type => :boolean, :default => false
     method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
-    method_option :public_scm, :desc => "use public scm URL", :type => :boolean, :default => false
-    method_option :assigned_node, :desc => "only use slave nodes with this label"
+    method_option :"public-scm", :desc => "use public scm URL", :type => :boolean, :default => false
+    method_option :"assigned-node", :desc => "only use slave nodes with this label"
     method_option :template, :desc => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     def create(project_path)
       select_hudson_server(options)
@@ -66,8 +67,8 @@ module Hudson
           template = options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
             c.scm = scm.url
-            c.assigned_node = options[:assigned_node] if options[:assigned_node]
-            c.public_scm = options[:public_scm]
+            c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]
+            c.public_scm = options[:"public-scm"]
           end
           name = File.basename(FileUtils.pwd)
           if Hudson::Api.create_job(name, job_config, options)
