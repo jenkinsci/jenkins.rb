@@ -160,7 +160,12 @@ module Hudson
         # <td id="main-panel">
         # <h1>Error</h1><p>Slave called 'localhost' already exists</p>
         require "hpricot"
-        puts Hpricot(response.body).search("td#main-panel p").text
+        error = Hpricot(response.body).search("td#main-panel p").text
+        unless error.blank?
+          puts error
+        else
+          puts response.body # so we can find other errors
+        end
         false
       end
     end
