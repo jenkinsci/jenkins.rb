@@ -103,7 +103,8 @@ module Hudson
 
     # Adds SSH nodes only, for now
     def self.add_node(options = {})
-      default_options = Hash.new("")
+      require "thor/core_ext/hash_with_indifferent_access"
+      default_options = Thor::CoreExt::HashWithIndifferentAccess.new("")
       default_options.merge!(
         :slave_port  => 22,
         :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
@@ -155,6 +156,11 @@ module Hudson
       when Net::HTTPFound
         true
       else
+        # error message looks like:
+        # <td id="main-panel">
+        # <h1>Error</h1><p>Slave called 'localhost' already exists</p>
+        require "hpricot"
+        puts Hpricot(response.body).search("td#main-panel p").text
         false
       end
     end

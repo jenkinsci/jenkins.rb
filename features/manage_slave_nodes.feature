@@ -31,6 +31,12 @@ Feature: Adding slave nodes
       """
       Added slave node foo1.bar.com
       """
+    When I run local executable "hudson" with arguments "add_node foo1.bar.com --slave-user deploy --label 'app1 app2' --host localhost --port 3010"
+    Then I should see exactly
+      """
+      Slave called 'foo1.bar.com' already exists
+      ERROR: Failed to add slave node foo1.bar.com
+      """
     When I run local executable "hudson" with arguments "nodes"
     Then I should see exactly
       """
