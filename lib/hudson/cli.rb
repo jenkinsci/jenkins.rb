@@ -157,6 +157,7 @@ module Hudson
     method_option :label, :desc => 'Labels for a job --assigned_node to match against to select a slave. Space separated list.'
     method_option :"slave-user", :desc => 'SSH user for Hudson to connect to slave node', :default => "deploy"
     method_option :"slave-port", :desc => 'SSH port for Hudson to connect to slave node', :default => 22
+    method_option :"master-key", :desc => 'Location of master public key or identity file'
     method_option :name, :desc => 'Name of slave node (default SLAVE_HOST)'
     common_options
     def add_node(slave_host)
