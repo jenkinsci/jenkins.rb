@@ -117,7 +117,7 @@ module Hudson
         :exclusive   => true
       )
 
-      slave_host = options[:slave_host] || options[:"slave-host"] # TODO error if blank
+      slave_host = options[:slave_host]
       name       = options[:name] || slave_host
 
       options    = default_options.merge(options)
@@ -141,9 +141,9 @@ module Hudson
           "launcher"          => {
             "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
             "host"          => slave_host,
-            "port"          => options[:slave_port] || options[:"slave-port"],
-            "username"      => options[:slave_user] || options[:"slave-user"],
-            "privatekey"    => options[:master_key] || options[:"master-key"],
+            "port"          => options[:slave_port],
+            "username"      => options[:slave_user],
+            "privatekey"    => options[:master_key],
           }
         }.to_json
       }
