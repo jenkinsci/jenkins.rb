@@ -111,7 +111,7 @@ module Hudson
       default_options.merge!(
         :slave_port  => 22,
         :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
-        :remote_fs   => "/data/hudson-slave/",
+        :slave_fs    => "/data/hudson-slave/",
         :description => "Automatically created by Hudson.rb",
         :executors   => 2,
         :exclusive   => true
@@ -132,7 +132,7 @@ module Hudson
           "name"              => name,
           "nodeDescription"   => options[:description],
           "numExecutors"      => options[:executors],
-          "remoteFS"          => options[:remote_fs],
+          "remoteFS"          => options[:slave_fs],
           "labelString"       => options[:label],
           "mode"              => options[:exclusive] ? "EXCLUSIVE" : "NORMAL",
           "type"              => type,
