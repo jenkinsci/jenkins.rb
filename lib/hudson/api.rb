@@ -3,6 +3,7 @@ require 'cgi'
 require 'uri'
 require 'json'
 
+require 'hudson/core_ext/hash'
 require 'hudson/config'
 
 module Hudson
@@ -16,6 +17,7 @@ module Hudson
     JobAlreadyExistsError = Class.new(Exception)
 
     def self.setup_base_url(options)
+      options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
       options[:host] ||= ENV['HUDSON_HOST']
@@ -36,6 +38,7 @@ module Hudson
     #
     # TODO Exceptions?
     def self.create_job(name, job_config, options = {})
+      options = options.with_clean_keys
       delete_job(name) if options[:override]
       begin
         res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
@@ -103,8 +106,8 @@ module Hudson
 
     # Adds SSH nodes only, for now
     def self.add_node(options = {})
-      require "thor/core_ext/hash_with_indifferent_access"
-      default_options = Thor::CoreExt::HashWithIndifferentAccess.new("")
+      options = options.with_clean_keys
+      default_options = Hash.new
       default_options.merge!(
         :slave_port  => 22,
         :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
@@ -114,9 +117,10 @@ module Hudson
         :exclusive   => true
       )
 
+      slave_host = options[:slave_host] || options[:"slave-host"] # TODO error if blank
+      name       = options[:name] || slave_host
+
       options    = default_options.merge(options)
-      slave_host = options[:slave_host] || options[:"slave-host"]
-      name       = options[:name].blank? ? slave_host : options[:name]
       
       type = "hudson.slaves.DumbSlave$DescriptorImpl"
 
@@ -143,7 +147,7 @@ module Hudson
           }
         }.to_json
       }
-      
+
       url = URI.parse("#{base_uri}/computer/doCreateItem")
 
       req = Net::HTTP::Post.new(url.path)
@@ -176,12 +180,14 @@ module Hudson
 
     # Helper for POST that don't barf at Hudson's crappy API responses
     def self.post_plain(path, options = {})
+      options = options.with_clean_keys
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.post(path, options) }
     end
     
     # Helper for GET that don't barf at Hudson's crappy API responses
     def self.get_plain(path, options = {})
+      options = options.with_clean_keys
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
     end
