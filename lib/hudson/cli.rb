@@ -152,6 +152,19 @@ module Hudson
         shell.say node["displayName"], color
       end
     end
+    
+    desc "add_node URI", "add a URI (user@host:port) server as a slave node"
+    method_option :label, :desc => 'Labels for a job --assigned_node to match against to select a slave. Space separated list.'
+    method_option :"slave-user", :desc => 'SSH user for Hudson to connect to slave node', :default => "deploy"
+    common_options
+    def add_node(uri)
+      select_hudson_server(options)
+      if Hudson::Api.add_node({:slave_host => uri}.merge(options))
+        display "Added slave node #{uri}"
+      else
+        error "Failed to add slave node #{uri}"
+      end
+    end
 
     desc "help [command]", "show help for hudson or for a specific command"
     def help(*args)

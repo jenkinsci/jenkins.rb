@@ -106,16 +106,17 @@ module Hudson
       default_options = Hash.new("")
       default_options.merge!(
         :slave_port  => 22,
-        :master_key  => "/home/hudson/.ssh/id_rsa", # FIXME - hardcoded master username assumption
+        :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
         :remote_fs   => "/data/hudson-slave/",
         :description => "Automatically created by Hudson.rb",
         :executors   => 2,
         :exclusive   => true
       )
 
-      options = default_options.merge(options)
-
-      name = options[:name]
+      options    = default_options.merge(options)
+      slave_host = options[:slave_host] || options[:"slave-host"]
+      name       = options[:name].blank? ? slave_host : options[:name]
+      
       type = "hudson.slaves.DumbSlave$DescriptorImpl"
 
       fields = {
@@ -134,21 +135,23 @@ module Hudson
           "nodeProperties"    => { "stapler-class-bag" => "true" },
           "launcher"          => {
             "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
-            "host"          => options[:slave_host],
-            "username"      => options[:slave_user],
-            "privatekey"    => options[:master_key],
-            "port"          => options[:slave_port]
+            "host"          => slave_host,
+            "port"          => options[:slave_port] || options[:"slave-port"],
+            "username"      => options[:slave_user] || options[:"slave-user"],
+            "privatekey"    => options[:master_key] || options[:"master-key"],
           }
         }.to_json
       }
-
+      
       url = URI.parse("#{base_uri}/computer/doCreateItem")
+
       req = Net::HTTP::Post.new(url.path)
       req.set_form_data(fields)
 
       http = Net::HTTP.new(url.host, url.port)
 
-      case http.request(req)
+      response = http.request(req)
+      case response
       when Net::HTTPFound
         true
       else
