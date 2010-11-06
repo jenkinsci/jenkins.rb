@@ -60,7 +60,15 @@ end
       </command>
     </hudson.plugins.ruby.Ruby>
     <hudson.tasks.Shell>
-      <command>bundle exec rake db:schema:load</command>
+      <command>bundle exec rake db:create:all</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>if [ -f db/schema.rb ]; then
+  bundle exec rake db:migrate
+else
+  bundle exec rake db:schema:load
+fi
+</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>bundle exec rake</command>

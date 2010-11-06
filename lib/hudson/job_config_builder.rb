@@ -164,7 +164,14 @@ module Hudson
               FileUtils.cp example, "config/database.yml"
             end
             RUBY
-          [:build_shell_step, "bundle exec rake db:schema:load"],
+          [:build_shell_step, "bundle exec rake db:create:all"],
+          [:build_shell_step, <<-RUBY.gsub(/^            /, '')],
+            if [ -f db/schema.rb ]; then
+              bundle exec rake db:migrate
+            else
+              bundle exec rake db:schema:load
+            fi
+            RUBY
           [:build_shell_step, "bundle exec rake"]
         ]
       else
