@@ -6,7 +6,7 @@ PATH
       hpricot
       httparty (~> 0.6.1)
       term-ansicolor (>= 1.0.4)
-      thor (= 0.14.2)
+      thor (~> 0.14.2)
       yajl-ruby (>= 0.7.6)
 
 GEM
@@ -41,7 +41,7 @@ GEM
       rspec-core (~> 2.0.1)
       rspec-expectations (~> 2.0.1)
     term-ansicolor (1.0.5)
-    thor (0.14.2)
+    thor (0.14.4)
     yajl-ruby (0.7.8)
 
 PLATFORMS
@@ -58,5 +58,5 @@ DEPENDENCIES
   rake (~> 0.8.7)
   rspec (~> 2.0.0)
   term-ansicolor (>= 1.0.4)
-  thor (= 0.14.2)
+  thor (~> 0.14.2)
   yajl-ruby (>= 0.7.6)
