@@ -12,7 +12,8 @@ Install
 =======
 
     gem install hudson
-    gem install hudson --pre (bleeding edge)
+
+You do not need to download Hudson CI. It is bundled in the RubyGem.
 
 Example
 =======
