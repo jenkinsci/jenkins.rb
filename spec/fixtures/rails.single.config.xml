@@ -64,9 +64,9 @@ end
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>if [ -f db/schema.rb ]; then
-  bundle exec rake db:migrate
-else
   bundle exec rake db:schema:load
+else
+  bundle exec rake db:migrate
 fi
 </command>
     </hudson.tasks.Shell>

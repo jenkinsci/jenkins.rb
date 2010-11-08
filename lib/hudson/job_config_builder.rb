@@ -167,9 +167,9 @@ module Hudson
           [:build_shell_step, "bundle exec rake db:create:all"],
           [:build_shell_step, <<-RUBY.gsub(/^            /, '')],
             if [ -f db/schema.rb ]; then
-              bundle exec rake db:migrate
-            else
               bundle exec rake db:schema:load
+            else
+              bundle exec rake db:migrate
             fi
             RUBY
           [:build_shell_step, "bundle exec rake"]
