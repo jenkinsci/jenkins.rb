@@ -24,40 +24,81 @@ The `hudson` application allows you to see the projects/jobs and their statuses:
     $ hudson list --host hudson.thefrontside.net --port 80
     hudson.rb - http://hudson.thefrontside.net/job/hudson.rb/
     TheRubyRacer - http://hudson.thefrontside.net/job/TheRubyRacer/
-    
-    # alternately use environment variables
+
+Alternately use environment variables:
+
     $ HUDSON_HOST=hudson.thefrontside.net HUDSON_PORT=80 hudson list
+
+Alternately, it will remember the last Hudson CI master used.
+
+    $ hudson list
 
 Usage
 =====
 
-To run Hudson server:
+To run your own Hudson server (by default opens at http://localhost:3001):
 
-    Usage: hudson server [HUDSON_HOME] [options]
-        -d, --daemon                     fork into background and run as daemon
-        -p, --port [3001]                run hudson on specified port 
-        -c, --control-port [3002]        set the shutdown/control port
-        -k, --kill                       send shutdown signal to control port
-        -v, --version                    show version information
-        -h, --help
+    Usage: hudson server [options]
+      -p,  --port [3001]                         run hudson server on this port
+      -c,  --control [3002]                      set the shutdown/control port
+           --daemon                              fork into background and run as a daemon
+           --logfile [PATH]                      redirect log messages to this file
+      -k,  --kill                                send shutdown signal to control port
+           --home [/Users/drnic/.hudson/server]  use this directory to store server data
 
-Note: HUDSON_HOME defaults to ~/.hudson
+The remaining CLI tasks are for communicating with a running Hudson server; either the one created above or hosted remotely.
+
+### Jobs
 
 To list Jobs/Projects on a Hudson server:
 
-    Usage: hudson list [project_path] [options]
-        -p, --port [3001]                find hudson on specified port
-            --host [localhost]           find hudson on specified host
-        -h, --help
+    Usage: hudson list [options]
 
-To add Project (create a Job) on a Hudson server:
+To add Jobs/Projects (create a Job) on a Hudson server:
 
-    Usage: hudson create [project_path] [options]
-        -p, --port [3001]                find hudson on specified port
-            --host [localhost]           find hudson on specified host
-        -h, --help
+    Usage: hudson create PROJECT_PATH [options]
+        --public-scm                     	  use public scm URL
+        --template [ruby]                	  template of job steps (available: rails,rails3,ruby,rubygem)
+        --assigned-node [ASSIGNED-NODE]  	  only use slave nodes with this label
+        --override                       	  override if job exists
+        --no-build                       	  create job without initial build
 
-For all commands, if flags for `host:port` are not provided, it will use either `$HUDSON_HOST` and `$HUDSON_PORT` or the previous target Hudson CI server.
+To trigger a Job to build:
+
+    Usage: hudson build
+
+To remove a Job from a Hudson server:
+
+    Usage: hudson remove PROJECT_PATH
+
+### Slave nodes
+
+To list slaves on a Hudson server (including itself):
+
+    Usage: hudson nodes
+
+To add a remote machine/remote VM to a Hudson server as a slave:
+
+    Usage: hudson add_node SLAVE_HOST
+        --slave-port [22]          	  SSH port for Hudson to connect to slave node
+        --label [LABEL]            	  Labels for a job --assigned_node to match against to select a slave.         --master-key [MASTER-KEY]  	  Location of master public key or identity file
+        --slave-fs [SLAVE-FS]      	  Location of file system on slave for Hudson to use
+        --name [NAME]              	  Name of slave node (default SLAVE_HOST)
+        --slave-user [deploy]      	  SSH user for Hudson to connect to slave node
+    
+
+### Selecting a Hudson CI server
+
+**For all client-side commands, there are `--host` and `--port` options flags.** These are cached after first used, so are only required for the first request to a Hudson CI server. For example:
+
+    hudson create . --host localhost --port 3001
+    hudson list
+    hudson create . --override
+
+Alternately, `$HUDSON_HOST` and `$HUDSON_PORT` can be provided in lieu of the cached target Hudson CI server
+
+    HUDSON_HOST=localhost HUDSON_PORT=3001 hudson list
+
 
 Developer Instructions
 ======================
