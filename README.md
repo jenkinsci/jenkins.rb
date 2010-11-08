@@ -1,12 +1,11 @@
 Hudson
 ======
 
-Hudson is a sweet continuous integration platform. Hudson.rb makes it easy
-to bundles all the things you need to easily run a hudson server from Ruby,
-as well as talk to a running hudson servers from Ruby and the command line.
+[Hudson CI](http://hudson-ci.org/) is a sweet continuous integration platform. Hudson.rb makes it easy to get started, add/remove Ruby jobs and slave nodes; either from a CLI or an API.
 
   * Email: [http://groups.google.com/group/hudsonrb](http://groups.google.com/group/hudsonrb)
   * IRC:  [irc://irc.freenode.net/hudson.rb](irc://irc.freenode.net/hudson.rb)
+  * CI: [http://hudson.thefrontside.net/job/hudson.rb/](http://hudson.thefrontside.net/job/hudson.rb/)
 
 Install
 =======
@@ -86,7 +85,6 @@ To add a remote machine/remote VM to a Hudson server as a slave:
         --slave-fs [SLAVE-FS]      	  Location of file system on slave for Hudson to use
         --name [NAME]              	  Name of slave node (default SLAVE_HOST)
         --slave-user [deploy]      	  SSH user for Hudson to connect to slave node
-    
 
 ### Selecting a Hudson CI server
 
