@@ -121,6 +121,13 @@ Alternately, manually launch the Hudson server, run features and close the Hudso
     rake cucumber:ok
     rake hudson:server:killtest
 
+Contributors
+============
+
+* Charles Lowell
+* Dr Nic Williams
+* Bo Jeanes
+
 License
 =======
 
