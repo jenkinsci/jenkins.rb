@@ -13,7 +13,6 @@ module Hudson
     def self.common_options
       method_option :host, :desc => 'connect to hudson server on this host'
       method_option :port, :desc => 'connect to hudson server on this port'
-      method_option :server, :desc => 'connect to remote hudson server by search'
     end
 
     desc "server [options]", "run a hudson server"
