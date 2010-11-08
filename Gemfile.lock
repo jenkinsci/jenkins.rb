@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hudson (0.3.0.beta.18)
+    hudson (0.3.0.beta.19)
       builder (~> 2.1.2)
       hpricot
       httparty (~> 0.6.1)
