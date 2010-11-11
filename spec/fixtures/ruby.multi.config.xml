@@ -46,7 +46,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <concurrentBuild>false</concurrentBuild>
   <axes>
-    <axis>
+    <hudson.matrix.TextAxis>
       <name>RUBY_VERSION</name>
       <values>
         <string>1.8.7</string>
@@ -54,7 +54,7 @@
         <string>rbx-head</string>
         <string>jruby</string>
       </values>
-    </axis>
+    </hudson.matrix.TextAxis>
   </axes>
   <builders>
     <hudson.tasks.Shell>

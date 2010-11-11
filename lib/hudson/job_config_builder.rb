@@ -113,7 +113,7 @@ module Hudson
       !rubies.blank?
     end
   
-    # <axis>
+    # <hudson.matrix.TextAxis>
     #   <name>RUBY_VERSION</name>
     #   <values>
     #     <string>1.8.7</string>
@@ -121,11 +121,11 @@ module Hudson
     #     <string>rbx-head</string>
     #     <string>jruby</string>
     #   </values>
-    # </axis>
+    # </hudson.matrix.TextAxis>
     def build_axes(b)
       b.axes do
         unless rubies.blank?
-          b.axis do
+          b.tag! "hudson.matrix.TextAxis" do
             b.name "RUBY_VERSION"
             b.values do
               rubies.each do |rvm_name|

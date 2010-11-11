@@ -48,6 +48,7 @@ module Hudson
 
     desc "create project_path [options]", "create a build for your project"
     common_options
+    method_option :rubies, :desc          => "run tests against multiple explicit rubies via RVM", :type => :string
     method_option :"no-build", :desc      => "create job without initial build", :type => :boolean, :default => false
     method_option :override, :desc        => "override if job exists", :type => :boolean, :default => false
     method_option :"scm", :desc           => "specific SCM URI", :type => :string
@@ -67,6 +68,7 @@ module Hudson
         begin
           template = options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
+            c.rubies        = options[:rubies].split(/\s*,\s*/) if options[:rubies]
             c.scm           = scm.url
             c.scm_branches  = options[:"scm-branches"].split(/\s*,\s*/)
             c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]
