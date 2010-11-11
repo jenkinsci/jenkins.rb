@@ -19,6 +19,7 @@ module Hudson
     # +scm+           - URL to the repository. Currently only support git URLs.
     # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Hudson job config.
     # +scm_branches+  - array of branches to run builds. Default: ['master']
+    # +rubies+        - list of RVM rubies to run tests (via Hudson Axes).
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
