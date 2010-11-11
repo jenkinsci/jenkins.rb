@@ -33,14 +33,15 @@ describe Hudson::JobConfigBuilder do
   
   
   
-  describe "rubygem job; single axis" do
+  describe "ruby job; many rubies" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rubygem) do |c|
+      @config = Hudson::JobConfigBuilder.new(:ruby) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
+        c.rubies = %w[1.8.7 1.9.2 rbx-head jruby]
       end
     end
     it "builds config.xml" do
-      config_xml("rubygem").should == @config.to_xml
+      config_xml("ruby", "multi").should == @config.to_xml
     end
   end
   
