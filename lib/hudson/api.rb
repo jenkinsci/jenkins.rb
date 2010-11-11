@@ -48,10 +48,17 @@ module Hudson
           cache_base_uri
           true
         else
-          # TODO - what are the errors we get?
-          puts "Server error:"
-          p res.code
-          puts res.body
+          require "hpricot"
+          doc = Hpricot(res.body)
+          error_msg = doc.search("td#main-panel p")
+          unless error_msg.inner_text.blank?
+            $stderr.puts error_msg.inner_text
+          else
+            # TODO - what are the errors we get?
+            puts "Server error:"
+            p res.code
+            puts res.body
+          end
           false
         end
       rescue REXML::ParseException => e
