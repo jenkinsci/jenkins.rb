@@ -5,8 +5,7 @@ Given /^I have a Hudson server running$/ do
       res = Net::HTTP.start("localhost", port) { |http| http.get('/api/json') }
       Hudson::Api.base_uri "http://localhost:#{port}"
     rescue Errno::ECONNREFUSED => e
-      puts "\n\n\nERROR: To run tests, launch hudson in test mode: 'rake hudson:server:test'\n\n\n"
-      exit
+      raise Exception, "To run tests, launch hudson in test mode: 'rake hudson:server:test'"
     end
     @hudson_port = port.to_s
     @hudson_host = 'localhost'
