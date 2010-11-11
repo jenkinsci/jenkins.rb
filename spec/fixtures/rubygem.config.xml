@@ -58,6 +58,12 @@
   </axes>
   <builders>
     <hudson.tasks.Shell>
+      <command>rvm $RUBY_VERSION</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rvm gemset create ruby-$RUBY_VERSION &amp;&amp; rvm gemset use ruby-$RUBY_VERSION</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
       <command>bundle install</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>

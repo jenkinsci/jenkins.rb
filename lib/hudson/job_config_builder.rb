@@ -172,7 +172,7 @@ module Hudson
     end
     
     def default_steps(job_type)
-      case job_type.to_sym
+      steps = case job_type.to_sym
       when :rails, :rails3
         [
           [:build_shell_step, "bundle install"],
@@ -200,6 +200,14 @@ module Hudson
           [:build_shell_step, "bundle exec rake"]
         ]
       end
+      rubies.blank? ? steps : default_rvm_steps + steps
+    end
+    
+    def default_rvm_steps
+      [
+        [:build_shell_step, "rvm $RUBY_VERSION"],
+        [:build_shell_step, "rvm gemset create ruby-$RUBY_VERSION && rvm gemset use ruby-$RUBY_VERSION"]
+      ]
     end
     
     # Default rubies by job type; using RVM names
@@ -217,7 +225,7 @@ module Hudson
     # </hudson.tasks.Shell>
     def build_shell_step(b, command)
       b.tag! "hudson.tasks.Shell" do
-        b.command command.to_xs.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+        b.command command.to_xs.gsub("&amp;", '&').gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
       end
     end
 
