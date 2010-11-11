@@ -120,6 +120,30 @@ module Hudson
         end
       end
     end
+    
+    desc "job NAME", "Display job details"
+    method_option :hash, :desc => 'Dump as formatted Ruby hash format'
+    method_option :json, :desc => 'Dump as JSON format'
+    method_option :yaml, :desc => 'Dump as YAML format'
+    common_options
+    def job(name)
+      select_hudson_server(options)
+      if job = Hudson::Api.job(name)
+        if options[:hash]
+          require "ap"
+          ap job.parsed_response
+        elsif options[:json]
+          puts job.parsed_response.to_json
+        elsif options[:yaml]
+          require "yaml"
+          puts job.parsed_response.to_yaml
+        else
+          error "Select an output format: --json, --xml, --yaml, --hash"
+        end
+      else
+        error "Cannot find project '#{name}'."
+      end
+    end
 
     desc "list [options]", "list jobs on a hudson server"
     common_options
