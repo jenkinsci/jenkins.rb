@@ -1,4 +1,4 @@
-Feature: Create jobs
+Feature: Create and manage jobs
   In order to reduce cost of getting a new project up onto Hudson
   As a project developer
   I want to add a new project to Hudson as a job

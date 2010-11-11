@@ -4,7 +4,7 @@ module Hudson
   class JobConfigBuilder
     attr_accessor :job_type, :matrix_project
     attr_accessor :steps
-    attr_accessor :scm, :public_scm, :git_branches
+    attr_accessor :scm, :public_scm, :scm_branches
     attr_accessor :assigned_node
     attr_accessor :envfile
     
@@ -17,14 +17,14 @@ module Hudson
     #   - Default is based on +job_type+.
     # +scm+           - URL to the repository. Currently only support git URLs.
     # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Hudson job config.
-    # +git_branches+  - array of branches to run builds. Default: ['master']
+    # +scm_branches+  - array of branches to run builds. Default: ['master']
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
       
       yield self
 
-      self.git_branches ||= ["master"]
+      self.scm_branches ||= ["master"]
       raise InvalidTemplate unless VALID_JOB_TEMPLATES.include?(job_type.to_s)
     end
   
@@ -85,9 +85,9 @@ module Hudson
             end
           end
         
-          if git_branches
+          if scm_branches
             b.branches do
-              git_branches.each do |branch|
+              scm_branches.each do |branch|
                 b.tag! "hudson.plugins.git.BranchSpec" do
                   b.name branch
                 end

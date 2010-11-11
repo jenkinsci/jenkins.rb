@@ -67,15 +67,45 @@ describe Hudson::JobConfigBuilder do
     end
   end
   
-  describe "public_scm = true => convert git@ into git:// until we have deploy keys" do
-    before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
-        c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
-        c.public_scm = true
+  describe "SCM behaviour" do
+    describe "#public_scm = true => convert git@ into git:// until we have deploy keys" do
+      before do
+        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+          c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
+          c.public_scm = true
+        end
+      end
+      it "builds config.xml" do
+        config_xml("rails", "single").should == @config.to_xml
       end
     end
-    it "builds config.xml" do
-      config_xml("rails", "single").should == @config.to_xml
+    
+    # <branches>
+    #   <hudson.plugins.git.BranchSpec>
+    #     <name>master</name>
+    #   </hudson.plugins.git.BranchSpec>
+    #   <hudson.plugins.git.BranchSpec>
+    #     <name>other</name>
+    #   </hudson.plugins.git.BranchSpec>
+    # </branches>
+    describe "#scm-branches - set branches" do
+      before do
+        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+          c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
+        end
+      end
+      it "defaults to 'master'" do
+        branch_names = Hpricot.XML(@config.to_xml).search("branches name")
+        branch_names.size.should == 1
+        branch_names.text.should == "master"
+        branch_names.first.parent.name.should == "hudson.plugins.git.BranchSpec"
+      end
+      it "can have specific branches" do
+        branches = @config.scm_branches = %w[master other branches]
+        branch_names = Hpricot.XML(@config.to_xml).search("branches name")
+        branch_names.size.should == 3
+        branch_names.map(&:inner_text).should == branches
+      end
     end
   end
 
