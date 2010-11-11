@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2010/11/11
+
+* hudson create
+  * --rubies '1.8.7,1.9.2,rbx-head,jruby' - uses RVM and Hudson's Axes support to run tests within different Ruby environments
+  * --scm git://some-alternate.com/repo.git - can override the "origin" URI
+  * --scm-branches 'master,other,branches' - specify which branches can be pulled from to trigger tests
+
+* hudson job
+  * Can dump information/status about a job
+
 ## 0.3.1 - 2010/11/8
 
 * fixed error in the rails3 template's test for schema.rb
