@@ -87,9 +87,7 @@ module Hudson
         json = get "/job/#{name}/api/json"
         cache_base_uri
         json
-      rescue Errno::ECONNREFUSED
-        false
-      rescue Errno::EAFNOSUPPORT
+      rescue Crack::ParseError
         false
       end
     end
@@ -98,10 +96,6 @@ module Hudson
       json = get "/computer/api/json"
       cache_base_uri
       json
-    rescue Errno::ECONNREFUSED => e
-      false
-    rescue Errno::EAFNOSUPPORT
-      false
     end
 
     # Adds SSH nodes only, for now

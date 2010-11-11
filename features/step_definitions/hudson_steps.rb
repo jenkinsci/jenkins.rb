@@ -89,5 +89,10 @@ When /^I (re|)create a job$/ do |override|
   CUCUMBER
 end
 
-
+Then /^the job "([^"]*)" config "([^"]*)" should be:$/ do |job_name, xpath, string|
+  raise "Cannot yet fetch XML config from non-localhost Hudson" unless Hudson::Api.base_uri =~ /localhost/
+  require "hpricot"
+  config = Hpricot.XML(File.read("#{test_hudson_path}/jobs/#{job_name}/config.xml"))
+  config.search(xpath).to_s.should == string
+end
 

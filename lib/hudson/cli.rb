@@ -50,13 +50,15 @@ module Hudson
     common_options
     method_option :"no-build", :desc => "create job without initial build", :type => :boolean, :default => false
     method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
+    method_option :"scm", :desc => "specific SCM URI", :type => :string
+    method_option :"scm-branches", :desc => "list of branches to build from (comma separated)", :type => :string, :default => "master"
     method_option :"public-scm", :desc => "use public scm URL", :type => :boolean, :default => false
     method_option :"assigned-node", :desc => "only use slave nodes with this label"
     method_option :template, :desc => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     def create(project_path)
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
-        unless scm = Hudson::ProjectScm.discover
+        unless scm = Hudson::ProjectScm.discover(options[:scm])
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
         unless File.exists?("Gemfile")
@@ -66,6 +68,7 @@ module Hudson
           template = options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
             c.scm = scm.url
+            c.scm_branches = options[:"scm-branches"].split(/\s*,\s*/)
             c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]
             c.public_scm = options[:"public-scm"]
           end

@@ -1,8 +1,8 @@
 module Hudson
   class ProjectScm
   
-    def self.discover
-      ProjectScmGit.new if File.exist?(".git") && File.directory?(".git")
+    def self.discover(scm)
+      ProjectScmGit.new(scm) if File.exist?(".git") && File.directory?(".git")
     end
   
     def self.supported
@@ -12,7 +12,7 @@ module Hudson
 
   class ProjectScmGit < ProjectScm
     def initialize(url = nil)
-      @url = nil
+      @url = url
     end
   
     def url

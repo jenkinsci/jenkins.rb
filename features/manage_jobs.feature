@@ -44,6 +44,55 @@ Feature: Create and manage jobs
         CLI: hudson build ruby
       """
 
+  Scenario: Setup hudson job with explicit scm url/branches (hudson create --scm URI --scm-branches='master,other')
+    Given I am in the "ruby" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --scm git://localhost/myapp.git --scm-branches 'master,other' --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Hudson."
+    And the job "ruby" config "scm" should be:
+      """
+      <scm class="hudson.plugins.git.GitSCM">
+          <configVersion>1</configVersion>
+          <remoteRepositories>
+            <org.spearce.jgit.transport.RemoteConfig>
+              <string>origin</string>
+              <int>5</int>
+              <string>fetch</string>
+              <string>+refs/heads/*:refs/remotes/origin/*</string>
+              <string>receivepack</string>
+              <string>git-upload-pack</string>
+              <string>uploadpack</string>
+              <string>git-upload-pack</string>
+              <string>url</string>
+              <string>git://localhost/myapp.git</string>
+              <string>tagopt</string>
+              <string></string>
+            </org.spearce.jgit.transport.RemoteConfig>
+          </remoteRepositories>
+          <branches>
+            <hudson.plugins.git.BranchSpec>
+              <name>master</name>
+            </hudson.plugins.git.BranchSpec>
+            <hudson.plugins.git.BranchSpec>
+              <name>other</name>
+            </hudson.plugins.git.BranchSpec>
+          </branches>
+          <localBranch></localBranch>
+          <mergeOptions />
+          <recursiveSubmodules>false</recursiveSubmodules>
+          <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+          <authorOrCommitter>false</authorOrCommitter>
+          <clean>false</clean>
+          <wipeOutWorkspace>false</wipeOutWorkspace>
+          <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser" />
+          <gitTool>Default</gitTool>
+          <submoduleCfg class="list" />
+          <relativeTargetDir></relativeTargetDir>
+          <excludedRegions></excludedRegions>
+          <excludedUsers></excludedUsers>
+        </scm>
+      """
+
   Scenario: Setup hudson job for a specific node label (hudson create --assigned_node)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
