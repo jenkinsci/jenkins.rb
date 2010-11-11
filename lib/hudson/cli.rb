@@ -16,12 +16,12 @@ module Hudson
     end
 
     desc "server [options]", "run a hudson server"
-    method_option :home, :type => :string, :default => File.join(ENV['HOME'], ".hudson", "server"), :banner => "PATH", :desc => "use this directory to store server data"
-    method_option :port, :type => :numeric, :default => 3001, :desc => "run hudson server on this port", :aliases => "-p"
-    method_option :control, :type => :numeric, :default => 3002, :desc => "set the shutdown/control port", :aliases => "-c"
-    method_option :daemon, :type => :boolean, :default => false, :desc => "fork into background and run as a daemon"
-    method_option :kill, :type => :boolean, :desc => "send shutdown signal to control port", :aliases => "-k"
-    method_option :logfile, :type => :string, :banner => "PATH", :desc => "redirect log messages to this file"
+    method_option :home, :desc    => "use this directory to store server data", :type => :string, :default => File.join(ENV['HOME'], ".hudson", "server"), :banner => "PATH"
+    method_option :port, :desc    => "run hudson server on this port", :type => :numeric, :default => 3001, :aliases => "-p"
+    method_option :control, :desc => "set the shutdown/control port", :type => :numeric, :default => 3002, :aliases => "-c"
+    method_option :daemon, :desc  => "fork into background and run as a daemon", :type => :boolean, :default => false
+    method_option :kill, :desc    => "send shutdown signal to control port", :type => :boolean, :aliases => "-k"
+    method_option :logfile, :desc => "redirect log messages to this file", :type => :string, :banner => "PATH"
     def server
       if options[:kill]
         require 'socket'
@@ -48,13 +48,13 @@ module Hudson
 
     desc "create project_path [options]", "create a build for your project"
     common_options
-    method_option :"no-build", :desc => "create job without initial build", :type => :boolean, :default => false
-    method_option :override, :desc => "override if job exists", :type => :boolean, :default => false
-    method_option :"scm", :desc => "specific SCM URI", :type => :string
-    method_option :"scm-branches", :desc => "list of branches to build from (comma separated)", :type => :string, :default => "master"
-    method_option :"public-scm", :desc => "use public scm URL", :type => :boolean, :default => false
+    method_option :"no-build", :desc      => "create job without initial build", :type => :boolean, :default => false
+    method_option :override, :desc        => "override if job exists", :type => :boolean, :default => false
+    method_option :"scm", :desc           => "specific SCM URI", :type => :string
+    method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
+    method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
     method_option :"assigned-node", :desc => "only use slave nodes with this label"
-    method_option :template, :desc => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
+    method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     def create(project_path)
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
@@ -67,10 +67,10 @@ module Hudson
         begin
           template = options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
-            c.scm = scm.url
-            c.scm_branches = options[:"scm-branches"].split(/\s*,\s*/)
+            c.scm           = scm.url
+            c.scm_branches  = options[:"scm-branches"].split(/\s*,\s*/)
             c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]
-            c.public_scm = options[:"public-scm"]
+            c.public_scm    = options[:"public-scm"]
           end
           name = File.basename(FileUtils.pwd)
           if Hudson::Api.create_job(name, job_config, options)
@@ -181,12 +181,12 @@ module Hudson
     end
     
     desc "add_node SLAVE_HOST", "add a URI (user@host:port) server as a slave node"
-    method_option :label, :desc => 'Labels for a job --assigned_node to match against to select a slave. Space separated list.'
+    method_option :label, :desc        => 'Labels for a job --assigned_node to match against to select a slave. Space separated list.'
     method_option :"slave-user", :desc => 'SSH user for Hudson to connect to slave node', :default => "deploy"
     method_option :"slave-port", :desc => 'SSH port for Hudson to connect to slave node', :default => 22
     method_option :"master-key", :desc => 'Location of master public key or identity file'
-    method_option :"slave-fs", :desc => 'Location of file system on slave for Hudson to use'
-    method_option :name, :desc => 'Name of slave node (default SLAVE_HOST)'
+    method_option :"slave-fs", :desc   => 'Location of file system on slave for Hudson to use'
+    method_option :name, :desc         => 'Name of slave node (default SLAVE_HOST)'
     common_options
     def add_node(slave_host)
       select_hudson_server(options)
