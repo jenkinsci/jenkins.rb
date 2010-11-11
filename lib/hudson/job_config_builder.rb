@@ -22,7 +22,6 @@ module Hudson
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
-      self.rubies = default_rubies(job_type)
       
       yield self
 
@@ -210,16 +209,6 @@ module Hudson
       ]
     end
     
-    # Default rubies by job type; using RVM names
-    def default_rubies(job_type)
-      case job_type.to_sym
-      when :rubygem
-        %w[1.8.7 1.9.2 rbx-head jruby]
-      else
-        nil
-      end
-    end
-  
     # <hudson.tasks.Shell>
     #   <command>bundle install</command>
     # </hudson.tasks.Shell>
