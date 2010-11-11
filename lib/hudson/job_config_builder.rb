@@ -2,9 +2,10 @@ require "builder"
 
 module Hudson
   class JobConfigBuilder
-    attr_accessor :job_type, :matrix_project
-    attr_accessor :steps
+    attr_accessor :job_type
+    attr_accessor :steps, :rubies
     attr_accessor :scm, :public_scm, :scm_branches
+    attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node
     attr_accessor :envfile
     
@@ -21,6 +22,7 @@ module Hudson
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
+      self.rubies = default_rubies(job_type)
       
       yield self
 
@@ -57,11 +59,6 @@ module Hudson
   
     protected
     
-    def matrix_project?
-      matrix_project ||
-        %w[rubygem].include?(job_type)
-    end
-  
     # <scm class="hudson.plugins.git.GitSCM"> ... </scm>
     def build_scm(b)
       if scm && scm =~ /git/
@@ -112,9 +109,32 @@ module Hudson
       end
     end
 
-    # TODO
+    def matrix_project?
+      !rubies.blank?
+    end
+  
+    # <axis>
+    #   <name>RUBY_VERSION</name>
+    #   <values>
+    #     <string>1.8.7</string>
+    #     <string>1.9.2</string>
+    #     <string>rbx-head</string>
+    #     <string>jruby</string>
+    #   </values>
+    # </axis>
     def build_axes(b)
-      b.axes
+      b.axes do
+        unless rubies.blank?
+          b.axis do
+            b.name "RUBY_VERSION"
+            b.values do
+              rubies.each do |rvm_name|
+                b.string rvm_name
+              end
+            end
+          end
+        end
+      end
     end
     
     # Example:
@@ -179,6 +199,16 @@ module Hudson
           [:build_shell_step, "bundle install"],
           [:build_shell_step, "bundle exec rake"]
         ]
+      end
+    end
+    
+    # Default rubies by job type; using RVM names
+    def default_rubies(job_type)
+      case job_type.to_sym
+      when :rubygem
+        %w[1.8.7 1.9.2 rbx-head jruby]
+      else
+        nil
       end
     end
   

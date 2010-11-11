@@ -45,7 +45,17 @@
   <disabled>false</disabled>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <concurrentBuild>false</concurrentBuild>
-  <axes/>
+  <axes>
+    <axis>
+      <name>RUBY_VERSION</name>
+      <values>
+        <string>1.8.7</string>
+        <string>1.9.2</string>
+        <string>rbx-head</string>
+        <string>jruby</string>
+      </values>
+    </axis>
+  </axes>
   <builders>
     <hudson.tasks.Shell>
       <command>bundle install</command>
