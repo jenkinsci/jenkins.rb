@@ -1,3 +1,9 @@
+
+
+Given /^hudson is using a stock warfile$/ do
+  ENV['HUDSON_STOCK'] = File.expand_path(File.dirname(__FILE__) + '/../../fixtures/hudson')
+end
+
 Given /^this project is active project folder/ do
   @active_project_folder = File.expand_path(File.dirname(__FILE__) + "/../..")
 end

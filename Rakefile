@@ -100,7 +100,7 @@ namespace :hudson do
     task :test do
       port = 3010
       control = 3011
-
+      ENV['HUDSON_STOCK'] = File.expand_path(File.dirname(__FILE__) + "/fixtures/hudson")
       FileUtils.chdir(File.dirname(__FILE__)) do
         logfile = File.join("/tmp", "test_hudson.log")
         puts "Launching hudson test server at http://localhost:#{port}..."

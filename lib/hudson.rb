@@ -4,7 +4,7 @@ module Hudson
 end
 
 require 'hudson/version'
-require 'hudson/hudson_version'
 require 'hudson/api'
 require 'hudson/job_config_builder'
 require 'hudson/project_scm'
+require 'hudson/installation'

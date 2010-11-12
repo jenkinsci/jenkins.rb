@@ -23,27 +23,16 @@ module Hudson
     method_option :kill, :desc    => "send shutdown signal to control port", :type => :boolean, :aliases => "-k"
     method_option :logfile, :desc => "redirect log messages to this file", :type => :string, :banner => "PATH"
     def server
+      installation = Hudson::Installation.new(shell, options)
       if options[:kill]
-        require 'socket'
-        TCPSocket.open("localhost", options[:control]) do |sock|
-          sock.write("0")
-        end
-        exit
+        installation.kill!
+        exit(0)
+      elsif options[:upgrade]
+        installation.upgrade!
+        exit(0)
+      else
+        installation.launch!
       end
-
-      serverhome = File.join(options[:home])
-      javatmp = File.join(serverhome, "javatmp")
-      FileUtils.mkdir_p serverhome
-      FileUtils.mkdir_p javatmp
-      FileUtils.cp_r Hudson::PLUGINS, serverhome
-      ENV['HUDSON_HOME'] = serverhome
-      cmd = ["java", "-Djava.io.tmpdir=#{javatmp}", "-jar", Hudson::WAR]
-      cmd << "--daemon" if options[:daemon]
-      cmd << "--logfile=#{File.expand_path(options[:logfile])}" if options[:logfile]
-      cmd << "--httpPort=#{options[:port]}"
-      cmd << "--controlPort=#{options[:control]}"
-      shell.say cmd.join(" ")
-      exec(*cmd)
     end
 
     desc "create project_path [options]", "create a build for your project"
@@ -206,7 +195,7 @@ module Hudson
 
     desc "version", "show version information"
     def version
-      shell.say "#{Hudson::VERSION} (Hudson Server #{Hudson::HUDSON_VERSION})"
+      shell.say "#{Hudson::VERSION}"
     end
 
     def self.help(shell, *)
