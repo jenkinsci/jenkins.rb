@@ -8,6 +8,8 @@
 * hudson gem now fully drinks the bundler koolaid.
 * hudson create
   * --node-labels 'ubuntu,gentoo' - run tests against multiple slave nodes by their label
+* hudson add_node
+  * --vagrant - provide alternate default values when adding nodes if the node is a Vagrant VM
 
 ## 0.4.0 - 2010/11/11
 
