@@ -6,6 +6,8 @@
   * rubygem is now 235K instead of 31M!
   * upgrade hudson server and related plugins without requiring a new gem release
 * hudson gem now fully drinks the bundler koolaid.
+* hudson create
+  * --node-labels 'ubuntu,gentoo' - run tests against multiple slave nodes by their label
 
 ## 0.4.0 - 2010/11/11
 
