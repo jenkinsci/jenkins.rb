@@ -174,17 +174,18 @@ module Hudson
     end
     
     desc "add_node SLAVE_HOST", "add a URI (user@host:port) server as a slave node"
-    method_option :label, :desc        => 'Labels for a job --assigned_node to match against to select a slave. Space separated list.'
-    method_option :"slave-user", :desc => 'SSH user for Hudson to connect to slave node', :default => "deploy"
-    method_option :"slave-port", :desc => 'SSH port for Hudson to connect to slave node', :default => 22
+    method_option :labels, :desc       => 'Labels for a job --assigned_node to match against to select a slave (comma separated)'
+    method_option :"slave-user", :desc => 'SSH user for Hudson to connect to slave node (default: deploy)'
+    method_option :"slave-port", :desc => 'SSH port for Hudson to connect to slave node (default: 22)'
     method_option :"master-key", :desc => 'Location of master public key or identity file'
     method_option :"slave-fs", :desc   => 'Location of file system on slave for Hudson to use'
     method_option :name, :desc         => 'Name of slave node (default SLAVE_HOST)'
+    method_option :vagrant, :desc      => 'Use settings for a Vagrant VM', :type => :boolean, :default => false
     common_options
     def add_node(slave_host)
       select_hudson_server(options)
-      if Hudson::Api.add_node({:slave_host => slave_host}.merge(options))
-        shell.say "Added slave node #{slave_host}", :green
+      if results = Hudson::Api.add_node({:slave_host => slave_host}.merge(options))
+        shell.say "Added slave node '#{results[:name]}' to #{results[:slave_host]}", :green
       else
         error "Failed to add slave node #{slave_host}"
       end

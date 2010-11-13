@@ -109,20 +109,33 @@ module Hudson
     def self.add_node(options = {})
       options = options.with_clean_keys
       default_options = Hash.new
-      default_options.merge!(
-        :slave_port  => 22,
-        :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
-        :slave_fs    => "/data/hudson-slave/",
-        :description => "Automatically created by Hudson.rb",
-        :executors   => 2,
-        :exclusive   => true
-      )
-
-      slave_host = options[:slave_host]
-      name       = options[:name] || slave_host
-
+      if options[:vagrant]
+        default_options.merge!(
+          :slave_port  => 2222,
+          :slave_user  => 'vagrant',
+          :master_key  => "/Library/Ruby/Gems/1.8/gems/vagrant-0.6.7/keys/vagrant", # FIXME - hardcoded master username assumption
+          :slave_fs    => "/vagrant/tmp/hudson-slave/",
+          :description => "Automatically created by Hudson.rb",
+          :executors   => 2,
+          :exclusive   => true
+        )
+      else
+        default_options.merge!(
+          :slave_port  => 22,
+          :slave_user  => 'deploy',
+          :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
+          :slave_fs    => "/data/hudson-slave/",
+          :description => "Automatically created by Hudson.rb",
+          :executors   => 2,
+          :exclusive   => true
+        )
+      end
       options    = default_options.merge(options)
       
+      slave_host = options[:slave_host]
+      name       = options[:name] || slave_host
+      labels     = options[:labels].split(/\s*,\s*/).join(' ') if options[:labels]
+
       type = "hudson.slaves.DumbSlave$DescriptorImpl"
 
       fields = {
@@ -134,7 +147,7 @@ module Hudson
           "nodeDescription"   => options[:description],
           "numExecutors"      => options[:executors],
           "remoteFS"          => options[:slave_fs],
-          "labelString"       => options[:label],
+          "labelString"       => labels,
           "mode"              => options[:exclusive] ? "EXCLUSIVE" : "NORMAL",
           "type"              => type,
           "retentionStrategy" => { "stapler-class"  => "hudson.slaves.RetentionStrategy$Always" },
@@ -159,7 +172,7 @@ module Hudson
       response = http.request(req)
       case response
       when Net::HTTPFound
-        true
+        { :name => name, :slave_host => slave_host }
       else
         # error message looks like:
         # <td id="main-panel">
