@@ -6,7 +6,7 @@ module Hudson
     attr_accessor :steps, :rubies
     attr_accessor :scm, :public_scm, :scm_branches
     attr_accessor :scm, :public_scm, :git_branches
-    attr_accessor :assigned_node
+    attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
     
     InvalidTemplate = Class.new(StandardError)
@@ -43,7 +43,7 @@ module Hudson
         b.canRoam !assigned_node
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
-        # build_triggers b
+        b.triggers :class => "vector"
         b.concurrentBuild false
         build_axes b if matrix_project?
         build_steps b
@@ -122,6 +122,13 @@ module Hudson
     #     <string>jruby</string>
     #   </values>
     # </hudson.matrix.TextAxis>
+    # <hudson.matrix.LabelAxis>
+    #   <name>label</name>
+    #   <values>
+    #     <string>1.8.7</string>
+    #     <string>ubuntu</string>
+    #   </values>
+    # </hudson.matrix.LabelAxis>
     def build_axes(b)
       b.axes do
         unless rubies.blank?
@@ -130,6 +137,16 @@ module Hudson
             b.values do
               rubies.each do |rvm_name|
                 b.string rvm_name
+              end
+            end
+          end
+        end
+        unless node_labels.blank?
+          b.tag! "hudson.matrix.LabelAxis" do
+            b.name "label"
+            b.values do
+              node_labels.each do |label|
+                b.string label
               end
             end
           end

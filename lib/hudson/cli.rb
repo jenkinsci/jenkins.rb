@@ -148,11 +148,10 @@ module Hudson
       unless summary["jobs"].blank?
         shell.say "#{@uri}:", :bold
         summary["jobs"].each do |job|
-          color = job['color']
-          bold  = color =~ /anime/
-          color = 'red' if color =~ /red/
-          color = 'green' if color =~ /blue/
-          color = 'yellow' if color =~ /grey/ || color == 'disabled'
+          bold  = job['color'] =~ /anime/
+          color = 'red' if job['color'] =~ /red/
+          color = 'green' if job['color'] =~ /(blue|green)/
+          color ||= 'yellow' # if color =~ /grey/ || color == 'disabled'
           shell.say "* "; shell.say(shell.set_color(job['name'], color.to_sym, bold), nil, true)
         end
         shell.say ""

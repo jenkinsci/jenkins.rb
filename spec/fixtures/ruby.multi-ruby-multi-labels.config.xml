@@ -56,6 +56,13 @@
         <string>jruby</string>
       </values>
     </hudson.matrix.TextAxis>
+    <hudson.matrix.LabelAxis>
+      <name>label</name>
+      <values>
+        <string>1.8.7</string>
+        <string>ubuntu</string>
+      </values>
+    </hudson.matrix.LabelAxis>
   </axes>
   <builders>
     <hudson.tasks.Shell>

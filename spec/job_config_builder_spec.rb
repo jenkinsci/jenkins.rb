@@ -37,11 +37,16 @@ describe Hudson::JobConfigBuilder do
     before do
       @config = Hudson::JobConfigBuilder.new(:ruby) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
+        c.rubies = %w[1.8.7 1.9.2 rbx-head jruby]
       end
     end
     it "have have explicit rubies" do
-      @config.rubies = %w[1.8.7 1.9.2 rbx-head jruby]
       config_xml("ruby", "multi").should == @config.to_xml
+    end
+    
+    it "and many labels/assigned_nodes" do
+      @config.node_labels = %w[1.8.7 ubuntu]
+      config_xml("ruby", "multi-ruby-multi-labels").should == @config.to_xml
     end
   end
   
