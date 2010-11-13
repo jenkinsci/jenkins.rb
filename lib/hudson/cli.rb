@@ -47,17 +47,18 @@ module Hudson
     method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
     method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
     method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
+    method_option :"no-template", :desc   => "do not use a template of default steps; avoids Gemfile requirement", :type => :boolean, :default => false
     def create(project_path)
       select_hudson_server(options)
       FileUtils.chdir(project_path) do
         unless scm = Hudson::ProjectScm.discover(options[:scm])
           error "Cannot determine project SCM. Currently supported: #{Hudson::ProjectScm.supported}"
         end
-        unless File.exists?("Gemfile")
+        unless (options[:template] == "none" || options[:"no-template"]) || File.exists?("Gemfile")
           error "Ruby/Rails projects without a Gemfile are currently unsupported."
         end
         begin
-          template = options[:template]
+          template = options[:"no-template"] ? 'none' : options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
             c.rubies        = options[:rubies].split(/\s*,\s*/) if options[:rubies]
             c.node_labels   = options[:"node-labels"].split(/\s*,\s*/) if options[:"node-labels"]
@@ -69,7 +70,7 @@ module Hudson
           name = File.basename(FileUtils.pwd)
           if Hudson::Api.create_job(name, job_config, options)
             build_url = "#{@uri}/job/#{name.gsub(/\s/,'%20')}/build"
-            shell.say "Added #{template} project '#{name}' to Hudson.", :green
+            shell.say "Added#{' ' + template unless template == 'none'} project '#{name}' to Hudson.", :green
             unless options[:"no-build"]
               shell.say "Triggering initial build..."
               Hudson::Api.build_job(name)

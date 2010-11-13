@@ -11,7 +11,7 @@ module Hudson
     
     InvalidTemplate = Class.new(StandardError)
     
-    VALID_JOB_TEMPLATES = %w[rails rails3 ruby rubygem]
+    VALID_JOB_TEMPLATES = %w[none rails rails3 ruby rubygem]
     
     # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
@@ -211,11 +211,13 @@ module Hudson
             RUBY
           [:build_shell_step, "bundle exec rake"]
         ]
-      else
+      when :ruby, :rubygems
         [
           [:build_shell_step, "bundle install"],
           [:build_shell_step, "bundle exec rake"]
         ]
+      else
+        [ [:build_shell_step, "echo 'THERE ARE NO STEPS! Except this one...'"] ]
       end
       rubies.blank? ? steps : default_rvm_steps + steps
     end

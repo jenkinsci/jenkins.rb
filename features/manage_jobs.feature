@@ -150,6 +150,12 @@ Feature: Create and manage jobs
     When I run local executable "hudson" with arguments "create . --template rails3 --host localhost --port 3010"
     Then I should see "Added rails3 project 'rails-3' to Hudson."
 
+  Scenario: Create job without default steps (hudson create --no-template)
+    Given I am in the "non-bundler" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --no-template --host localhost --port 3010"
+    Then I should see "Added project 'non-bundler' to Hudson."
+
   Scenario: Reject projects that don't use bundler (hudson create)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm

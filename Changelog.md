@@ -8,6 +8,7 @@
 * hudson gem now fully drinks the bundler koolaid.
 * hudson create
   * --node-labels 'ubuntu,gentoo' - run tests against multiple slave nodes by their label
+  * --no-template - do not generate any default steps (well, a silly one)
 * hudson add_node
   * --vagrant - provide alternate default values when adding nodes if the node is a Vagrant VM
 
