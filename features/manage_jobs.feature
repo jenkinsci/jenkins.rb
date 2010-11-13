@@ -155,6 +155,14 @@ Feature: Create and manage jobs
     And the project uses "git" scm
     When I run local executable "hudson" with arguments "create . --no-template --host localhost --port 3010"
     Then I should see "Added project 'non-bundler' to Hudson."
+    And the job "non-bundler" config "builders" should be:
+      """
+      <builders>
+          <hudson.tasks.Shell>
+            <command>echo &quot;THERE ARE NO STEPS! Except this one...&quot;</command>
+          </hudson.tasks.Shell>
+        </builders>
+      """
 
   Scenario: Reject projects that don't use bundler (hudson create)
     Given I am in the "non-bundler" project folder

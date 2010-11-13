@@ -217,7 +217,7 @@ module Hudson
           [:build_shell_step, "bundle exec rake"]
         ]
       else
-        [ [:build_shell_step, "echo 'THERE ARE NO STEPS! Except this one...'"] ]
+        [ [:build_shell_step, 'echo "THERE ARE NO STEPS! Except this one..."'] ]
       end
       rubies.blank? ? steps : default_rvm_steps + steps
     end
@@ -230,11 +230,11 @@ module Hudson
     end
     
     # <hudson.tasks.Shell>
-    #   <command>bundle install</command>
+    #   <command>echo &apos;THERE ARE NO STEPS! Except this one...&apos;</command>
     # </hudson.tasks.Shell>
     def build_shell_step(b, command)
       b.tag! "hudson.tasks.Shell" do
-        b.command command.to_xs.gsub("&amp;", '&').gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+        b.command command.to_xs.gsub("&amp;", '&') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
       end
     end
 
