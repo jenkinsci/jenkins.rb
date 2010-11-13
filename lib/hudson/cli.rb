@@ -39,12 +39,13 @@ module Hudson
     desc "create project_path [options]", "create a build for your project"
     common_options
     method_option :rubies, :desc          => "run tests against multiple explicit rubies via RVM", :type => :string
+    method_option :"node-labels", :desc   => "run tests against multiple slave nodes by their label (comma separated)"
+    method_option :"assigned-node", :desc => "only use slave nodes with this label (similar to --node-labels)"
     method_option :"no-build", :desc      => "create job without initial build", :type => :boolean, :default => false
     method_option :override, :desc        => "override if job exists", :type => :boolean, :default => false
     method_option :"scm", :desc           => "specific SCM URI", :type => :string
     method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
     method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
-    method_option :"assigned-node", :desc => "only use slave nodes with this label"
     method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     def create(project_path)
       select_hudson_server(options)
@@ -59,6 +60,7 @@ module Hudson
           template = options[:template]
           job_config = Hudson::JobConfigBuilder.new(template) do |c|
             c.rubies        = options[:rubies].split(/\s*,\s*/) if options[:rubies]
+            c.node_labels   = options[:"node-labels"].split(/\s*,\s*/) if options[:"node-labels"]
             c.scm           = scm.url
             c.scm_branches  = options[:"scm-branches"].split(/\s*,\s*/)
             c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]

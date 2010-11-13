@@ -111,6 +111,32 @@ Feature: Create and manage jobs
           </hudson.matrix.TextAxis>
         </axes>
       """
+
+  Scenario: Setup hudson job with multiple rubies and multiple nodes (hudson create --rubies.. --node_labels..)
+    Given I am in the "ruby" project folder
+    And the project uses "git" scm
+    When I run local executable "hudson" with arguments "create . --rubies '1.8.7,rbx-head,jruby' --node-labels '1.8.7,ubuntu' --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Hudson."
+    And the job "ruby" config "axes" should be:
+      """
+      <axes>
+          <hudson.matrix.TextAxis>
+            <name>RUBY_VERSION</name>
+            <values>
+              <string>1.8.7</string>
+              <string>rbx-head</string>
+              <string>jruby</string>
+            </values>
+          </hudson.matrix.TextAxis>
+          <hudson.matrix.LabelAxis>
+            <name>label</name>
+            <values>
+              <string>1.8.7</string>
+              <string>ubuntu</string>
+            </values>
+          </hudson.matrix.LabelAxis>
+        </axes>
+      """
   
   Scenario: Setup hudson job for a specific node label (hudson create --assigned_node)
     Given I am in the "ruby" project folder
