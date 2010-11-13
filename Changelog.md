@@ -1,5 +1,12 @@
 # Changelog
 
+## Edge
+
+* hudson warfile no longer bundled with hudson gem
+  * rubygem is now 235K instead of 31M!
+  * upgrade hudson server and related plugins without requiring a new gem release
+* hudson gem now fully drinks the bundler koolaid.
+
 ## 0.4.0 - 2010/11/11
 
 * hudson create

@@ -12,7 +12,7 @@ module Hudson
     end
 
     def launch!
-      unless File.exists? @warfile
+      unless warfile?
         @shell.say "no server currently installed."
         upgrade!
       end
@@ -43,6 +43,12 @@ module Hudson
     
     def hudson_stock
       ENV['HUDSON_STOCK']
+    end
+
+    private
+
+    def warfile?
+      File.exists?(@warfile) && system("unzip -l #{@warfile} > /dev/null 2>/dev/null")
     end
     
     def upgrade_from_fixture_stock

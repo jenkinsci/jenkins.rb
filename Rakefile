@@ -1,52 +1,5 @@
-require 'rubygems'
-require 'bundler/setup'
-
-$:.unshift('lib')
-require 'hudson'
-
-Gem::Specification.new do |s|
-  $gemspec = s
-  s.name = s.rubyforge_project =  "hudson"
-  s.version = Hudson::VERSION
-  s.summary = "Painless Continuous Integration with Hudson Server"
-  s.description = "A suite of utilities for bringing continous integration to your projects (not the other way around) with hudson CI"
-  s.email = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
-  s.homepage = "http://github.com/cowboyd/hudson.rb"
-  s.authors = ["Charles Lowell", "Dr Nic Williams"]
-  s.executables = ["hudson"]
-  s.require_paths = ["lib"]
-  s.files = Rake::FileList.new("**/*").tap do |manifest|
-    manifest.exclude "tmp", "**/*.gem"
-  end.to_a
-  s.add_dependency("term-ansicolor", [">= 1.0.4"])
-  s.add_dependency("yajl-ruby", [">= 0.7.6"])
-  s.add_dependency("httparty", ["~> 0.6.1"])
-  s.add_dependency("builder", ["~> 2.1.2"])
-  s.add_dependency("thor", ["~> 0.14.2"])
-  s.add_dependency("hpricot")
-  s.add_development_dependency("rake", ["~> 0.8.7"])
-  s.add_development_dependency("cucumber", ["~> 0.9.0"])
-  s.add_development_dependency("rspec", ["~> 2.0.0"])
-  s.add_development_dependency("json", ["~>1.4.0"])
-  s.add_development_dependency("awesome_print")
-end
-
-desc "Build gem"
-task :gem => :gemspec do
-  Gem::Builder.new($gemspec).build
-end
-
-desc "Build gemspec"
-task :gemspec => :clean do
-  File.open("#{$gemspec.name}.gemspec", "w") do |f|
-    f.write($gemspec.to_ruby)
-  end
-end
-
-desc "Clean up"
-task :clean do
-  sh "rm -rf *.gem"
-end
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
@@ -68,6 +21,7 @@ task :cucumber => 'cucumber:ok'
 desc "Start test server; Run cucumber:ok; Kill Test Server;"
 task :default => [:spec, "hudson:server:killtest", "hudson:server:test"] do
   require 'socket'
+  require 'net/http'
   print "waiting for at most 30 seconds for the server to start"
   tries = 1
   begin
