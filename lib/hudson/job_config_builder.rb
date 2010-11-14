@@ -110,7 +110,7 @@ module Hudson
     end
 
     def matrix_project?
-      !rubies.blank?
+      !(rubies.blank? && node_labels.blank?)
     end
   
     # <hudson.matrix.TextAxis>
