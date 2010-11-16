@@ -82,7 +82,7 @@ module Hudson
       else
         %w(envfile git github greenballs rake ruby)
       end
-      
+      FileUtils.mkdir_p(plugins_dir)
       for plugin in plugins do
         metadata = OpenStruct.new(latest['plugins'][plugin])
         progress.means "downloading #{plugin} plugin" do |step|
