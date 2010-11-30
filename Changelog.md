@@ -11,6 +11,8 @@
   * --no-template - do not generate any default steps (well, a silly one)
 * hudson add_node
   * --vagrant - provide alternate default values when adding nodes if the node is a Vagrant VM
+* hudson default_host
+  * NEW - displays the current default host:port URI
 
 ## 0.4.0 - 2010/11/11
 

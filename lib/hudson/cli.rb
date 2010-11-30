@@ -191,6 +191,15 @@ module Hudson
         error "Failed to add slave node #{slave_host}"
       end
     end
+    
+    desc "default_host", "display current default host:port URI"
+    def default_host
+      if select_hudson_server({})
+        display Hudson::Api.base_uri
+      else
+        display "No default host yet. Use '--host host --port port' on your first request."
+      end
+    end
 
     desc "help [command]", "show help for hudson or for a specific command"
     def help(*args)
@@ -224,6 +233,7 @@ USEAGE
       unless @uri = Hudson::Api.setup_base_url(options)
         error "Either use --host or add remote servers."
       end
+      @uri
     end
 
     def display(text)
