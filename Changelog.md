@@ -1,6 +1,6 @@
 # Changelog
 
-## Edge
+## 0.5.0 - 2010/12/1
 
 * hudson warfile no longer bundled with hudson gem
   * rubygem is now 235K instead of 31M!
