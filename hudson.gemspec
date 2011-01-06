@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "hudson"
 
-  s.files         = `git ls-files -x fixtures`.split("\n").reject {|f| f =~ /^fixtures/}
+  s.files         = `git ls-files`.split("\n")
 
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
