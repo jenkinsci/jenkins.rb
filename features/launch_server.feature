@@ -6,7 +6,6 @@ Feature: Running a Hudson Server
   Scenario: Start a Hudson Server (hudson server)
     Given env variable $HOME set to project path "home"
       And "home/.hudson" folder is deleted
-      And hudson is using a stock warfile
       And there is nothing listening on port 5001
       And there is nothing listening on port 5002
       And I cleanup any hudson processes with control port 5002

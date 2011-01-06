@@ -50,15 +50,19 @@ namespace :hudson do
   namespace :server do
     require 'fileutils'
 
+    directory plugin_dir = File.expand_path("var/hudson/plugins")
     desc "Run a server for tests"
-    task :test do
+    task :test => plugin_dir do
       port = 3010
       control = 3011
       FileUtils.chdir(File.dirname(__FILE__)) do
-        logfile = File.join("/tmp", "test_hudson.log")
+        Dir["fixtures/hudson/*.hpi"].each do |plugin|
+          FileUtils.cp plugin, plugin_dir
+        end
+        logfile = File.expand_path("var/hudson/test.log")
         puts "Launching hudson test server at http://localhost:#{port}..."
         puts "  output will be logged to #{logfile}"
-        `ruby bin/hudson server --home /tmp/test_hudson --port #{port} --control #{control} --daemon --logfile #{logfile}`
+        `ruby bin/hudson server --home #{File.dirname(plugin_dir)} --port #{port} --control #{control} --daemon --logfile #{logfile}`
       end
     end
 

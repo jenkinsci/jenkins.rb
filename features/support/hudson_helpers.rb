@@ -1,6 +1,6 @@
 module HudsonHelper
   def test_hudson_path
-    "/tmp/test_hudson"
+    "var/hudson"
   end
 end
 World(HudsonHelper)

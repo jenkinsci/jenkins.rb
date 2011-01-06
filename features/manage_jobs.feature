@@ -84,6 +84,7 @@ Feature: Create and manage jobs
           <authorOrCommitter>false</authorOrCommitter>
           <clean>false</clean>
           <wipeOutWorkspace>false</wipeOutWorkspace>
+          <pruneBranches>false</pruneBranches>
           <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser" />
           <gitTool>Default</gitTool>
           <submoduleCfg class="list" />

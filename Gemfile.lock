@@ -55,7 +55,7 @@ DEPENDENCIES
   hpricot
   httparty (~> 0.6.1)
   hudson!
-  hudson-war
+  hudson-war (>= 1.386)
   json (~> 1.4.0)
   rake (~> 0.8.7)
   rspec (~> 2.0.0)

@@ -71,6 +71,7 @@ Feature: Adding slave nodes
               <host>localhost</host>
               <port>2222</port>
               <username>vagrant</username>
+              <password>rvDV+OTiBj3UtK5p7sl62Q==</password>
               <privatekey>/Library/Ruby/Gems/1.8/gems/vagrant-0.6.7/keys/vagrant</privatekey>
             </launcher>
             <label>app1 app2</label>

@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency("builder", ["~> 2.1.2"])
   s.add_dependency("thor", ["~> 0.14.2"])
   s.add_dependency("hpricot")
-  s.add_development_dependency("hudson-war")
+  s.add_development_dependency("hudson-war", ">= 1.386")
   s.add_development_dependency("rake", ["~> 0.8.7"])
   s.add_development_dependency("cucumber", ["~> 0.9.0"])
   s.add_development_dependency("rspec", ["~> 2.0.0"])
