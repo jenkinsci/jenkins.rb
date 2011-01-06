@@ -1,5 +1,5 @@
 Given /^I have no hudson preferences set$/ do
-  FileUtils.rm_rf File.join(@home_path, ".hudson")
+  FileUtils.rm_rf @home_path
 end
 
 Given /^I have a Hudson server running$/ do
