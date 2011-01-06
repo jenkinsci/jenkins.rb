@@ -1,3 +1,7 @@
+Given /^I have no hudson preferences set$/ do
+  FileUtils.rm_rf File.join(@home_path, ".hudson")
+end
+
 Given /^I have a Hudson server running$/ do
   unless @hudson_port
     port = 3010
