@@ -1,7 +1,6 @@
 Feature: Display default host information
 
   Scenario: Display default host information if it is setup
-    Given I have no hudson preferences set
     Given I run local executable "hudson" with arguments "list --host localhost --port 3010"
     When I run local executable "hudson" with arguments "default_host"
     Then I should see exactly
@@ -10,7 +9,6 @@ Feature: Display default host information
       """
 
   Scenario: Display warning if never used Hudson.rb before
-    Given I have no hudson preferences set
     When I run local executable "hudson" with arguments "default_host"
     Then I should see exactly
       """

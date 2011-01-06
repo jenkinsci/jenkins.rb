@@ -12,3 +12,8 @@ Before do
   ENV['HOME'] = @home_path
   ENV['CUCUMBER_RUNNING'] = 'oooh yes'
 end
+
+After do
+  ENV.delete('HUDSON_HOST')
+  ENV.delete('HUDSON_PORT')
+end

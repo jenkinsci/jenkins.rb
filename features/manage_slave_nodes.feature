@@ -44,6 +44,7 @@ Feature: Adding slave nodes
       foo1.bar.com
       """
 
+  @wip
   Scenario: Add a local Vagrant/VirtualBox VM as a slave (hudson add_node --vagrant)
     Given I am in the "rails-3" project folder
     When I run local executable "hudson" with arguments "add_node localhost --name rails-3 --vagrant --labels 'app1,app2'"
