@@ -22,17 +22,13 @@ module Hudson
     method_option :daemon, :desc  => "fork into background and run as a daemon", :type => :boolean, :default => false
     method_option :kill, :desc    => "send shutdown signal to control port", :type => :boolean, :aliases => "-k"
     method_option :logfile, :desc => "redirect log messages to this file", :type => :string, :banner => "PATH"
-    method_option :upgrade, :desc => "upgrade hudson server and plugins to latest version", :type => :boolean
     def server
-      installation = Hudson::Installation.new(shell, options)
-      if options[:kill]
-        installation.kill!
-        exit(0)
-      elsif options[:upgrade]
-        installation.upgrade!
-        exit(0)
-      else
-        installation.launch!
+      begin
+        require 'hudson/war'
+        Hudson::War::server(options)
+      rescue LoadError
+        puts "To run a hudson server, you need to install the hudson-war gem. try:"
+        puts "gem install hudson-war"
       end
     end
 
