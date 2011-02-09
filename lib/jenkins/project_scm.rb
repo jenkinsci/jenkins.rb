@@ -1,4 +1,4 @@
-module Hudson
+module Jenkins
   class ProjectScm
   
     def self.discover(scm)

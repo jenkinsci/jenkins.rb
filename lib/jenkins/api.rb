@@ -3,10 +3,10 @@ require 'cgi'
 require 'uri'
 require 'json'
 
-require 'hudson/core_ext/hash'
-require 'hudson/config'
+require 'jenkins/core_ext/hash'
+require 'jenkins/config'
 
-module Hudson
+module Jenkins
   module Api
     include HTTParty
 
@@ -20,17 +20,17 @@ module Hudson
       options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
-      options[:host] ||= ENV['HUDSON_HOST']
-      options[:port] ||= ENV['HUDSON_PORT']
+      options[:host] ||= ENV['JENKINS_HOST']
+      options[:port] ||= ENV['JENKINS_PORT']
       options[:port] &&= options[:port].to_i
-      return false unless options[:host] || Hudson::Config.config["base_uri"]
-      uri = options[:host] ? URI::HTTP.build(options) : Hudson::Config.config["base_uri"]
+      return false unless options[:host] || Jenkins::Config.config["base_uri"]
+      uri = options[:host] ? URI::HTTP.build(options) : Jenkins::Config.config["base_uri"]
       base_uri uri.to_s
       uri
     end
 
-    # returns true if successfully create a new job on Hudson
-    # +job_config+ is a Hudson::JobConfigBuilder instance
+    # returns true if successfully create a new job on Jenkins
+    # +job_config+ is a Jenkins::JobConfigBuilder instance
     # +options+ are:
     #   :override - true, will delete any existing job with same name, else error
     #
@@ -114,8 +114,8 @@ module Hudson
           :slave_port  => 2222,
           :slave_user  => 'vagrant',
           :master_key  => "/Library/Ruby/Gems/1.8/gems/vagrant-0.6.7/keys/vagrant", # FIXME - hardcoded master username assumption
-          :slave_fs    => "/vagrant/tmp/hudson-slave/",
-          :description => "Automatically created by Hudson.rb",
+          :slave_fs    => "/vagrant/tmp/jenkins-slave/",
+          :description => "Automatically created by Jenkins.rb",
           :executors   => 2,
           :exclusive   => true
         )
@@ -124,8 +124,8 @@ module Hudson
           :slave_port  => 22,
           :slave_user  => 'deploy',
           :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
-          :slave_fs    => "/data/hudson-slave/",
-          :description => "Automatically created by Hudson.rb",
+          :slave_fs    => "/data/jenkins-slave/",
+          :description => "Automatically created by Jenkins.rb",
           :executors   => 2,
           :exclusive   => true
         )
@@ -192,14 +192,14 @@ module Hudson
       post_plain("#{base_uri}/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
     end
 
-    # Helper for POST that don't barf at Hudson's crappy API responses
+    # Helper for POST that don't barf at Jenkins's crappy API responses
     def self.post_plain(path, options = {})
       options = options.with_clean_keys
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.post(path, options) }
     end
     
-    # Helper for GET that don't barf at Hudson's crappy API responses
+    # Helper for GET that don't barf at Jenkins's crappy API responses
     def self.get_plain(path, options = {})
       options = options.with_clean_keys
       uri = URI.parse base_uri
@@ -208,8 +208,8 @@ module Hudson
     
     private
     def self.cache_base_uri
-      Hudson::Config.config["base_uri"] = base_uri
-      Hudson::Config.store!
+      Jenkins::Config.config["base_uri"] = base_uri
+      Jenkins::Config.store!
     end
     
     def self.job_url(name)

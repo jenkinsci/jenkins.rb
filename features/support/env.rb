@@ -1,5 +1,5 @@
 $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../../lib"))
-require 'hudson.rb'
+require 'jenkins.rb'
 require 'bundler/setup'
 require 'ap'
 
@@ -14,6 +14,6 @@ Before do
 end
 
 After do
-  ENV.delete('HUDSON_HOST')
-  ENV.delete('HUDSON_PORT')
+  ENV.delete('JENKINS_HOST')
+  ENV.delete('JENKINS_PORT')
 end

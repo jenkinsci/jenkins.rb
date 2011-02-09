@@ -187,6 +187,6 @@ When /^I create a new node with the following options on "http:\/\/(.+?):(\d+)":
     options
   end
 
-  Hudson::Api.setup_base_url(:host => host, :port => port.to_i)
-  Hudson::Api.add_node(options)
+  Jenkins::Api.setup_base_url(:host => host, :port => port.to_i)
+  Jenkins::Api.add_node(options)
 end

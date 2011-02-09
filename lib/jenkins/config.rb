@@ -1,4 +1,4 @@
-module Hudson
+module Jenkins
   module Config
     extend self
     
@@ -21,7 +21,7 @@ module Hudson
     end
     
     def config_file
-      @config_file ||= "#{ENV['HOME']}/.hudson/hudsonrb-config.json"
+      @config_file ||= "#{ENV['HOME']}/.jenkins/jenkinsrb-config.json"
     end
   end
 end

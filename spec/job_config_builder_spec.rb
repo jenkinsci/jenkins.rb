@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe Hudson::JobConfigBuilder do
+describe Jenkins::JobConfigBuilder do
   include ConfigFixtureLoaders
   
   describe "explicit steps to match a ruby job" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.steps = [
           [:build_shell_step, "step 1"],
@@ -22,7 +22,7 @@ describe Hudson::JobConfigBuilder do
   
   describe "rails job; single axis" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
       end
     end
@@ -35,7 +35,7 @@ describe Hudson::JobConfigBuilder do
   
   describe "many rubies" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:ruby) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:ruby) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
         c.rubies = %w[1.8.7 1.9.2 rbx-head jruby]
       end
@@ -52,7 +52,7 @@ describe Hudson::JobConfigBuilder do
   
   describe "assigned slave nodes for slave usage" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
         c.assigned_node = "my-slave"
       end
     end
@@ -65,7 +65,7 @@ describe Hudson::JobConfigBuilder do
   
   describe "no specific slave nodes" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
       end
     end
     it "builds config.xml" do
@@ -76,7 +76,7 @@ describe Hudson::JobConfigBuilder do
   describe "SCM behaviour" do
     describe "#public_scm = true => convert git@ into git:// until we have deploy keys" do
       before do
-        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+        @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
           c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
           c.public_scm = true
         end
@@ -96,7 +96,7 @@ describe Hudson::JobConfigBuilder do
     # </branches>
     describe "#scm-branches - set branches" do
       before do
-        @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+        @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
           c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
         end
       end
@@ -117,7 +117,7 @@ describe Hudson::JobConfigBuilder do
 
   describe "setup ENV variables via envfile plugin" do
     before do
-      @config = Hudson::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
         c.scm      = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.steps    = []
         c.envfile  = "/path/to/env/file"
