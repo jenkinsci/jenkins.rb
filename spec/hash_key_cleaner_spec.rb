@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-require "hudson/core_ext/hash"
+require "jenkins/core_ext/hash"
 
 describe Hash do
   subject do

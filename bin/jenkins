@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/jenkins.rb")))
+require File.expand_path(File.dirname(__FILE__) + '/../lib/jenkins')
+require 'jenkins/cli'
+
+begin
+  Jenkins::CLI.start
+rescue Errno::ECONNREFUSED, Errno::EAFNOSUPPORT
+  Jenkins::CLI.new.shell.say "No connection available to the server.", :red
+end

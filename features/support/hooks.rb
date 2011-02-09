@@ -1,11 +1,11 @@
 require 'socket'
 
 Before do
-  @hudson_cleanup = []
+  @jenkins_cleanup = []
 end
 
 After do
-  for port in @hudson_cleanup do
+  for port in @jenkins_cleanup do
     begin
       TCPSocket.open("localhost", port) do |sock|
         sock.write("0")

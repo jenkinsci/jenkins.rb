@@ -1,4 +1,4 @@
-module Hudson
+module Jenkins
   class Remote
     def self.add_server(name, uri)
       remotes[name] = uri

@@ -1,54 +1,54 @@
 Feature: Create and manage jobs
-  In order to reduce cost of getting a new project up onto Hudson
+  In order to reduce cost of getting a new project up onto Jenkins
   As a project developer
-  I want to add a new project to Hudson as a job
+  I want to add a new project to Jenkins as a job
 
   Background:
-    Given I have a Hudson server running
-    And the Hudson server has no current jobs
+    Given I have a Jenkins server running
+    And the Jenkins server has no current jobs
   
-  Scenario: Setup hudson job for git scm (hudson create)
+  Scenario: Setup jenkins job for git scm (jenkins create)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "create . --host localhost --port 3010"
     Then I should see exactly
       """
-      Added ruby project 'ruby' to Hudson.
+      Added ruby project 'ruby' to Jenkins.
       Triggering initial build...
       Trigger additional builds via:
         URL: http://localhost:3010/job/ruby/build
-        CLI: hudson build ruby
+        CLI: jenkins build ruby
       """
-    When I run local executable "hudson" with arguments "list --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "list --host localhost --port 3010"
     Then I should see "ruby"
   
-  Scenario: Create job via $HUDSON_HOST and $HUDSON_PORT (hudson create)
+  Scenario: Create job via $JENKINS_HOST and $JENKINS_PORT (jenkins create)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    And env variable $HUDSON_HOST set to "localhost"
-    And env variable $HUDSON_PORT set to "3010"
-    When I run local executable "hudson" with arguments "create ."
+    And env variable $JENKINS_HOST set to "localhost"
+    And env variable $JENKINS_PORT set to "3010"
+    When I run local executable "jenkins" with arguments "create ."
     Then I should see "http://localhost:3010/job/ruby/build"
-    When I run local executable "hudson" with arguments "list"
+    When I run local executable "jenkins" with arguments "list"
     Then I should see "ruby"
   
-  Scenario: Don't trigger initial job build (hudson create --no-build)
+  Scenario: Don't trigger initial job build (jenkins create --no-build)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --no-build --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "create . --no-build --host localhost --port 3010"
     Then I should see exactly
       """
-      Added ruby project 'ruby' to Hudson.
+      Added ruby project 'ruby' to Jenkins.
       Trigger builds via:
         URL: http://localhost:3010/job/ruby/build
-        CLI: hudson build ruby
+        CLI: jenkins build ruby
       """
 
-  Scenario: Setup hudson job with explicit scm url/branches (hudson create --scm URI --scm-branches='master,other')
+  Scenario: Setup jenkins job with explicit scm url/branches (jenkins create --scm URI --scm-branches='master,other')
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --scm git://localhost/myapp.git --scm-branches 'master,other' --host localhost --port 3010"
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --scm git://localhost/myapp.git --scm-branches 'master,other' --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Jenkins."
     And the job "ruby" config "scm" should be:
       """
       <scm class="hudson.plugins.git.GitSCM">
@@ -94,11 +94,11 @@ Feature: Create and manage jobs
         </scm>
       """
 
-  Scenario: Setup hudson job with multiple rubies (hudson create --rubies '1.8.7,rbx-head,jruby')
+  Scenario: Setup jenkins job with multiple rubies (jenkins create --rubies '1.8.7,rbx-head,jruby')
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --rubies '1.8.7,rbx-head,jruby' --host localhost --port 3010"
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --rubies '1.8.7,rbx-head,jruby' --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Jenkins."
     And the job "ruby" config "axes" should be:
       """
       <axes>
@@ -113,11 +113,11 @@ Feature: Create and manage jobs
         </axes>
       """
 
-  Scenario: Setup hudson job with multiple rubies and multiple nodes (hudson create --rubies.. --node_labels..)
+  Scenario: Setup jenkins job with multiple rubies and multiple nodes (jenkins create --rubies.. --node_labels..)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --rubies '1.8.7,rbx-head,jruby' --node-labels '1.8.7,ubuntu' --host localhost --port 3010"
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --rubies '1.8.7,rbx-head,jruby' --node-labels '1.8.7,ubuntu' --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Jenkins."
     And the job "ruby" config "axes" should be:
       """
       <axes>
@@ -139,23 +139,23 @@ Feature: Create and manage jobs
         </axes>
       """
   
-  Scenario: Setup hudson job for a specific node label (hudson create --assigned_node)
+  Scenario: Setup jenkins job for a specific node label (jenkins create --assigned_node)
     Given I am in the "ruby" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --assigned_node my_node --host localhost --port 3010"
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --assigned_node my_node --host localhost --port 3010"
+    Then I should see "Added ruby project 'ruby' to Jenkins."
 
-  Scenario: Select 'rails3' project type (hudson create --template rails3)
+  Scenario: Select 'rails3' project type (jenkins create --template rails3)
     Given I am in the "rails-3" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --template rails3 --host localhost --port 3010"
-    Then I should see "Added rails3 project 'rails-3' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --template rails3 --host localhost --port 3010"
+    Then I should see "Added rails3 project 'rails-3' to Jenkins."
 
-  Scenario: Create job without default steps (hudson create --no-template)
+  Scenario: Create job without default steps (jenkins create --no-template)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --no-template --host localhost --port 3010"
-    Then I should see "Added project 'non-bundler' to Hudson."
+    When I run local executable "jenkins" with arguments "create . --no-template --host localhost --port 3010"
+    Then I should see "Added project 'non-bundler' to Jenkins."
     And the job "non-bundler" config "builders" should be:
       """
       <builders>
@@ -165,44 +165,44 @@ Feature: Create and manage jobs
         </builders>
       """
 
-  Scenario: Reject projects that don't use bundler (hudson create)
+  Scenario: Reject projects that don't use bundler (jenkins create)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm
-    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "create . --host localhost --port 3010"
     Then I should see "Ruby/Rails projects without a Gemfile are currently unsupported."
 
-  Scenario: Attempt to create project without scm (hudson create)
+  Scenario: Attempt to create project without scm (jenkins create)
     Given I am in the "ruby" project folder
-    When I run local executable "hudson" with arguments "create . --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "create . --host localhost --port 3010"
     Then I should see "Cannot determine project SCM. Currently supported:"
 
-  Scenario: Recreate a job (hudson create --override)
+  Scenario: Recreate a job (jenkins create --override)
     Given I am in the "ruby" project folder
     When I create a job
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Jenkins."
     When I recreate a job
-    Then I should see "Added ruby project 'ruby' to Hudson."
+    Then I should see "Added ruby project 'ruby' to Jenkins."
 
-  Scenario: Trigger a job build (hudson build)
+  Scenario: Trigger a job build (jenkins build)
     Given I am in the "ruby" project folder
     When I create a job
-    When I run local executable "hudson" with arguments "build"
+    When I run local executable "jenkins" with arguments "build"
     Then I should see "Build for 'ruby' running now..."
   
-  Scenario: Trigger a job build on invaild project (hudson build)
+  Scenario: Trigger a job build on invaild project (jenkins build)
     Given I am in the "ruby" project folder
-    When I run local executable "hudson" with arguments "build . --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "build . --host localhost --port 3010"
     Then I should see "ERROR: No job 'ruby' on server."
   
-  Scenario: Remove a job (hudson remove)
+  Scenario: Remove a job (jenkins remove)
     Given I am in the "ruby" project folder
     When I create a job
-    Then I should see "Added ruby project 'ruby' to Hudson."
-    When I run local executable "hudson" with arguments "remove ."
-    Then I should see "Removed project 'ruby' from Hudson."
+    Then I should see "Added ruby project 'ruby' to Jenkins."
+    When I run local executable "jenkins" with arguments "remove ."
+    Then I should see "Removed project 'ruby' from Jenkins."
   
-  Scenario: Remove a job that doesn't exist gives error (hudson remove)
+  Scenario: Remove a job that doesn't exist gives error (jenkins remove)
     Given I am in the "ruby" project folder
-    When I run local executable "hudson" with arguments "remove . --host localhost --port 3010"
+    When I run local executable "jenkins" with arguments "remove . --host localhost --port 3010"
     Then I should see "ERROR: Failed to delete project 'ruby'."
   

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hudson (0.5.0)
+    jenkins (0.6.0)
       builder (~> 2.1.2)
       hpricot
       httparty (~> 0.6.1)
@@ -25,10 +25,10 @@ GEM
     gherkin (2.2.9)
       json (~> 1.4.6)
       term-ansicolor (~> 1.0.5)
-    hpricot (0.8.2)
+    hpricot (0.8.3)
     httparty (0.6.1)
       crack (= 0.1.8)
-    hudson-war (1.386)
+    jenkins-war (1.396)
     json (1.4.6)
     rake (0.8.7)
     rspec (2.0.1)
@@ -42,7 +42,7 @@ GEM
       rspec-core (~> 2.0.1)
       rspec-expectations (~> 2.0.1)
     term-ansicolor (1.0.5)
-    thor (0.14.4)
+    thor (0.14.6)
     yajl-ruby (0.7.8)
 
 PLATFORMS
@@ -50,15 +50,9 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
-  builder (~> 2.1.2)
   cucumber (~> 0.9.0)
-  hpricot
-  httparty (~> 0.6.1)
-  hudson!
-  hudson-war (>= 1.386)
+  jenkins!
+  jenkins-war (>= 1.396)
   json (~> 1.4.0)
   rake (~> 0.8.7)
   rspec (~> 2.0.0)
-  term-ansicolor (>= 1.0.4)
-  thor (~> 0.14.2)
-  yajl-ruby (>= 0.7.6)

@@ -1,6 +1,6 @@
 require 'term/ansicolor'
 
-module Hudson
+module Jenkins
   class CLI < Thor
     module Formatting
       module ClassMethods

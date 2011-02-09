@@ -2,7 +2,7 @@ require "bundler"
 Bundler.setup
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
-require 'hudson'
+require 'jenkins'
 require 'hpricot'
 
 module ConfigFixtureLoaders
