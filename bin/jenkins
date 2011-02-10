@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'rubygems'
 $:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/jenkins.rb")))
 require File.expand_path(File.dirname(__FILE__) + '/../lib/jenkins')
 require 'jenkins/cli'
