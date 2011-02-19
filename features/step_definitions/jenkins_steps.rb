@@ -88,6 +88,18 @@ When /^I (re|)create a job$/ do |override|
   CUCUMBER
 end
 
+When /^I wait for ([\S]+) build (\d+) to start$/ do |project_name, build_number|
+  begin
+    Timeout.timeout(10) do
+      while !Jenkins::Api.build_details(project_name, build_number)
+        sleep 1
+      end
+    end
+  rescue TimeoutError
+    raise "Couldn't find build #{build_number} for project #{project_name}"
+  end
+end
+
 Then /^the job "([^"]*)" config "([^"]*)" should be:$/ do |job_name, xpath, string|
   raise "Cannot yet fetch XML config from non-localhost Jenkins" unless Jenkins::Api.base_uri =~ /localhost/
   require "hpricot"
