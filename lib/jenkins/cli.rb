@@ -146,17 +146,17 @@ module Jenkins
     common_options
     def build_details(job_name, build_number)
       select_jenkins_server(options)
-      if job = Jenkins::Api.build_details(job_name, build_number)
+      if build_details = Jenkins::Api.build_details(job_name, build_number)
         if options[:hash]
           require "ap"
-          ap job.parsed_response
+          ap build_details.parsed_response
         elsif options[:json]
-          puts job.parsed_response.to_json
+          puts build_details.parsed_response.to_json
         elsif options[:yaml]
           require "yaml"
-          puts job.parsed_response.to_yaml
+          puts build_details.parsed_response.to_yaml
         else
-          error "Select an output format: --json, --xml, --yaml, --hash"
+          error "Select an output format: --json, --yaml, --hash"
         end
       else
         error "Cannot find project '#{job_name}'."
