@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    jenkins (0.6.0)
-      builder (~> 2.1.2)
+    jenkins (0.6.0.1)
+      builder (>= 2.1.2)
       hpricot
       httparty (~> 0.6.1)
       term-ansicolor (>= 1.0.4)
@@ -13,19 +13,18 @@ GEM
   remote: http://rubygems.org/
   specs:
     awesome_print (0.2.1)
-    builder (2.1.2)
+    builder (3.0.0)
     crack (0.1.8)
-    cucumber (0.9.3)
-      builder (~> 2.1.2)
+    cucumber (0.10.0)
+      builder (>= 2.1.2)
       diff-lcs (~> 1.1.2)
-      gherkin (~> 2.2.9)
+      gherkin (~> 2.3.2)
       json (~> 1.4.6)
       term-ansicolor (~> 1.0.5)
     diff-lcs (1.1.2)
-    gherkin (2.2.9)
+    gherkin (2.3.4)
       json (~> 1.4.6)
-      term-ansicolor (~> 1.0.5)
-    hpricot (0.8.3)
+    hpricot (0.8.4)
     httparty (0.6.1)
       crack (= 0.1.8)
     jenkins-war (1.396)
@@ -43,14 +42,14 @@ GEM
       rspec-expectations (~> 2.0.1)
     term-ansicolor (1.0.5)
     thor (0.14.6)
-    yajl-ruby (0.7.8)
+    yajl-ruby (0.8.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   awesome_print
-  cucumber (~> 0.9.0)
+  cucumber (~> 0.10.0)
   jenkins!
   jenkins-war (>= 1.396)
   json (~> 1.4.0)

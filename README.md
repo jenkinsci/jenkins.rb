@@ -102,11 +102,16 @@ Alternately, `$JENKINS_HOST` and `$JENKINS_PORT` can be provided in lieu of the 
 Developer Instructions
 ======================
 
-The dependencies for the gem and for developing the gem are managed by bundler.
+The dependencies for the gem and for developing the gem are managed by Bundler.
 
     gem install bundler
     git clone http://github.com/cowboyd/jenkins.rb.git
     bundle install
+
+The test suites expects Jenkins to speak English. If you are not using an
+English locale prepare the terminal session running the test suite with:
+
+    export LC_ALL=en_US.UTF-8
 
 The test suite is run with:
 
