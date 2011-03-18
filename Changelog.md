@@ -1,7 +1,8 @@
 # Changelog
 
-## Edge
+## 0.6.2 - 2011/03/17
 
+* add `build_details` command for fetching the result of a particular build.
 * add instructions for running with non-english locale
 * remove, fix obsolete gem dependencies
 
