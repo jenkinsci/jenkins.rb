@@ -99,6 +99,17 @@ module Jenkins
       end
     end
 
+    # Return a hash of information about a build.
+    def self.build_details(job_name, build_number)
+      begin
+        json = get "/job/#{job_name}/#{build_number}/api/json"
+        cache_base_uri
+        json
+      rescue Crack::ParseError
+        false
+      end
+    end
+
     def self.nodes
       json = get "/computer/api/json"
       cache_base_uri

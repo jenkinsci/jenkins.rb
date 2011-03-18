@@ -139,6 +139,30 @@ module Jenkins
       end
     end
 
+    desc "build_details JOB_NAME BUILD_NUMBER", "Display details about a particular build"
+    method_option :hash, :desc => 'Dump as formatted Ruby hash format'
+    method_option :json, :desc => 'Dump as JSON format'
+    method_option :yaml, :desc => 'Dump as YAML format'
+    common_options
+    def build_details(job_name, build_number)
+      select_jenkins_server(options)
+      if build_details = Jenkins::Api.build_details(job_name, build_number)
+        if options[:hash]
+          require "ap"
+          ap build_details.parsed_response
+        elsif options[:json]
+          puts build_details.parsed_response.to_json
+        elsif options[:yaml]
+          require "yaml"
+          puts build_details.parsed_response.to_yaml
+        else
+          error "Select an output format: --json, --yaml, --hash"
+        end
+      else
+        error "Cannot find project '#{job_name}'."
+      end
+    end
+
     desc "list [options]", "list jobs on a jenkins server"
     common_options
     def list
