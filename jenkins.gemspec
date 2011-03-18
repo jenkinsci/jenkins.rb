@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("term-ansicolor", [">= 1.0.4"])
-  s.add_dependency("yajl-ruby", [">= 0.7.6"])
   s.add_dependency("httparty", ["~> 0.6.1"])
   s.add_dependency("builder", [">= 2.1.2"])
   s.add_dependency("thor", ["~> 0.14.2"])
