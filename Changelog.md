@@ -1,5 +1,10 @@
 # Changelog
 
+## Edge
+
+* add instructions for running with non-english locale
+* remove, fix obsolete gem dependencies
+
 ## 0.5.0 - 2010/12/1
 
 * hudson warfile no longer bundled with hudson gem
