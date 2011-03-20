@@ -24,11 +24,10 @@ Gem::Specification.new do |s|
   s.add_dependency("builder", [">= 2.1.2"])
   s.add_dependency("thor", ["~> 0.14.2"])
   s.add_dependency("hpricot")
-  s.add_dependency("json", ["~> 1.5"])
+  s.add_dependency("json", ">= 1.4.6")
   s.add_development_dependency("jenkins-war", ">= 1.396")
   s.add_development_dependency("rake", ["~> 0.8.7"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])
   s.add_development_dependency("rspec", ["~> 2.0.0"])
-  s.add_development_dependency("json", ["~>1.4.0"])
   s.add_development_dependency("awesome_print")
 end
