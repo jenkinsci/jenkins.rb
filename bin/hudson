@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+$:.unshift(File.expand_path(File.dirname(File.dirname(__FILE__) + "/../lib/hudson.rb")))
+require File.expand_path(File.dirname(__FILE__) + '/../lib/hudson')
+require 'hudson/cli'
+
+begin
+  Hudson::CLI.start
+rescue Errno::ECONNREFUSED, Errno::EAFNOSUPPORT
+  Hudson::CLI.new.shell.say "No connection available to the server.", :red
+end

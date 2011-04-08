@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git@codebasehq.com:mocra/dash/web-app.git</string>
+        <string>tagopt</string>
+        <string/>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <clean>false</clean>
+    <choosingStrategy>Default</choosingStrategy>
+    <submoduleCfg class="list"/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <concurrentBuild>false</concurrentBuild>
+  <axes>
+  </axes>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Running steps...&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.plugins.ruby.Ruby>
+      <command>unless File.exist?(&quot;config/database.yml&quot;)
+  require &apos;fileutils&apos;
+  example = Dir[&quot;config/database*&quot;].first
+  puts &quot;Using #{example} for config/database.yml&quot;
+  FileUtils.cp example, &quot;config/database.yml&quot;
+end</command>
+    </hudson.plugins.ruby.Ruby>
+    <hudson.plugins.rake.Rake>
+      <rakeInstallation>(Default)</rakeInstallation>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
+      <tasks>db:schema:load</tasks>
+      <silent>false</silent>
+    </hudson.plugins.rake.Rake>
+    <hudson.plugins.rake.Rake>
+      <rakeInstallation>(Default)</rakeInstallation>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
+      <tasks>features</tasks>
+      <silent>false</silent>
+    </hudson.plugins.rake.Rake>
+    <hudson.plugins.rake.Rake>
+      <rakeInstallation>(Default)</rakeInstallation>
+      <rakeFile/>
+      <rakeLibDir/>
+      <rakeWorkingDir/>
+      <tasks>spec</tasks>
+      <silent>false</silent>
+    </hudson.plugins.rake.Rake>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+  <runSequentially>false</runSequentially>
+</matrix-project>

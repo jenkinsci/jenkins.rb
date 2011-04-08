@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<matrix-project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>http://github.com/drnic/picasa_plucker.git</string>
+        <string>tagopt</string>
+        <string/>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <localBranch/>
+    <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir/>
+    <excludedRegions/>
+    <excludedUsers/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes>
+    <hudson.matrix.TextAxis>
+      <name>RUBY_VERSION</name>
+      <values>
+        <string>1.8.7</string>
+        <string>1.9.2</string>
+        <string>rbx-head</string>
+        <string>jruby</string>
+      </values>
+    </hudson.matrix.TextAxis>
+  </axes>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>rvm $RUBY_VERSION</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rvm gemset create ruby-$RUBY_VERSION &amp;&amp; rvm gemset use ruby-$RUBY_VERSION</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>bundle install</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>bundle exec rake</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+  <runSequentially>false</runSequentially>
+</matrix-project>

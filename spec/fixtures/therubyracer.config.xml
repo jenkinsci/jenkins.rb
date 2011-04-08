@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git://github.com/cowboyd/therubyracer.git</string>
+        <string>tagopt</string>
+        <string></string>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <clean>true</clean>
+    <choosingStrategy>Default</choosingStrategy>
+    <submoduleCfg class="list"/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes>
+    <axis>
+      <name>RUBY_VERSION</name>
+      <values>
+        <string>1.8.6</string>
+        <string>1.8.7</string>
+        <string>1.9.1</string>
+      </values>
+    </axis>
+    <axis>
+      <name>label</name>
+      <values>
+        <string>OSX-Leopard-10.5</string>
+        <string>Ubuntu-Lucid-10.04-server-amd64</string>
+        <string>Ubuntu-Karmic-9.10-server-amd64</string>
+        <string>OSX-Snow-Leopard-10.6.3</string>
+      </values>
+    </axis>
+  </axes>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash -lxe
+GEMSET=build-$BUILD_NUMBER-ruby-$RUBY_VERSION
+rvm $RUBY_VERSION
+rvm gemset create $GEMSET
+rvm gemset use $GEMSET
+gem install rake rake-compiler rspec
+rake gem
+gem install therubyracer-*.gem
+v8 --selftest
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+  <runSequentially>false</runSequentially>
+</matrix-project>

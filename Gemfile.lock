@@ -1,0 +1,64 @@
+PATH
+  remote: .
+  specs:
+    hudson (0.5.0)
+      builder (~> 2.1.2)
+      hpricot
+      httparty (~> 0.6.1)
+      term-ansicolor (>= 1.0.4)
+      thor (~> 0.14.2)
+      yajl-ruby (>= 0.7.6)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    awesome_print (0.2.1)
+    builder (2.1.2)
+    crack (0.1.8)
+    cucumber (0.9.3)
+      builder (~> 2.1.2)
+      diff-lcs (~> 1.1.2)
+      gherkin (~> 2.2.9)
+      json (~> 1.4.6)
+      term-ansicolor (~> 1.0.5)
+    diff-lcs (1.1.2)
+    gherkin (2.2.9)
+      json (~> 1.4.6)
+      term-ansicolor (~> 1.0.5)
+    hpricot (0.8.2)
+    httparty (0.6.1)
+      crack (= 0.1.8)
+    hudson-war (1.386)
+    json (1.4.6)
+    rake (0.8.7)
+    rspec (2.0.1)
+      rspec-core (~> 2.0.1)
+      rspec-expectations (~> 2.0.1)
+      rspec-mocks (~> 2.0.1)
+    rspec-core (2.0.1)
+    rspec-expectations (2.0.1)
+      diff-lcs (>= 1.1.2)
+    rspec-mocks (2.0.1)
+      rspec-core (~> 2.0.1)
+      rspec-expectations (~> 2.0.1)
+    term-ansicolor (1.0.5)
+    thor (0.14.4)
+    yajl-ruby (0.7.8)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  builder (~> 2.1.2)
+  cucumber (~> 0.9.0)
+  hpricot
+  httparty (~> 0.6.1)
+  hudson!
+  hudson-war (>= 1.386)
+  json (~> 1.4.0)
+  rake (~> 0.8.7)
+  rspec (~> 2.0.0)
+  term-ansicolor (>= 1.0.4)
+  thor (~> 0.14.2)
+  yajl-ruby (>= 0.7.6)
