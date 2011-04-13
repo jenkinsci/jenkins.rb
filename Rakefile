@@ -50,7 +50,7 @@ namespace :jenkins do
   namespace :server do
     require 'fileutils'
 
-    directory plugin_dir = File.expand_path("var/jenkins/plugins")
+    directory plugin_dir = File.expand_path("../var/jenkins/plugins", __FILE__)
     desc "Run a server for tests"
     task :test => plugin_dir do
       port = 3010
@@ -59,7 +59,7 @@ namespace :jenkins do
         Dir["fixtures/jenkins/*.hpi"].each do |plugin|
           FileUtils.cp plugin, plugin_dir
         end
-        logfile = File.expand_path("var/jenkins/test.log")
+        logfile = File.expand_path("../var/jenkins/test.log", __FILE__)
         puts "Launching jenkins test server at http://localhost:#{port}..."
         puts "  output will be logged to #{logfile}"
         `ruby bin/jenkins server --home #{File.dirname(plugin_dir)} --port #{port} --control #{control} --daemon --logfile #{logfile}`
