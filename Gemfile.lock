@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     jenkins (0.6.2)
-      builder (>= 2.1.2)
+      builder (~> 2.1.2)
       hpricot
       httparty (~> 0.6.1)
       json (>= 1.4.6)
@@ -13,7 +13,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     awesome_print (0.3.2)
-    builder (3.0.0)
+    builder (2.1.2)
     crack (0.1.8)
     cucumber (0.10.0)
       builder (>= 2.1.2)
