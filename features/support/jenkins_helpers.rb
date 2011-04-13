@@ -1,6 +1,6 @@
 module JenkinsHelper
   def test_jenkins_path
-    "var/jenkins"
+    @test_jenkins_path ||= File.expand_path("../../../var/jenkins", __FILE__)
   end
 end
 World(JenkinsHelper)
