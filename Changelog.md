@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 - 2011/04/12
+
+* fixes for ruby 1.9
+
 ## 0.6.2 - 2011/03/17
 
 * add `build_details` command for fetching the result of a particular build.
