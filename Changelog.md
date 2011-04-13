@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4 - 2011/04/13
+
+* change from json to json_pure
+
 ## 0.6.3 - 2011/04/12
 
 * fixes for ruby 1.9
