@@ -50,7 +50,7 @@ module Jenkins
         unless scm = Jenkins::ProjectScm.discover(options[:scm])
           error "Cannot determine project SCM. Currently supported: #{Jenkins::ProjectScm.supported}"
         end
-        unless (options[:template] == "none" || options[:"no-template"]) || File.exists?("Gemfile")
+        unless (options[:template] == "none" || options[:template] == "erlang" || options[:"no-template"]) || File.exists?("Gemfile")
           error "Ruby/Rails projects without a Gemfile are currently unsupported."
         end
         begin

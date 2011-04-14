@@ -134,4 +134,17 @@ describe Jenkins::JobConfigBuilder do
       Hpricot.XML(@config.to_xml).search("buildWrappers").to_s.should == xml_bite.strip
     end
   end
+
+  describe "erlang job; single axis" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:erlang) do |c|
+        c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
+      end
+    end
+    it "builds config.xml" do
+      config_xml("erlang", "single").should == @config.to_xml
+    end
+  end
+  
+  
 end

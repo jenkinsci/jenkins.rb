@@ -11,7 +11,7 @@ module Jenkins
     
     InvalidTemplate = Class.new(StandardError)
     
-    VALID_JOB_TEMPLATES = %w[none rails rails3 ruby rubygem]
+    VALID_JOB_TEMPLATES = %w[none rails rails3 ruby rubygem erlang]
     
     # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
@@ -215,6 +215,11 @@ module Jenkins
         [
           [:build_shell_step, "bundle install"],
           [:build_shell_step, "bundle exec rake"]
+        ]
+      when :erlang
+        [
+          [:build_shell_step, "rebar compile"],
+          [:build_shell_step, "rebar ct"]
         ]
       else
         [ [:build_shell_step, 'echo "THERE ARE NO STEPS! Except this one..."'] ]

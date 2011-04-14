@@ -58,7 +58,7 @@ To add Jobs/Projects (create a Job) on a Jenkins server:
 
     Usage: jenkins create PROJECT_PATH [options]
         --public-scm                     	  use public scm URL
-        --template [ruby]                	  template of job steps (available: rails,rails3,ruby,rubygem)
+        --template [ruby]                	  template of job steps (available: rails,rails3,ruby,rubygem,erlang)
         --assigned-node [ASSIGNED-NODE]  	  only use slave nodes with this label
         --override                       	  override if job exists
         --no-build                       	  create job without initial build

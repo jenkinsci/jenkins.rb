@@ -151,6 +151,12 @@ Feature: Create and manage jobs
     When I run local executable "jenkins" with arguments "create . --template rails3 --host localhost --port 3010"
     Then I should see "Added rails3 project 'rails-3' to Jenkins."
 
+  Scenario: Select 'erlang' project type (jenkins create --template erlang)
+    Given I am in the "erlang" project folder
+    And the project uses "git" scm
+    When I run local executable "jenkins" with arguments "create . --template erlang --host localhost --port 3010"
+    Then I should see "Added erlang project 'erlang' to Jenkins."
+
   Scenario: Create job without default steps (jenkins create --no-template)
     Given I am in the "non-bundler" project folder
     And the project uses "git" scm
