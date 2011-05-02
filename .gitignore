@@ -4,3 +4,4 @@ var
 *.rbc
 .bundle
 pkg/
+*.swp
