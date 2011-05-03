@@ -5,3 +5,4 @@ var
 .bundle
 pkg/
 *.swp
+.rvmrc
