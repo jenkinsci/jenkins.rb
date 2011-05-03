@@ -11,8 +11,11 @@ module Jenkins
     map "-v" => :version, "--version" => :version, "-h" => :help, "--help" => :help
 
     def self.common_options
-      method_option :host, :desc => 'connect to jenkins server on this host'
-      method_option :port, :desc => 'connect to jenkins server on this port'
+      method_option :host,     :desc => 'connect to jenkins server on this host'
+      method_option :port,     :desc => 'connect to jenkins server on this port'
+      method_option :ssl,      :desc => 'connect to jenkins server with ssl', :type => :boolean, :default => false
+      method_option :username, :desc => 'connect to jenkins server with username'
+      method_option :password, :desc => 'connect to jenkins server with password'
     end
 
     desc "server [options]", "run a jenkins server"
@@ -86,7 +89,7 @@ module Jenkins
         end
       end
     end
-    
+
     desc "build [PROJECT_PATH]", "trigger build of this project's build job"
     common_options
     def build(project_path = ".")
@@ -100,7 +103,7 @@ module Jenkins
         end
       end
     end
-    
+
     desc "remove PROJECT_PATH", "remove this project's build job from Jenkins"
     common_options
     def remove(project_path)
@@ -114,7 +117,7 @@ module Jenkins
         end
       end
     end
-    
+
     desc "job NAME", "Display job details"
     method_option :hash, :desc => 'Dump as formatted Ruby hash format'
     method_option :json, :desc => 'Dump as JSON format'
@@ -193,7 +196,7 @@ module Jenkins
         shell.say node["displayName"], color
       end
     end
-    
+
     desc "add_node SLAVE_HOST", "add a URI (user@host:port) server as a slave node"
     method_option :labels, :desc       => 'Labels for a job --assigned_node to match against to select a slave (comma separated)'
     method_option :"slave-user", :desc => 'SSH user for Jenkins to connect to slave node (default: deploy)'
@@ -211,13 +214,28 @@ module Jenkins
         error "Failed to add slave node #{slave_host}"
       end
     end
-    
+
     desc "default_host", "display current default host:port URI"
     def default_host
       if select_jenkins_server({})
         display Jenkins::Api.base_uri
       else
         display "No default host yet. Use '--host host --port port' on your first request."
+      end
+    end
+
+    desc "configure", "configure host connection information"
+    common_options
+    def configure
+      Jenkins::Api.setup_base_url(options)
+      Jenkins::Api.cache_configuration!
+    end
+
+    desc "auth_info", "display authentication information"
+    def auth_info
+      if auth = Jenkins::Config.config['basic_auth']
+        shell.say "username: #{auth["username"]}"
+        shell.say "password: #{auth["password"]}"
       end
     end
 
@@ -265,7 +283,7 @@ USEAGE
       shell.say "ERROR: #{text}", :red
       exit
     end
-    
+
     def cmd
       ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
     end

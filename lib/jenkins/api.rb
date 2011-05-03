@@ -13,18 +13,20 @@ module Jenkins
     headers 'content-type' => 'application/json'
     format :json
     # http_proxy 'localhost', '8888'
-    
+
     JobAlreadyExistsError = Class.new(Exception)
 
     def self.setup_base_url(options)
       options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
+      options = setup_authentication(options)
       options[:host] ||= ENV['JENKINS_HOST']
       options[:port] ||= ENV['JENKINS_PORT']
       options[:port] &&= options[:port].to_i
       return false unless options[:host] || Jenkins::Config.config["base_uri"]
-      uri = options[:host] ? URI::HTTP.build(options) : Jenkins::Config.config["base_uri"]
+      uri_class = options.delete(:ssl) ? URI::HTTPS : URI::HTTP
+      uri = options[:host] ? uri_class.build(options) : Jenkins::Config.config["base_uri"]
       base_uri uri.to_s
       uri
     end
@@ -45,7 +47,7 @@ module Jenkins
           :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
         }
         if res.code.to_i == 200
-          cache_base_uri
+          cache_configuration!
           true
         else
           require "hpricot"
@@ -66,13 +68,13 @@ module Jenkins
         raise JobAlreadyExistsError.new(name)
       end
     end
-    
+
     # Attempts to delete a job +name+
     def self.delete_job(name)
       res = post_plain "#{job_url name}/doDelete"
       res.code.to_i == 302
     end
-    
+
     def self.build_job(name)
       res = get_plain "/job/#{name}/build"
       res.code.to_i == 302
@@ -80,10 +82,10 @@ module Jenkins
 
     def self.summary
       json = get "/api/json"
-      cache_base_uri
+      cache_configuration!
       json
     end
-    
+
     def self.job_names
       summary["jobs"].map {|job| job["name"]}
     end
@@ -92,7 +94,7 @@ module Jenkins
     def self.job(name)
       begin
         json = get "/job/#{name}/api/json"
-        cache_base_uri
+        cache_configuration!
         json
       rescue Crack::ParseError
         false
@@ -103,7 +105,7 @@ module Jenkins
     def self.build_details(job_name, build_number)
       begin
         json = get "/job/#{job_name}/#{build_number}/api/json"
-        cache_base_uri
+        cache_configuration!
         json
       rescue Crack::ParseError
         false
@@ -112,7 +114,7 @@ module Jenkins
 
     def self.nodes
       json = get "/computer/api/json"
-      cache_base_uri
+      cache_configuration!
       json
     end
 
@@ -142,7 +144,7 @@ module Jenkins
         )
       end
       options    = default_options.merge(options)
-      
+
       slave_host = options[:slave_host]
       name       = options[:name] || slave_host
       labels     = options[:labels].split(/\s*,\s*/).join(' ') if options[:labels]
@@ -198,7 +200,7 @@ module Jenkins
         false
       end
     end
-    
+
     def self.delete_node(name)
       post_plain("#{base_uri}/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
     end
@@ -207,7 +209,7 @@ module Jenkins
     def self.post_plain(path, data = "", options = {})
       options = options.with_clean_keys
       uri = URI.parse base_uri
-      res = Net::HTTP.start(uri.host, uri.port) do |http| 
+      res = Net::HTTP.start(uri.host, uri.port) do |http|
         if RUBY_VERSION =~ /1.8/
           http.post(path, options)
         else
@@ -215,20 +217,32 @@ module Jenkins
         end
       end
     end
-    
+
     # Helper for GET that don't barf at Jenkins's crappy API responses
     def self.get_plain(path, options = {})
       options = options.with_clean_keys
       uri = URI.parse base_uri
       res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
     end
-    
-    private
-    def self.cache_base_uri
+
+    def self.cache_configuration!
       Jenkins::Config.config["base_uri"] = base_uri
+      Jenkins::Config.config["basic_auth"] = default_options[:basic_auth]
       Jenkins::Config.store!
     end
-    
+
+    private
+    def self.setup_authentication(options)
+      username, password = options.delete(:username), options.delete(:password)
+      if username && password
+        basic_auth username, password
+      elsif Jenkins::Config.config["basic_auth"]
+        basic_auth Jenkins::Config.config["basic_auth"]["username"],
+                   Jenkins::Config.config["basic_auth"]["password"]
+      end
+      options
+    end
+
     def self.job_url(name)
       "#{base_uri}/job/#{name}"
     end
