@@ -28,15 +28,15 @@ Feature: Show build details
     When I run local executable "jenkins" with arguments "build_details ruby 1 --host localhost --port 3010 --json"
     Then I should see
       """
-      "builtOn":"","result":"FAILURE","number":1,"keepLog":false,
+      "result":"FAILURE"
       """
     And I should see
       """
-      "actions":[{"causes":[{"userName":"anonymous","shortDescription":"Started by user anonymous"},{"userName":"anonymous","shortDescription":"Started by user anonymous"}]}],
+      "actions":[
       """
     And I should see
       """
-      "description":null,"changeSet":{"kind":null,"items":[]},"fullDisplayName":"ruby #1"
+      "changeSet":{
       """
   
   
