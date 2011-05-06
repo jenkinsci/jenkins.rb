@@ -28,7 +28,7 @@ Feature: Show build details
     When I run local executable "jenkins" with arguments "build_details ruby 1 --host localhost --port 3010 --json"
     Then I should see
       """
-      "result":"FAILURE"
+      "number":1
       """
     And I should see
       """
