@@ -166,7 +166,7 @@ module Jenkins
       end
     end
 
-    desc "console", "Display the console"
+    desc "console JOB_NAME BUILD_NUMBER [AXE]", "Display the console"
     common_options
     def console(job_name, axe=nil, build_number="lastBuild")
       select_jenkins_server(options)
