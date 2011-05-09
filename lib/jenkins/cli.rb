@@ -147,7 +147,7 @@ module Jenkins
     method_option :json, :desc => 'Dump as JSON format'
     method_option :yaml, :desc => 'Dump as YAML format'
     common_options
-    def build_details(job_name, build_number)
+    def build_details(job_name, build_number="lastBuild")
       select_jenkins_server(options)
       if build_details = Jenkins::Api.build_details(job_name, build_number)
         if options[:hash]
@@ -164,6 +164,13 @@ module Jenkins
       else
         error "Cannot find project '#{job_name}'."
       end
+    end
+
+    desc "console", "Display the console"
+    common_options
+    def console(job_name, axe=nil, build_number="lastBuild")
+      select_jenkins_server(options)
+      puts Jenkins::Api.console(job_name, build_number, axe)
     end
 
     desc "list [options]", "list jobs on a jenkins server"
@@ -266,26 +273,29 @@ USEAGE
     end
 
     private
-
-    def select_jenkins_server(options)
-      unless @uri = Jenkins::Api.setup_base_url(options)
-        error "Either use --host or add remote servers."
+      def method_missing(name, *args)
+        console(name, *args)
       end
-      @uri
-    end
 
-    def display(text)
-      shell.say text
-      exit
-    end
+      def select_jenkins_server(options)
+        unless @uri = Jenkins::Api.setup_base_url(options)
+          error "Either use --host or add remote servers."
+        end
+        @uri
+      end
 
-    def error(text)
-      shell.say "ERROR: #{text}", :red
-      exit
-    end
+      def display(text)
+        shell.say text
+        exit
+      end
 
-    def cmd
-      ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
-    end
+      def error(text)
+        shell.say "ERROR: #{text}", :red
+        exit
+      end
+
+      def cmd
+        ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
+      end
   end
 end
