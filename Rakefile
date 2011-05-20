@@ -62,7 +62,7 @@ namespace :jenkins do
         logfile = File.expand_path("../var/jenkins/test.log", __FILE__)
         puts "Launching jenkins test server at http://localhost:#{port}..."
         puts "  output will be logged to #{logfile}"
-        `ruby bin/jenkins server --home #{File.dirname(plugin_dir)} --port #{port} --control #{control} --daemon --logfile #{logfile}`
+        `bundle exec bin/jenkins server --home #{File.dirname(plugin_dir)} --port #{port} --control #{control} --daemon --logfile #{logfile}`
       end
     end
 
