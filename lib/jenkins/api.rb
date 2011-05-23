@@ -5,6 +5,7 @@ require 'json'
 
 require 'jenkins/core_ext/hash'
 require 'jenkins/config'
+#require 'jenkins/connection'
 
 module Jenkins
   module Api
@@ -20,10 +21,10 @@ module Jenkins
       options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
-      options = setup_authentication(options)
       options[:host] ||= ENV['JENKINS_HOST']
       options[:port] ||= ENV['JENKINS_PORT']
       options[:port] &&= options[:port].to_i
+      options = setup_authentication(options)
       return false unless options[:host] || Jenkins::Config.config["base_uri"]
       uri_class = options.delete(:ssl) ? URI::HTTPS : URI::HTTP
       uri = options[:host] ? uri_class.build(options) : Jenkins::Config.config["base_uri"]
@@ -43,9 +44,14 @@ module Jenkins
       options = options.with_clean_keys
       delete_job(name) if options[:override]
       begin
-        res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
-          :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
-        }
+        if @username && @password && @options
+          conn = Jenkins::Connection.new(@username, @password, @options)
+          res = conn.post("/createItem/api/xml?name=#{CGI.escape(name)}", job_config.to_xml, 'application/xml')
+        else
+          res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
+            :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+          }
+        end
         if res.code.to_i == 200
           cache_configuration!
           true
@@ -221,8 +227,13 @@ module Jenkins
     # Helper for GET that don't barf at Jenkins's crappy API responses
     def self.get_plain(path, options = {})
       options = options.with_clean_keys
-      uri = URI.parse base_uri
-      res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
+      if @username && @password && @options
+        conn = Jenkins::Connection.new(@username, @password, @options)
+        res  = conn.get(path)
+      else
+        uri = URI.parse base_uri
+        res = Net::HTTP.start(uri.host, uri.port) { |http| http.get(path, options) }
+      end
     end
 
     def self.cache_configuration!
@@ -233,8 +244,10 @@ module Jenkins
 
     private
     def self.setup_authentication(options)
-      username, password = options.delete(:username), options.delete(:password)
-      if username && password
+      username, password, form = options.delete(:username), options.delete(:password), options.delete(:form)
+      if username && password && form
+        form_auth(username, password, options)
+      elsif username && password
         basic_auth username, password
       elsif Jenkins::Config.config["basic_auth"]
         basic_auth Jenkins::Config.config["basic_auth"]["username"],
@@ -242,9 +255,161 @@ module Jenkins
       end
       options
     end
+    
+    def self.form_auth(username, password, options)
+      @username = username
+      @password = password
+      @options  = options
+      #Jenkins::Connection.new(username, password, options)
+    end
 
     def self.job_url(name)
       "#{base_uri}/job/#{name}"
     end
+  end
+  
+  class LoginError < RuntimeError
+  end
+  class UnhandledResponse < RuntimeError
+  end
+  class Connection
+    
+    URL = "/j_acegi_security_check"
+    attr :url, true
+    attr :user, false
+    attr :pass, false
+    attr :connection, true
+    attr :debug, true
+    attr :cookie, true
+    
+    def initialize(user, pass, opts={})
+      options = {
+        :debug => false
+      }.merge! opts
+      @debug = options[:debug]
+
+      @user = user
+      @pass = pass
+      @host = "http://#{options[:host]}"
+      @url = URI.parse(@host + URL)
+      @url.port = options[:port]
+      
+      # Handles http/https in url string
+      @ssl = false
+      @ssl = true if @url.scheme == "https"
+      
+      @connection = false
+      login!
+      raise LoginError, "Invalid Username or Password" unless logged_in?
+    end
+    
+    def get(path)
+      request = Net::HTTP::Get.new(path, header)
+      response = @connection.request(request)
+      case response
+        when Net::HTTPOK
+          return response
+        when Net::HTTPFound
+          return response
+        when Net::HTTPUnauthorized
+          login!
+          get(path)
+        when Net::HTTPForbidden
+          raise LoginError, "Invalid Username or Password" 
+        else 
+          raise UnhandledResponse, "Can't handle response #{response}"
+      end
+    end
+    
+    def post(path, body, content_type=nil)
+      #puts body
+      #puts header(content_type)
+      request = Net::HTTP::Post.new(path, header(content_type))
+      request.body = body
+      response = @connection.request(request)
+      case response
+        when Net::HTTPOK
+          return response
+        when Net::HTTPFound
+          return response
+        when Net::HTTPBadRequest
+          return response
+        when Net::HTTPUnauthorized
+          login!
+          post(path, body, content_type)
+        when Net::HTTPForbidden
+          raise LoginError, "Invalid Username or Password" 
+        else 
+          raise UnhandledResponse, "Can't handle response #{response}"
+      end
+    end
+    
+    protected
+    
+    # Attempt to login to Jenkins
+    def login!
+      connect! unless connected?
+      body = {
+        #:Submit     => 'log in',
+        #:from       => '/',
+        :j_username => @user,
+        :j_password => @pass
+      }
+      
+      request = Net::HTTP::Post.new(@url.path)
+      request.body = wrap_body(body)
+      response = @connection.request(request)
+      
+      if response["Set-Cookie"]
+        @cookie = response["Set-Cookie"].split(/;/)[0]
+      else
+        raise LoginError, "Invalid Username or Password"
+      end
+      
+    end
+    
+    # Check to see if we are logged in or not
+    def logged_in?
+      return false unless @cookie
+      true
+    end
+    
+    # Check to see if we have an HTTP/S Connection
+    def connected?
+      return false unless @connection
+      return false unless @connection.started?
+      true
+    end
+    
+    # Connect to the Jenkins Server
+    def connect!
+      @connection = Net::HTTP.new(@url.host, @url.port)
+      if @ssl
+        @connection.use_ssl = true
+        @connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+      @connection.start
+    end
+    
+    def wrap_body(params={})
+      body = ["Submit=log%20in", "from=%2F"]
+      params.each_pair do |k,v|
+        body << "#{k.to_s}=#{v.to_s}"
+      end
+      body = body.join('&')
+      body.insert(0, "?")
+      body
+    end
+    
+    def header(content_type=nil)
+      if @cookie && content_type
+        {'Cookie' => @cookie, 'content-type' => content_type, 'Accept-Encoding' => ''}
+      elsif @cookie
+        {'Cookie' => @cookie, 'Accept-Encoding' => ''}
+      else
+        {}
+      end
+    end
+    
   end
 end
