@@ -8,6 +8,11 @@ module Jenkins
     attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
+    attr_accessor :description
+    attr_accessor :child_projects
+    attr_accessor :mail_recipients
+    attr_accessor :triggers
+    attr_accessor :join_triggers
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -35,7 +40,7 @@ module Jenkins
       b.instruct!
       b.tag!(matrix_project? ? "matrix-project" : "project") do
         b.actions
-        b.description
+        b.description description
         b.keepDependencies false
         b.properties
         build_scm b
@@ -43,11 +48,13 @@ module Jenkins
         b.canRoam !assigned_node
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
-        b.triggers :class => "vector"
+        #b.triggers :class => "vector"
+        build_triggers b
         b.concurrentBuild false
         build_axes b if matrix_project?
         build_steps b
-        b.publishers
+        #b.publishers
+        build_publishers b
         build_wrappers b
         b.runSequentially false if matrix_project?
       end
@@ -154,6 +161,36 @@ module Jenkins
       end
     end
     
+    def build_publishers(b)
+      b.publishers do
+        if child_projects
+          b.tag! "hudson.tasks.BuildTrigger" do
+            b.childProjects child_projects #TODO: allow passing of array or string
+            b.threshold do
+              b.name "SUCCESS"
+              b.ordinal "0"
+              b.color "BLUE"
+            end
+          end
+        end
+        if join_triggers && !matrix_project? #TODO: error message if its a matrix project?
+          b.tag! "join.JoinTrigger" do
+            #join_triggers.each do |project|
+            b.joinProjects join_triggers #TODO: allow passing of array or string
+            b.joinPublishers
+            b.evenIfDownstreamUnstable false
+          end
+        end   
+        if mail_recipients
+          b.tag! "hudson.tasks.Mailer" do
+            b.recipients mail_recipients
+            b.dontNotifyEveryUnstableBuild false
+            b.sendToIndividuals false
+          end
+        end
+      end
+    end
+    
     # Example:
     # <buildWrappers>
     #   <hudson.plugins.envfile.EnvFileBuildWrapper>
@@ -172,6 +209,36 @@ module Jenkins
         end
       else
         b.buildWrappers
+      end
+    end
+    
+    # Pass in an array of arrays of the trigger type, and the poll interval.
+    # e.g. triggers = [ [:build_periodically, "0 18 * * *"], [:poll_scm, "0 0 * * *"] ]
+    # this would set the job to periodically build at 6PM everyday, and poll scm for build at Midnight, everyday
+    def build_triggers(b)
+      b.triggers :class => "vector" do
+        if triggers
+          triggers.each do |trigger|
+            method, cmd = trigger
+            send(method.to_sym, b, cmd) # e.g. poll_scm(b, "0 18 * * *")
+          end
+        end
+      end
+    end
+    
+    def poll_scm(b, command)
+      b.tag! "hudson.triggers.SCMTrigger" do
+        b.spec do
+          b << command.to_xs
+        end
+      end
+    end
+    
+    def build_periodically(b, command)
+      b.tag! "hudson.triggers.TimerTrigger" do
+        b.spec do
+          b << command.to_xs
+        end
       end
     end
     
@@ -240,6 +307,15 @@ module Jenkins
     def build_shell_step(b, command)
       b.tag! "hudson.tasks.Shell" do
         b.command command.to_xs.gsub("&amp;", '&') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+      end
+    end
+    
+    # <hudson.tasks.BatchFile>
+    #   <command>echo &apos;THERE ARE NO STEPS! Except this one...&apos;</command>
+    # </hudson.tasks.BatchFile>
+    def build_bat_step(b, command)
+      b.tag! "hudson.tasks.BatchFile" do
+        b.command command.to_xs.gsub("&amp;", '&')
       end
     end
 
