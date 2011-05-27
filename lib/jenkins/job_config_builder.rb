@@ -4,15 +4,19 @@ module Jenkins
   class JobConfigBuilder
     attr_accessor :job_type
     attr_accessor :steps, :rubies
-    attr_accessor :scm, :public_scm, :scm_branches
+    attr_accessor :scm, :public_scm, :scm_branches, :scm_refspec
     attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
     attr_accessor :description
     attr_accessor :child_projects
     attr_accessor :mail_recipients
+    attr_accessor :mail_build_breakers
     attr_accessor :triggers
     attr_accessor :join_triggers
+    attr_accessor :publish_documents
+    attr_accessor :publish_dupe_code_results
+    attr_accessor :publish_testing_tools_results
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -77,7 +81,11 @@ module Jenkins
               b.string "origin"
               b.int 5
               b.string "fetch"
-              b.string "+refs/heads/*:refs/remotes/origin/*"
+              if scm_refspec
+                b.string scm_refspec
+              else
+                b.string "+refs/heads/*:refs/remotes/origin/*"
+              end
               b.string "receivepack"
               b.string "git-upload-pack"
               b.string "uploadpack"
@@ -163,6 +171,24 @@ module Jenkins
     
     def build_publishers(b)
       b.publishers do
+        if publish_dupe_code_results
+          b.tag! "hudson.plugins.dry.DryPublisher" do
+            b.threshold
+            b.newThreshold
+            b.failureThreshold
+            b.newFailureThreshold
+            b.healthy
+            b.unHealthy
+            b.pluginName "[DRY]"
+            b.thresholdLimit "low"
+            b.defaultEncoding
+            b.useDeltaValues false
+            b.canRunOnFailed false
+            b.pattern publish_dupe_code_results[:pattern]
+            b.highThreshold publish_dupe_code_results[:high_threshold]
+            b.normalThreshold publish_dupe_code_results[:normal_threshold]
+          end
+        end
         if child_projects
           b.tag! "hudson.tasks.BuildTrigger" do
             b.childProjects child_projects #TODO: allow passing of array or string
@@ -173,6 +199,30 @@ module Jenkins
             end
           end
         end
+        if publish_documents
+          b.tag! "hudson.plugins.doclinks.DocLinksPublisher" do
+            b.documents do
+              b.tag! "hudson.plugins.doclinks.Document" do
+                b.title publish_documents[:title]
+                b.directory publish_documents[:directory]
+                b.file publish_documents[:file]
+                b.id 1
+              end
+            end
+          end
+        end
+        if publish_testing_tools_results
+          b.tag! "com.thalesgroup.hudson.plugins.xunit.XUnitPublisher" do
+            b.types do
+              b.tag! "com.thalesgroup.dtkit.metrics.hudson.model.PHPUnitJunitHudsonTestType" do
+                b.pattern publish_testing_tools_results[:pattern]
+                b.faildedIfNotNew publish_testing_tools_results[:fail_no_results]
+                b.deleteOutputFiles publish_testing_tools_results[:del_tmp_junit]
+                b.stopProcessingIfError publish_testing_tools_results[:fail_on_result_error]
+              end
+            end
+          end
+        end
         if join_triggers && !matrix_project? #TODO: error message if its a matrix project?
           b.tag! "join.JoinTrigger" do
             #join_triggers.each do |project|
@@ -180,12 +230,12 @@ module Jenkins
             b.joinPublishers
             b.evenIfDownstreamUnstable false
           end
-        end   
+        end
         if mail_recipients
           b.tag! "hudson.tasks.Mailer" do
             b.recipients mail_recipients
             b.dontNotifyEveryUnstableBuild false
-            b.sendToIndividuals false
+            b.sendToIndividuals mail_build_breakers ? true : false
           end
         end
       end
@@ -316,6 +366,15 @@ module Jenkins
     def build_bat_step(b, command)
       b.tag! "hudson.tasks.BatchFile" do
         b.command command.to_xs.gsub("&amp;", '&')
+      end
+    end
+    
+    # <hudson.tasks.Ant>
+    #   <comman
+    def build_ant_step(b, targets)
+      b.tag! "hudson.tasks.Ant" do
+        b.targets targets
+        b.buildFile "../build.xml"
       end
     end
 
