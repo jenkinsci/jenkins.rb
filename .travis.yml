@@ -1,0 +1,45 @@
+# This file lifted wholesale from https://github.com/travis-ci/travis-ci/wiki/.travis.yml-options
+
+# Passes arguments to bundle install (http://gembundler.com/man/bundle-install.1.html)
+#bundler_args: --binstubs
+
+# Specify which ruby versions you wish to run your tests on, each version will be used
+rvm:
+  - 1.8.7 # (current default)
+  # - 1.9.2
+  # - rbx
+  # - rbx-2.0
+  # - ree
+  # - jruby
+  # - ruby-head
+  # - 1.8.6
+
+# Define how to run your tests (defaults to `bundle exec rake` or `rake` depending on whether you have a `Gemfile`)
+#script: "bundle exec rake db:drop db:create db:migrate test"    
+
+# Define tasks to be completed before and after tests run . Will allow folding of content on frontend
+# before_script:
+#   - command_1
+#   - command_2
+
+# after_script:
+#   - command_1
+#   - command_2
+
+# Specify an ENV variable to run before: 'bundle install' and 'rake' (or your defined 'script')
+#env: "RAILS_ENV='test' "        # 
+
+# Specify the recipients for email notification
+notifications:
+  recipients:
+#    - cowboyd@thefrontside.net
+#    - drnicwilliams@gmail.com
+   disabled: true # Disable email notifications
+
+# Specify branches to build
+# You can either specify only or except. If you specify both, except will be ignored.
+branches:
+  only:
+    - master
+#   except:
+#     - legacy
