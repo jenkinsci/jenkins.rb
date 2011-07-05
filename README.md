@@ -8,7 +8,7 @@ jobs and slave nodes; either from a CLI or an API.
 
   * Email: [http://groups.google.com/group/jenkinsrb](http://groups.google.com/group/jenkinsrb)
   * IRC:  [irc://irc.freenode.net/jenkins.rb](irc://irc.freenode.net/jenkins.rb)
-  * CI: [http://travis-ci.org/cowboyd/jenkins.rb](http://travis-ci.org/cowboyd/jenkins.rb) [![Build Status](https://secure.travis-ci.org/cowboyd/jenkins.rb.png)](http://travis-ci.org/cowboyd/jenkins.rb)
+  * CI: [http://travis-ci.org/cowboyd/jenkins.rb](http://travis-ci.org/cowboyd/jenkins.rb) 
 Install
 =======
 
