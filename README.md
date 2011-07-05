@@ -1,12 +1,14 @@
 Jenkins
 ======
 
-[Jenkins CI](http://jenkins-ci.org/) is a sweet continuous integration platform. Jenkins.rb makes it easy to get started, add/remove Ruby jobs and slave nodes; either from a CLI or an API.
+[Jenkins CI](http://jenkins-ci.org/) is a sweet continuous integration
+platform. Jenkins.rb makes it easy to get started, add/remove Ruby
+jobs and slave nodes; either from a CLI or an API. 
+
 
   * Email: [http://groups.google.com/group/jenkinsrb](http://groups.google.com/group/jenkinsrb)
   * IRC:  [irc://irc.freenode.net/jenkins.rb](irc://irc.freenode.net/jenkins.rb)
-  * CI: [http://jenkins.thefrontside.net/job/jenkins.rb/](http://jenkins.thefrontside.net/job/jenkins.rb/)
-
+  * CI: [http://travis-ci.org/cowboyd/jenkins.rb](http://travis-ci.org/cowboyd/jenkins.rb) [![Build Status](https://secure.travis-ci.org/cowboyd/jenkins.rb.png)](http://travis-ci.org/cowboyd/jenkins.rb)
 Install
 =======
 
