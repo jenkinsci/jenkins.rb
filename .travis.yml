@@ -15,7 +15,7 @@ rvm:
   # - 1.8.6
 
 # Define how to run your tests (defaults to `bundle exec rake` or `rake` depending on whether you have a `Gemfile`)
-#script: "bundle exec rake db:drop db:create db:migrate test"    
+script: "bundle exec rake"
 
 # Define tasks to be completed before and after tests run . Will allow folding of content on frontend
 # before_script:
@@ -32,9 +32,9 @@ rvm:
 # Specify the recipients for email notification
 notifications:
   recipients:
-#    - cowboyd@thefrontside.net
+    - cowboyd@thefrontside.net
 #    - drnicwilliams@gmail.com
-   disabled: true # Disable email notifications
+#   disabled: true # Disable email notifications
 
 # Specify branches to build
 # You can either specify only or except. If you specify both, except will be ignored.
