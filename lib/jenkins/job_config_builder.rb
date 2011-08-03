@@ -17,6 +17,7 @@ module Jenkins
     attr_accessor :publish_documents
     attr_accessor :publish_dupe_code_results
     attr_accessor :publish_testing_tools_results
+    attr_accessor :schedule_failed_builds
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -259,6 +260,13 @@ module Jenkins
             b.sendToIndividuals mail_build_breakers ? true : false
           end
         end
+        if schedule_failed_builds
+          interval, retries = schedule_failed_builds
+          b.tag! "com.progress.hudson.ScheduleFailedBuildsPublisher" do
+            b.interval interval
+            b.maxRetries retries
+          end
+        end
       end
     end
     
@@ -288,6 +296,10 @@ module Jenkins
     # this would set the job to periodically build at 6PM everyday, and poll scm for build at Midnight, everyday
     def build_triggers(b)
       b.triggers :class => "vector" do
+        if schedule_failed_builds # putting it in build triggers if we're scheduling failed builds
+          triggers = [] if !triggers #declaring triggers to be an array if it doesn't exist
+          triggers << ["schedule_failed_builds_trigger", "* * * * *"]
+        end
         if triggers
           triggers.each do |trigger|
             method, cmd = trigger
@@ -307,6 +319,14 @@ module Jenkins
     
     def build_periodically(b, command)
       b.tag! "hudson.triggers.TimerTrigger" do
+        b.spec do
+          b << command.to_xs
+        end
+      end
+    end
+    
+    def schedule_failed_builds_trigger(b, command)
+      b.tag! "com.progress.hudson.ScheduleFailedBuildsTrigger" do
         b.spec do
           b << command.to_xs
         end
