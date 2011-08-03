@@ -191,11 +191,32 @@ module Jenkins
         end
         if child_projects
           b.tag! "hudson.tasks.BuildTrigger" do
-            b.childProjects child_projects #TODO: allow passing of array or string
-            b.threshold do
-              b.name "SUCCESS"
-              b.ordinal "0"
-              b.color "BLUE"
+            if child_projects.class == String # To accept all the child projects the way they are currently formatted
+              b.childProjects child_projects #TODO: allow passing of array or string
+              b.threshold do
+                b.name "SUCCESS"
+                b.ordinal "0"
+                b.color "BLUE"
+              end
+            else # to accept child_projects passed as an array, like ["children", "FAILURE"] to build even if it fails
+              children, threshold = child_projects
+              b.childProjects children
+              b.threshold do
+                case threshold
+                  when "SUCCESS"
+                    b.name "SUCCESS"
+                    b.ordinal "0"
+                    b.color "BLUE"
+                  when "UNSTABLE"
+                    b.name "UNSTABLE"
+                    b.ordinal "1"
+                    b.color "YELLOW"
+                  when "FAILURE"
+                    b.name "FAILURE"
+                    b.ordinal "2"
+                    b.color "RED"
+                end
+              end
             end
           end
         end
