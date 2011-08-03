@@ -317,11 +317,15 @@ module Jenkins
     # Can be defaulted by the +job_type+ using +default_steps(job_type)+,
     # or customized via +steps+ array.
     def build_steps(b)
-      b.builders do
-        self.steps ||= default_steps(job_type)
-        steps.each do |step|
-          method, cmd = step
-          send(method.to_sym, b, cmd) # e.g. build_shell_step(b, "bundle install")
+      if !steps
+        b.builders
+      else
+        b.builders do
+          self.steps ||= default_steps(job_type)
+          steps.each do |step|
+            method, cmd = step
+            send(method.to_sym, b, cmd) # e.g. build_shell_step(b, "bundle install")
+          end
         end
       end
     end
