@@ -7,12 +7,14 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Items;
+import hudson.util.IOUtils;
 import hudson.util.XStream2;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -118,7 +120,20 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	public RubyPlugin() {
 		this.ruby = new ScriptingContainer(LocalContextScope.THREADSAFE);
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
-		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
+        // JRuby can't load jar inside jar, so put this in a file system
+        // TODO: it's very hard to consistently clean up temporary directories in Java,
+        // so ideally we should just unjar it and load it from ruby-runtime.jar itself
+        File dir;
+        try {
+            dir = File.createTempFile("jenkins", "rb");
+            dir.delete();
+            dir.mkdir();
+            IOUtils.copy(getClass().getResourceAsStream("support/bundled-gems.jar"),new File(dir,"bundled-gems.jar"));
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+
+        this.ruby.getLoadPaths().add(0, dir.getPath());
 //		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
 		this.extensions = new ArrayList<ExtensionComponent>();
