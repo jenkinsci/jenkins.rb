@@ -4,12 +4,21 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.424</version>
+		<version>1.406-SNAPSHOT</version> <!-- jruby branch of Jenkins -->
 	</parent>
 
 	<artifactId>ruby-runtime</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
+  <description>Hosts runtime for enabling pure-Ruby plugins</description>
 	<packaging>hpi</packaging>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>lib</directory>
+      </resource>
+    </resources>
+  </build>
 
 	<dependencies>
     <dependency>
