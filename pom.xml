@@ -17,6 +17,9 @@
       <resource>
         <directory>lib</directory>
       </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
     </resources>
   </build>
 
