@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.406-SNAPSHOT</version> <!-- jruby branch of Jenkins -->
+		<version>1.426-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ruby-runtime</artifactId>
@@ -24,6 +24,17 @@
   </build>
 
 	<dependencies>
+      <dependency>
+        <groupId>org.kohsuke.stapler</groupId>
+        <artifactId>stapler-jruby</artifactId>
+        <version>1.172</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.kohsuke.stapler</groupId>
+            <artifactId>stapler-jelly</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
