@@ -30,11 +30,13 @@ public class RubyExtensionFinder extends ExtensionFinder {
 	@Override
 	public <T> Collection<ExtensionComponent<T>> find(Class<T> type, Hudson hudson) {
 		Collection<ExtensionComponent<T>> hits = new ArrayList<ExtensionComponent<T>>();
-		for (ExtensionComponent c: RubyPlugin.getExtensions()) {
-			if (type.isAssignableFrom(c.getInstance().getClass())) {
-				hits.add(c);
-			}
-		}
+        for (RubyPlugin rp : hudson.getPlugins(RubyPlugin.class)) {
+            for (ExtensionComponent c: rp.getExtensions()) {
+                if (type.isAssignableFrom(c.getInstance().getClass())) {
+                    hits.add(c);
+                }
+            }
+        }
 		return hits;
 	}
 }
