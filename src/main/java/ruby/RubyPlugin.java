@@ -1,22 +1,14 @@
 package ruby;
 
-import hudson.Extension;
 import hudson.ExtensionComponent;
 import hudson.Plugin;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
-import hudson.model.Hudson;
-import hudson.model.Items;
 import hudson.util.IOUtils;
-import hudson.util.XStream2;
-import org.jenkinsci.jruby.JRubyMapper;
-import org.jenkinsci.jruby.JRubyXStream;
-import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -178,4 +170,17 @@ public class RubyPlugin extends Plugin {
 	public String getResourceURI(String relativePathFormat, Object... args) {
 		return getClass().getResource(String.format(relativePathFormat, args)).getPath();
 	}
+
+    /**
+     * Returns a directory that stores all the Ruby scripts.
+     */
+    public File getScriptDir() {
+        URL url = wrapper.baseResourceURL;
+        // we assume url to be file:// path because we later need to be able to enumerate them
+        // to lift this limitation, we need build-time processing to enumerate all the rb files.
+        if (!url.getProtocol().equals("file"))
+            throw new IllegalStateException("Unexpected base resource URL: "+url);
+
+        return new File(url.getPath());
+    }
 }
