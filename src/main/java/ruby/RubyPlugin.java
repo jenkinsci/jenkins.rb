@@ -39,7 +39,7 @@ import java.util.Collection;
  * Each plugin has its own JRuby environment
  */
 @SuppressWarnings({"UnusedDeclaration"})
-public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
+public class RubyPlugin extends Plugin {
 	/**
 	 * The unique JRuby environment used by this plugin and all the objects
 	 * and classes that it contains.
@@ -175,30 +175,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.callMethod(plugin, "stop");
 	}
 
-
-	/**
-	 * This is mandatory for Jenkins to find this plugin, although I'm not
-	 * exactly sure why.
-	 *
-	 * @return
-	 */
-	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) Hudson.getInstance().getDescriptorOrDie(getClass());
-	}
-
 	public String getResourceURI(String relativePathFormat, Object... args) {
 		return getClass().getResource(String.format(relativePathFormat, args)).getPath();
-	}
-
-	/**
-	 * Again, this is mandatory for Jenkins to find this plugin, although I'm not
-	 * exactly sure why.
-	 */
-	@Extension
-	public static final class DescriptorImpl extends Descriptor<RubyPlugin> {
-		@Override
-		public String getDisplayName() {
-			return "Ruby Plugin";
-		}
 	}
 }
