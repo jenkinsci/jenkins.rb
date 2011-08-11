@@ -2,7 +2,12 @@ package ruby;
 
 import hudson.ExtensionComponent;
 import hudson.Plugin;
+import hudson.model.Items;
 import hudson.util.IOUtils;
+import hudson.util.XStream2;
+import jenkins.model.Jenkins;
+import org.jenkinsci.jruby.JRubyMapper;
+import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.embed.ScriptingContainer;
 
 import java.io.File;
@@ -11,6 +16,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -128,23 +134,40 @@ public class RubyPlugin extends Plugin {
 	 */
 	@Override
 	public void start() throws Exception {
-        ruby = new ScriptingContainerHolder().ruby;
+        if (getWrapper().getShortName().equals("ruby-runtime")) {
+            ruby = new ScriptingContainerHolder().ruby;
 
-		Map<String, String> env = this.ruby.getEnvironment();
-		env.put("GEM_PATH", this.getClass().getClassLoader().getResource("/ruby/vendor/gems/jruby/1.8").getPath());
-		this.ruby.setEnvironment(env);
+            // Kohsuke: these 3 lines aren't really working. it still requires me to locally install json
+            Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
+            env.put("GEM_PATH", this.getClass().getClassLoader().getResource("ruby/vendor/gems/jruby/1.8").getPath());
+            this.ruby.setEnvironment(env);
 
 //		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
-        this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
+            this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
+            this.ruby.runScriptlet("require 'rubygems'");
+            this.ruby.runScriptlet("require 'jenkins/plugins'");
+
+            register(Jenkins.XSTREAM2, ruby);
+            register(Items.XSTREAM2, ruby);
+        } else {
+            // pick up existing scripting container instead of creating a new one
+            // at least for now. TODO: eventually think about isolated multiple scripting container
+            ruby = ((RubyPlugin)Jenkins.getInstance().getPlugin("ruby-runtime")).ruby;
+        }
+        
         this.extensions = new ArrayList<ExtensionComponent>();
-        this.ruby.runScriptlet("require 'rubygems'");
-//        this.ruby.runScriptlet("require 'bundled-gems.jar'");
-        this.ruby.runScriptlet("require 'jenkins/plugins'");
         Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
         this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
 		this.ruby.callMethod(plugin, "start");
 	}
+
+    private void register(XStream2 xs, ScriptingContainer ruby) {
+        JRubyXStream.register(xs, ruby);
+        synchronized (xs) {
+            xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
+        }
+    }
 
 	/**
 	 * Jenkins will call this method whenever the plugin is shut down
