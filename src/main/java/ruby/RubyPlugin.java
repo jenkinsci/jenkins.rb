@@ -195,6 +195,6 @@ public class RubyPlugin extends Plugin {
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
-        return new File(url.getPath());
+        return new File(new File(url.getPath()),"WEB-INF/classes");
     }
 }
