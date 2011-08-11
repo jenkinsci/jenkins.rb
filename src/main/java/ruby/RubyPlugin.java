@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -129,25 +130,15 @@ public class RubyPlugin extends Plugin {
 	public void start() throws Exception {
         ruby = new ScriptingContainerHolder().ruby;
 
-        // JRuby can't load jar inside jar, so put this in a file system
-        // TODO: it's very hard to consistently clean up temporary directories in Java,
-        // so ideally we should just unjar it and load it from ruby-runtime.jar itself
-        File dir;
-        try {
-            dir = File.createTempFile("jenkins", "rb");
-            dir.delete();
-            dir.mkdir();
-            IOUtils.copy(getClass().getResourceAsStream("support/bundled-gems.jar"),new File(dir,"bundled-gems.jar"));
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+		Map<String, String> env = this.ruby.getEnvironment();
+		env.put("GEM_PATH", this.getClass().getClassLoader().getResource("/ruby/vendor/gems/jruby/1.8").getPath());
+		this.ruby.setEnvironment(env);
 
-        this.ruby.getLoadPaths().add(0, dir.getPath());
 //		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
         this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
         this.extensions = new ArrayList<ExtensionComponent>();
         this.ruby.runScriptlet("require 'rubygems'");
-        this.ruby.runScriptlet("require 'bundled-gems.jar'");
+//        this.ruby.runScriptlet("require 'bundled-gems.jar'");
         this.ruby.runScriptlet("require 'jenkins/plugins'");
         Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
         this.plugin = this.ruby.callMethod(pluginClass, "new", this);
@@ -175,7 +166,7 @@ public class RubyPlugin extends Plugin {
      * Returns a directory that stores all the Ruby scripts.
      */
     public File getScriptDir() {
-        URL url = wrapper.baseResourceURL;
+        URL url = getWrapper().baseResourceURL;
         // we assume url to be file:// path because we later need to be able to enumerate them
         // to lift this limitation, we need build-time processing to enumerate all the rb files.
         if (!url.getProtocol().equals("file"))
