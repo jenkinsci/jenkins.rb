@@ -35,9 +35,10 @@ module Jenkins
       @descriptors = {}
       @proxies = Plugins::Proxies.new(self)
       load_models
-# KK: needs to figure out how to resurrect this after runtime/plugin split
-#      script = 'support/hudson/plugin/models.rb'
-#      self.instance_eval @java.read(script), script
+
+      # load model definitions
+      # TODO: auto-register them
+      self.instance_eval @java.loadBootScript(), "models.rb"
     end
 
     # Called once when Jenkins first initializes this plugin

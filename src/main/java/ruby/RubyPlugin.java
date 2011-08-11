@@ -6,6 +6,7 @@ import hudson.model.Items;
 import hudson.util.IOUtils;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
+import org.apache.commons.io.FileUtils;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.embed.ScriptingContainer;
@@ -89,41 +90,20 @@ public class RubyPlugin extends Plugin {
 		return extensions;
 	}
 
-	/**
-	 * Reads a resource relative to this plugin's Java class using a formatted string
-	 *
-	 * @param resource the string template specifying the resource
-	 * @param args     format arguments
-	 * @return the content of the resource
-	 */
-	public String readf(String resource, Object... args) {
-		return read(String.format(resource, args));
-	}
-
 	public RubyPlugin() {
 	}
 
-	/**
-	 * Read a resource relative to this plugin clas
-	 *
-	 * @param resource the name of the resource to be read
-	 * @return the content of the resource
-	 */
-	public String read(String resource) {
-		InputStream stream = this.getClass().getResourceAsStream(resource);
-		try {
-			if (stream == null) {
-				throw new RuntimeException("no such resource: " + resource);
-			}
-			StringBuffer buffer = new StringBuffer();
-			for (int c = stream.read(); c > 0; c = stream.read()) {
-				buffer.append((char) c);
-			}
-			return buffer.toString();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * Loads the models.rb
+     */
+    public String loadBootScript() throws IOException {
+        File rb = new File(getScriptDir(), "lib/models.rb");
+        if (rb.exists()) {
+            return FileUtils.readFileToString(rb);
+        } else {
+            return "";
+        }
+    }
 
 	/**
 	 * Jenkins will call this method whenever the plugin is initialized
