@@ -34,7 +34,7 @@ public class ScriptingContainerHolder {
      * can be persisted along with other objects in Jenkins.
      */
     public ScriptingContainerHolder() {
-        this.ruby = new ScriptingContainer(LocalContextScope.THREADSAFE);
+        this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
         this.ruby.setClassLoader(Jenkins.getInstance().pluginManager.uberClassLoader);
 
         register((XStream2) Hudson.XSTREAM, ruby);
