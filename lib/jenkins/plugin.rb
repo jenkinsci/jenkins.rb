@@ -76,7 +76,7 @@ module Jenkins
     end
 
     def load_models
-      for filename in Dir["#{@java.get_script_dir}/models/**/*.rb"]
+      for filename in Dir["#{@java.getScriptDir()}/models/**/*.rb"]
         load filename
       end
     end
