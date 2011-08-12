@@ -1,3 +1,10 @@
+PATH
+  remote: ../jenkins-plugins.rb
+  specs:
+    jenkins-plugins (0.0.1)
+      json
+      rubyzip
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -12,11 +19,13 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
+    rubyzip (0.9.4)
 
 PLATFORMS
   java
   ruby
 
 DEPENDENCIES
+  jenkins-plugins!
   json (~> 1.5.0)
   rspec (>= 2.5.0)

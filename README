@@ -6,4 +6,5 @@
 4. let bundler bundle all gems
    (./.bundle/config puts them all under src/main/resources/ruby/vendor/gems/jruby)
     $ bundle install
-
+5. also install jenkins-plugins.rb gem into src/main/resources/ruby/vendor/gems/jruby
+    $ ./install-jenkins-plugins.rb
