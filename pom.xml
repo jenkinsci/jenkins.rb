@@ -12,17 +12,6 @@
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
 	<packaging>hpi</packaging>
 
-  <build>
-    <resources>
-      <resource>
-        <directory>lib</directory>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-  </build>
-
 	<dependencies>
       <dependency>
         <groupId>org.kohsuke.stapler</groupId>
