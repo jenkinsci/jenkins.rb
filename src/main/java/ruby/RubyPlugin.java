@@ -119,7 +119,10 @@ public class RubyPlugin extends Plugin {
 
             // Kohsuke: these 3 lines aren't really working. it still requires me to locally install json
             Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
-            env.put("GEM_PATH", this.getClass().getClassLoader().getResource("ruby/vendor/gems/jruby/1.8").getPath());
+            URL res = this.getClass().getClassLoader().getResource("ruby/vendor/gems/jruby/1.8");
+            if (res==null)
+                throw new Exception("Gem directory is missing in the plugin "+getWrapper().getShortName());
+            env.put("GEM_PATH", res.getPath());
             this.ruby.setEnvironment(env);
 
 //		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
