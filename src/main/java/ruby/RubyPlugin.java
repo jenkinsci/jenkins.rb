@@ -122,7 +122,7 @@ public class RubyPlugin extends Plugin {
             URL res = this.getClass().getClassLoader().getResource("ruby/vendor/gems/jruby/1.8");
             if (res==null)
                 throw new Exception("Gem directory is missing in the plugin "+getWrapper().getShortName());
-            env.put("GEM_PATH", res.getPath());
+            env.put("GEM_HOME", res.getPath());
             this.ruby.setEnvironment(env);
 
 //		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
