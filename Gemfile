@@ -1,7 +1,7 @@
 source :rubygems
 
 gem "json", "~> 1.5.0"
-gem "jenkins-plugins", :path => "../jenkins-plugins.rb"
+gem "jenkins-plugin-runtime", :path => "../jenkins-plugins.rb/runtime"
 
 group :development do
   gem "rspec", ">= 2.5.0"

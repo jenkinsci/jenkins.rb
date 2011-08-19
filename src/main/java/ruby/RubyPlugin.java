@@ -39,7 +39,7 @@ import java.util.Map;
  * Each plugin has its own JRuby environment
  */
 @SuppressWarnings({"UnusedDeclaration"})
-public class RubyPlugin extends Plugin {
+public class RubyPlugin extends PluginImpl {
 	/**
 	 * The unique JRuby environment used by this plugin and all the objects
 	 * and classes that it contains.

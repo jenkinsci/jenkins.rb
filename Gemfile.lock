@@ -1,9 +1,8 @@
 PATH
-  remote: ../jenkins-plugins.rb
+  remote: ../jenkins-plugins.rb/runtime
   specs:
-    jenkins-plugins (0.0.1)
+    jenkins-plugin-runtime (0.0.1)
       json
-      rubyzip
 
 GEM
   remote: http://rubygems.org/
@@ -19,13 +18,12 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    rubyzip (0.9.4)
 
 PLATFORMS
   java
   ruby
 
 DEPENDENCIES
-  jenkins-plugins!
+  jenkins-plugin-runtime!
   json (~> 1.5.0)
   rspec (>= 2.5.0)
