@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * The primary Java interface to a plugin which is implemented in Ruby.
  * One instance is created per each Ruby plugin.
- * 
+ *
  * <p>
  * When this plugin initializes, it will instantiate a Jenkins::Plugin
  * object which acts as the gateway for Ruby to interact with the java
@@ -91,6 +91,7 @@ public class RubyPlugin extends Plugin {
 	}
 
 	public RubyPlugin() {
+		this.extensions = new ArrayList<ExtensionComponent>();
 	}
 
     /**
@@ -114,38 +115,37 @@ public class RubyPlugin extends Plugin {
 	 */
 	@Override
 	public void start() throws Exception {
-        if (getWrapper().getShortName().equals("ruby-runtime")) {
+        if (!getWrapper().getShortName().equals("ruby-runtime")) {
             ruby = new ScriptingContainerHolder().ruby;
 
-            // Kohsuke: these 3 lines aren't really working. it still requires me to locally install json
-            Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
-            URL res = this.getClass().getClassLoader().getResource("ruby/vendor/gems/jruby/1.8");
-            if (res==null)
-                throw new Exception("Gem directory is missing in the plugin "+getWrapper().getShortName());
-            env.put("GEM_HOME", res.getPath());
-            this.ruby.setEnvironment(env);
+	        initRubyLoadPaths();
 
-//		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
-            this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
-            this.ruby.runScriptlet("require 'rubygems'");
-            this.ruby.runScriptlet("require 'jenkins/plugins'");
+	        register(Jenkins.XSTREAM2, ruby);
+	        register(Items.XSTREAM2, ruby);
+	        Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
+	        this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
-            register(Jenkins.XSTREAM2, ruby);
-            register(Items.XSTREAM2, ruby);
+	        this.ruby.callMethod(plugin, "start");
         } else {
-            // pick up existing scripting container instead of creating a new one
-            // at least for now. TODO: eventually think about isolated multiple scripting container
-            ruby = ((RubyPlugin)Jenkins.getInstance().getPlugin("ruby-runtime")).ruby;
+	        // pick up existing scripting container instead of creating a new one
+	        // at least for now. TODO: eventually think about isolated multiple scripting container
+	        //ruby = ((RubyPlugin)Jenkins.getInstance().getPlugin("ruby-runtime")).ruby;
         }
-        
-        this.extensions = new ArrayList<ExtensionComponent>();
-        Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
-        this.plugin = this.ruby.callMethod(pluginClass, "new", this);
-
-		this.ruby.callMethod(plugin, "start");
 	}
 
-    private void register(XStream2 xs, ScriptingContainer ruby) {
+	private void initRubyLoadPaths() throws Exception {
+		Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
+		File gemHome = new File(getScriptDir(), "vendor/gems/jruby/1.8");
+
+		if (!gemHome.exists())
+		    throw new Exception("unable to location gem bundle for " + getWrapper().getShortName());
+		env.put("GEM_HOME", gemHome.getPath());
+		this.ruby.setEnvironment(env);
+		this.ruby.runScriptlet("require 'rubygems'");
+		this.ruby.runScriptlet("require 'jenkins/plugin'");
+	}
+
+	private void register(XStream2 xs, ScriptingContainer ruby) {
         JRubyXStream.register(xs, ruby);
         synchronized (xs) {
             xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
