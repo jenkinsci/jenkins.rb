@@ -91,7 +91,7 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	public RubyPlugin() {
-		this.extensions = new ArrayList<ExtensionComponent>();
+
 	}
 
     /**
@@ -115,30 +115,26 @@ public class RubyPlugin extends PluginImpl {
 	 */
 	@Override
 	public void start() throws Exception {
-        if (!getWrapper().getShortName().equals("ruby-runtime")) {
-            ruby = new ScriptingContainerHolder().ruby;
+		this.extensions = new ArrayList<ExtensionComponent>();
+		ruby = new ScriptingContainerHolder().ruby;
 
-	        initRubyLoadPaths();
+		initRubyLoadPaths();
 
-	        register(Jenkins.XSTREAM2, ruby);
-	        register(Items.XSTREAM2, ruby);
-	        Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
-	        this.plugin = this.ruby.callMethod(pluginClass, "new", this);
+		register(Jenkins.XSTREAM2, ruby);
+		register(Items.XSTREAM2, ruby);
+		Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
+		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
-	        this.ruby.callMethod(plugin, "start");
-        } else {
-	        // pick up existing scripting container instead of creating a new one
-	        // at least for now. TODO: eventually think about isolated multiple scripting container
-	        //ruby = ((RubyPlugin)Jenkins.getInstance().getPlugin("ruby-runtime")).ruby;
-        }
+		this.ruby.callMethod(plugin, "start");
 	}
 
 	private void initRubyLoadPaths() throws Exception {
 		Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
 		File gemHome = new File(getScriptDir(), "vendor/gems/jruby/1.8");
 
-		if (!gemHome.exists())
-		    throw new Exception("unable to location gem bundle for " + getWrapper().getShortName());
+		if (!gemHome.exists()) {
+		    throw new Exception("unable to location gem bundle for " + getWrapper().getShortName() + " at " + gemHome.getAbsolutePath());
+		}
 		env.put("GEM_HOME", gemHome.getPath());
 		this.ruby.setEnvironment(env);
 		this.ruby.runScriptlet("require 'rubygems'");
