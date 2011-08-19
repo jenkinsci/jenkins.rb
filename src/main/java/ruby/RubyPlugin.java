@@ -129,16 +129,12 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	private void initRubyLoadPaths() throws Exception {
-		Map<String, String> env = new HashMap<String,String>(this.ruby.getEnvironment());
-		File gemHome = new File(getScriptDir(), "vendor/gems/jruby/1.8");
-
-		if (!gemHome.exists()) {
-		    throw new Exception("unable to location gem bundle for " + getWrapper().getShortName() + " at " + gemHome.getAbsolutePath());
+		File bundle = new File(getScriptDir(), "vendor/gems");
+		if (!bundle.exists()) {
+		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + bundle.getAbsolutePath());
 		}
-		env.put("GEM_HOME", gemHome.getPath());
-		this.ruby.setEnvironment(env);
-		this.ruby.runScriptlet("require 'rubygems'");
-		this.ruby.runScriptlet("require 'jenkins/plugin'");
+		this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
+		this.ruby.runScriptlet("require 'bundler/setup'");
 	}
 
 	private void register(XStream2 xs, ScriptingContainer ruby) {
