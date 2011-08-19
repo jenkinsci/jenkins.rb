@@ -91,7 +91,7 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	public RubyPlugin() {
-
+		this.extensions = new ArrayList<ExtensionComponent>();
 	}
 
     /**
@@ -115,17 +115,21 @@ public class RubyPlugin extends PluginImpl {
 	 */
 	@Override
 	public void start() throws Exception {
-		this.extensions = new ArrayList<ExtensionComponent>();
-		ruby = new ScriptingContainerHolder().ruby;
+		//This seems to be instantiatiating RubyPlugin for the abstract instance
+		//I thought it had been working to not do so at one point...
+		if (!this.getWrapper().getShortName().equals("ruby-runtime")) {
+			this.extensions = new ArrayList<ExtensionComponent>();
+			ruby = new ScriptingContainerHolder().ruby;
 
-		initRubyLoadPaths();
+			initRubyLoadPaths();
 
-		register(Jenkins.XSTREAM2, ruby);
-		register(Items.XSTREAM2, ruby);
-		Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
-		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
+			register(Jenkins.XSTREAM2, ruby);
+			register(Items.XSTREAM2, ruby);
+			Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
+			this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
-		this.ruby.callMethod(plugin, "start");
+			this.ruby.callMethod(plugin, "start");
+		}
 	}
 
 	private void initRubyLoadPaths() throws Exception {
@@ -153,7 +157,9 @@ public class RubyPlugin extends PluginImpl {
 	 */
 	@Override
 	public void stop() throws Exception {
-		this.ruby.callMethod(plugin, "stop");
+		if (this.ruby != null) {
+			this.ruby.callMethod(plugin, "stop");
+		}
 	}
 
 	public String getResourceURI(String relativePathFormat, Object... args) {
