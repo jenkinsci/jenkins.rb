@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'jpi/cli'
+
+JPI::CLI.start
