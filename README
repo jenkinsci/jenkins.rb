@@ -1,10 +1,7 @@
-1. install rvm
-2. switch to jruby
-    $ rvm jruby
-3. install bundler
-    $ gem install bundler
-4. let bundler bundle all gems
+See https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+plugin+development+in+Ruby for other dependencies
+
+1. let bundler bundle all gems
    (./.bundle/config puts them all under src/main/resources/ruby/vendor/gems/jruby)
     $ bundle install
-6. build the plugin with maven
+2. build the plugin with maven
     $ mvn install
