@@ -137,7 +137,10 @@ public class RubyPlugin extends PluginImpl {
 		if (!bundle.exists()) {
 		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + bundle.getAbsolutePath());
 		}
-		this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
+        // once the Ruby object is created, this doesn't work. This method
+        // apparently only builds the list to be fed into newly constructed runtime
+		// this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
+        this.ruby.runScriptlet("$:.unshift \""+bundle.getAbsolutePath()+"\"");
 		this.ruby.runScriptlet("require 'bundler/setup'");
 	}
 
