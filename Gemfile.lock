@@ -1,5 +1,5 @@
 PATH
-  remote: ../jenkins-plugins.rb/runtime
+  remote: ../jenkins-plugin-runtime
   specs:
     jenkins-plugin-runtime (0.0.1)
       json
