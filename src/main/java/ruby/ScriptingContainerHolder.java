@@ -36,9 +36,6 @@ public class ScriptingContainerHolder {
     public ScriptingContainerHolder() {
         this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
         this.ruby.setClassLoader(Jenkins.getInstance().pluginManager.uberClassLoader);
-
-        register((XStream2) Hudson.XSTREAM, ruby);
-        register((XStream2) Items.XSTREAM, ruby);
     }
 
     private void register(XStream2 xs, ScriptingContainer ruby) {
