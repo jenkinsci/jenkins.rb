@@ -125,7 +125,7 @@ public class RubyPlugin extends PluginImpl {
 
 			register(Jenkins.XSTREAM2, ruby);
 			register(Items.XSTREAM2, ruby);
-			Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
+			Object pluginClass = this.ruby.runScriptlet("require 'jenkins/plugin/runtime'; Jenkins::Plugin");
 			this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
 			this.ruby.callMethod(plugin, "start");
