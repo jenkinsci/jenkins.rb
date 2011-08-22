@@ -17,3 +17,5 @@ end
 require 'rake/clean'
 directory "target"
 CLEAN.include("target")
+
+task :default => [:compile, :spec]
