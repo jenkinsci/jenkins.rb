@@ -1,7 +1,9 @@
 package ruby;
 
 import hudson.ExtensionComponent;
+import hudson.Functions;
 import hudson.Plugin;
+import hudson.Util;
 import hudson.model.Items;
 import hudson.util.IOUtils;
 import hudson.util.XStream2;
@@ -137,6 +139,12 @@ public class RubyPlugin extends PluginImpl {
 		if (!bundle.exists()) {
 		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + bundle.getAbsolutePath());
 		}
+
+        // make it easier to load arbitrary scripts from the file system, especially during the development
+        for (String path : Util.fixNull(System.getProperty("jenkins.ruby.paths")).split(",")) {
+            this.ruby.runScriptlet("$:.shift \""+path+"\"");
+        }
+
         // once the Ruby object is created, this doesn't work. This method
         // apparently only builds the list to be fed into newly constructed runtime
 		// this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
