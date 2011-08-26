@@ -4,6 +4,9 @@ require 'spec_helper'
 describe Jenkins::Plugin::Proxies::BuildWrapper do
   include ProxyHelper
 
+  subject {Jenkins::Plugin::Proxies::BuildWrapper}
+  it {should be_transient(:plugin)}
+
   before do
     @object = mock(Jenkins::Tasks::BuildWrapper)
     @wrapper = Jenkins::Plugin::Proxies::BuildWrapper.new(@plugin, @object)
