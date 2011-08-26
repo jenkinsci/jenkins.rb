@@ -1,11 +1,8 @@
 package ruby;
 
 import hudson.ExtensionComponent;
-import hudson.Functions;
-import hudson.Plugin;
 import hudson.Util;
 import hudson.model.Items;
-import hudson.util.IOUtils;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
@@ -15,12 +12,9 @@ import org.jruby.embed.ScriptingContainer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -135,9 +129,15 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	private void initRubyLoadPaths() throws Exception {
-		File bundle = new File(getScriptDir(), "vendor/gems");
-		if (!bundle.exists()) {
-		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + bundle.getAbsolutePath());
+        File gemsHome;
+        String gemsHomePath = getWrapper().getManifest().getMainAttributes().getValue("Gems-Home");
+        if (gemsHomePath!=null)
+            gemsHome = resolve(getScriptDir(),"vendor/gems");
+        else
+            gemsHome = new File(gemsHomePath);
+
+		if (!gemsHome.exists()) {
+		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + gemsHome.getAbsolutePath());
 		}
 
         // make it easier to load arbitrary scripts from the file system, especially during the development
@@ -148,9 +148,17 @@ public class RubyPlugin extends PluginImpl {
         // once the Ruby object is created, this doesn't work. This method
         // apparently only builds the list to be fed into newly constructed runtime
 		// this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
-        this.ruby.runScriptlet("$:.unshift \""+bundle.getAbsolutePath()+"\"");
+        this.ruby.runScriptlet("$:.unshift \""+gemsHome.getAbsolutePath()+"\"");
 		this.ruby.runScriptlet("require 'bundler/setup'");
 	}
+
+    private static File resolve(File base, String relative) {
+        File rel = new File(relative);
+        if(rel.isAbsolute())
+            return rel;
+        else
+            return new File(base.getParentFile(),relative);
+    }
 
 	private void register(XStream2 xs, ScriptingContainer ruby) {
         JRubyXStream.register(xs, ruby);
