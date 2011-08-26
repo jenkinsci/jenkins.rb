@@ -8,4 +8,4 @@ $CLASSPATH << Pathname(__FILE__).dirname.join('../target')
 $:.unshift Pathname(__FILE__).dirname.join('../lib')
 
 require 'jenkins/plugin/runtime'
-require 'jenkins/plugins/proxies/proxy_helper'
+require 'jenkins/plugin/proxies/proxy_helper'

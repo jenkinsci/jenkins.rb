@@ -28,7 +28,7 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
         @object = impl
       end
       @jenkins = mock(Java.jenkins.model.Jenkins)
-      @java_plugin = mock(:RubyPlugin, :getRubyController => @plugin)
+      @java_plugin = mock(:RubyPlugin, :getNativeRubyPlugin => @plugin)
       @jenkins.stub(:getPlugin).with("test-plugin").and_return(@java_plugin)
       Java.jenkins.model.Jenkins.stub(:getInstance).and_return(@jenkins)
     end
