@@ -53,6 +53,16 @@ public class RubyPlugin extends PluginImpl {
 
 	private ArrayList<ExtensionComponent> extensions;
 
+    /**
+     * Directory to load ruby lib/*.rb from.
+     */
+    private File libPath;
+
+    /**
+     * Directory to load ruby model definitions.
+     */
+    private File modelsPath;
+
 	/**
 	 * invokes a Ruby method on the specified object in the context of this plugin's
 	 * {@link ScriptingContainer}
@@ -94,7 +104,7 @@ public class RubyPlugin extends PluginImpl {
      * Loads the models.rb
      */
     public String loadBootScript() throws IOException {
-        File rb = new File(getScriptDir(), "lib/models.rb");
+        File rb = new File(getLibPath(),"models.rb");
         if (rb.exists()) {
             return FileUtils.readFileToString(rb);
         } else {
@@ -129,19 +139,17 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	private void initRubyLoadPaths() throws Exception {
-        File gemsHome;
-        String gemsHomePath = getWrapper().getManifest().getMainAttributes().getValue("Gems-Home");
-        if (gemsHomePath!=null)
-            gemsHome = resolve(getScriptDir(),"vendor/gems");
-        else
-            gemsHome = new File(gemsHomePath);
+        this.libPath = getPathFromManifest("Lib-Path","lib");
+        this.modelsPath = getPathFromManifest("Models-Path","models");
 
+        File gemsHome = getPathFromManifest("Gems-Home", "vendor/gems");
 		if (!gemsHome.exists()) {
 		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + gemsHome.getAbsolutePath());
 		}
 
         // make it easier to load arbitrary scripts from the file system, especially during the development
         for (String path : Util.fixNull(System.getProperty("jenkins.ruby.paths")).split(",")) {
+            if (path.length()==0)   continue;   // "".split(",")=>[""]
             this.ruby.runScriptlet("$:.shift \""+path+"\"");
         }
 
@@ -151,6 +159,12 @@ public class RubyPlugin extends PluginImpl {
         this.ruby.runScriptlet("$:.unshift \""+gemsHome.getAbsolutePath()+"\"");
 		this.ruby.runScriptlet("require 'bundler/setup'");
 	}
+
+    private File getPathFromManifest(String attributeName, String defaultValue) {
+        String v = getWrapper().getManifest().getMainAttributes().getValue(attributeName);
+        if (v ==null)   v = defaultValue;
+        return resolve(getScriptDir(), v);
+    }
 
     private static File resolve(File base, String relative) {
         File rel = new File(relative);
@@ -196,5 +210,13 @@ public class RubyPlugin extends PluginImpl {
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
         return new File(new File(url.getPath()),"WEB-INF/classes");
+    }
+
+    public File getLibPath() {
+        return libPath;
+    }
+
+    public File getModelsPath() {
+        return modelsPath;
     }
 }
