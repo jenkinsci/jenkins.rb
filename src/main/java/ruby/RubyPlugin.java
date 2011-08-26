@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.embed.ScriptingContainer;
+import sun.security.pkcs11.Secmod;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,11 +37,23 @@ import java.util.Collection;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class RubyPlugin extends PluginImpl {
+
+
+	/**
+	 * sets up an XSTREAM to be able to handle jruby objects
+	 * @param xs
+	 */
+	private static void enableJRubyXStream(XStream2 xs) {
+		synchronized (xs) {
+			xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
+        }
+	}
+
 	/**
 	 * The unique JRuby environment used by this plugin and all the objects
 	 * and classes that it contains.
 	 */
-	private ScriptingContainer ruby;
+	ScriptingContainer ruby;
 
     /**
      * Kinda acts like the "agent" of this ruby plugin in the Ruby world.
@@ -128,14 +141,24 @@ public class RubyPlugin extends PluginImpl {
 			ruby = new ScriptingContainerHolder().ruby;
 
 			initRubyLoadPaths();
-
-			register(Jenkins.XSTREAM2, ruby);
-			register(Items.XSTREAM2, ruby);
+			initXStreams();
 			Object pluginClass = this.ruby.runScriptlet("require 'jenkins/plugin/runtime'; Jenkins::Plugin");
 			this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
 			this.ruby.callMethod(plugin, "start");
 		}
+	}
+
+	private void initXStreams() {
+		RubyPluginRuntimeResolver resolver = new RubyPluginRuntimeResolver(this);
+		JRubyXStream.register(Jenkins.XSTREAM2, resolver);
+		JRubyXStream.register(Items.XSTREAM2, resolver);
+
+		//TODO: these should be in some sort of static initializer, but where?
+		//TODO: if I move it to an initializer block, then it barfs.
+		enableJRubyXStream(Jenkins.XSTREAM2);
+		enableJRubyXStream(Items.XSTREAM2);
+
 	}
 
 	private void initRubyLoadPaths() throws Exception {
@@ -172,13 +195,6 @@ public class RubyPlugin extends PluginImpl {
             return rel;
         else
             return new File(base.getParentFile(),relative);
-    }
-
-	private void register(XStream2 xs, ScriptingContainer ruby) {
-        JRubyXStream.register(xs, ruby);
-        synchronized (xs) {
-            xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
-        }
     }
 
 	/**
@@ -219,4 +235,12 @@ public class RubyPlugin extends PluginImpl {
     public File getModelsPath() {
         return modelsPath;
     }
+
+	public ScriptingContainer getScriptingContainer() {
+		return ruby;
+	}
+
+	public Object getNativeRubyPlugin() {
+		return this.plugin;
+	}
 }
