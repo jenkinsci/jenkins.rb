@@ -1,4 +1,5 @@
 require 'jenkins/plugin/tools/version'
+require 'jenkins/plugin/tools/hpi'
 require 'zip/zip'
 
 module Jenkins
@@ -31,6 +32,8 @@ module Jenkins
     include ::Rake::DSL if defined? ::Rake::DSL
 
     def install
+      desc "Directory used as JENKINS_HOME during 'rake server'"
+      directory work = "work"
 
       desc "remove built artifacts"
       task :clean do
@@ -78,8 +81,18 @@ module Jenkins
         puts "#{::PluginName} plugin #{::PluginVersion} built to #{file_name}"
       end
 
+      desc "resolve dependency plugins into #{work}/plugins"
+      task :'resolve-dependency-plugins' => [work] do
+        FileUtils.mkdir_p("#{work}/plugins")
+
+        puts "Copying plugin dependencies into #{work}/plugins"
+        ::PluginDeps.each do |short_name,version|
+          FileUtils.cp Jenkins::Plugin::Tools::Hpi::resolve(short_name,version), "#{work}/plugins/#{short_name}.hpi", :verbose=>true
+        end
+      end
+
       desc "run a Jenkins server with this plugin"
-      task :server => [:bundle, work] do
+      task :server => [:bundle, :'resolve-dependency-plugins'] do
         require 'jenkins/war'
         require 'zip/zip'
         require 'fileutils'
