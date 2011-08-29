@@ -2,6 +2,27 @@ require 'jenkins/plugin/tools/version'
 require 'zip/zip'
 
 module Jenkins
+  # given the IO handle, produce the basic manifest entries that are common between hpi and hpl formats
+  def generate_manifest(f)
+    f.puts "Manifest-Version: 1.0"
+    f.puts "Created-By: #{Jenkins::Plugin::Tools::VERSION}"
+    f.puts "Build-Ruby-Platform: #{RUBY_PLATFORM}"
+    f.puts "Build-Ruby-Version: #{RUBY_VERSION}"
+
+    f.puts "Group-Id: org.jenkins-ci.plugins"
+    f.puts "Short-Name: #{::PluginName}"
+    f.puts "Long-Name: #{::PluginName}" # TODO: better name
+    f.puts "Url: http://jenkins-ci.org/" # TODO: better value
+    # f.puts "Compatible-Since-Version:"
+    f.puts "Plugin-Class: ruby.RubyPlugin"
+    f.puts "Plugin-Version: #{::PluginVersion}"
+    f.puts "Jenkins-Version: 1.426"
+
+    f.puts "Plugin-Dependencies: " + ::PluginDeps.map{|k,v| "#{k}:#{v}"}.join(",")
+    # f.puts "Plugin-Developers:"
+  end
+
+
   class Rake
     def self.install_tasks
       self.new.install
@@ -41,20 +62,7 @@ module Jenkins
 
         Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zipfile|
           zipfile.get_output_stream("META-INF/MANIFEST.MF") do |f|
-            f.puts "Manifest-Version: 1.0"
-            f.puts "Created-By: #{Jenkins::Plugin::Tools::VERSION}"
-            f.puts "Build-Ruby-Platform: #{RUBY_PLATFORM}"
-            f.puts "Build-Ruby-Version: #{RUBY_VERSION}"
-
-            f.puts "Group-Id: org.jenkins-ci.plugins"
-            f.puts "Short-Name: #{::PluginName}"
-            f.puts "Long-Name: #{::PluginName}"     # TODO: better name
-            f.puts "Url: http://jenkins-ci.org/"    # TODO: better value
-            # f.puts "Compatible-Since-Version:"
-            f.puts "Plugin-Class: ruby.RubyPlugin"
-            f.puts "Plugin-Version: #{::PluginVersion}"
-            f.puts "Jenkins-Version: 1.426"
-            f.puts "Plugin-Dependencies: ruby-runtime:0.1-SNAPSHOT"
+            generate_manifest(f)
             # f.puts "Plugin-Developers:"
           end
           zipfile.mkdir("WEB-INF/classes")
@@ -69,6 +77,39 @@ module Jenkins
         end
         puts "#{::PluginName} plugin #{::PluginVersion} built to #{file_name}"
       end
+
+      desc "run a Jenkins server with this plugin"
+      task :server => [:bundle, work] do
+        require 'jenkins/war'
+        require 'zip/zip'
+        require 'fileutils'
+
+        # generate the plugin manifest
+        FileUtils.mkdir_p("#{work}/plugins")
+        File.open("#{work}/plugins/#{::PluginName}.hpl",mode="w+") do |f|
+          generate_manifest f
+
+          f.puts "Libraries: "+["lib","models","pkg/vendor"].collect{|r| Dir.pwd+'/'+r}.join(",")
+          # TODO: where do we put views?
+          # TODO: where do we put static resources?
+          f.puts "Resource-Path: #{Dir.pwd}/views"
+          f.puts "Gems-Home: #{Dir.pwd}/pkg/vendor/gems"
+          f.puts "Lib-Path: #{Dir.pwd}/lib/"
+          f.puts "Models-Path: #{Dir.pwd}/models"
+        end
+
+        # TODO: assemble dependency plugins
+
+        # execute Jenkins
+        args = []
+        args << "java"
+        args << "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
+        args << "-DJENKINS_HOME=#{work}"
+        args << "-jar"
+        args << Jenkins::War::LOCATION
+        exec *args
+      end
+
     end
   end
 end
