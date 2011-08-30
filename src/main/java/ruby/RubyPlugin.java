@@ -181,7 +181,7 @@ public class RubyPlugin extends PluginImpl {
 
 		String loadPaths = getWrapper().getManifest().getMainAttributes().getValue("Load-Path");
 		if (loadPaths != null) {
-			for (String path: loadPaths.split(File.pathSeparator)) {
+			for (String path: loadPaths.split(":")) {
 				addLoadPath(path);
 			}
 		} else {
