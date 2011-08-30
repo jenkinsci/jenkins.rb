@@ -1,12 +1,13 @@
-require 'jenkins/plugin/tools/version'
+require 'jenkins/plugin/version'
 require 'jenkins/plugin/tools/hpi'
+require 'jenkins/plugin/tools/loadpath'
 require 'zip/zip'
 
 module Jenkins
   # given the IO handle, produce the basic manifest entries that are common between hpi and hpl formats
-  def generate_manifest(f)
+  def self.generate_manifest(f)
     f.puts "Manifest-Version: 1.0"
-    f.puts "Created-By: #{Jenkins::Plugin::Tools::VERSION}"
+    f.puts "Created-By: #{Jenkins::Plugin::VERSION}"
     f.puts "Build-Ruby-Platform: #{RUBY_PLATFORM}"
     f.puts "Build-Ruby-Version: #{RUBY_VERSION}"
 
@@ -48,6 +49,12 @@ module Jenkins
         end
       end
 
+      desc "output the development servers loadpath"
+      task :loadpath do
+        loadpath = Jenkins::Plugin::Tools::Loadpath.new(:default)
+        puts loadpath.to_path
+      end
+
       directory target = "pkg"
       desc "bundle gems"
       task :bundle => [target] do
@@ -65,8 +72,8 @@ module Jenkins
 
         Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zipfile|
           zipfile.get_output_stream("META-INF/MANIFEST.MF") do |f|
-            generate_manifest(f)
-            # f.puts "Plugin-Developers:"
+            Jenkins.generate_manifest(f)
+            f.puts "Bundle-Path: vendor/gems"
           end
           zipfile.mkdir("WEB-INF/classes")
 
@@ -92,21 +99,23 @@ module Jenkins
       end
 
       desc "run a Jenkins server with this plugin"
-      task :server => [:bundle, :'resolve-dependency-plugins'] do
+      task :server => :'resolve-dependency-plugins' do
         require 'jenkins/war'
         require 'zip/zip'
         require 'fileutils'
 
+        loadpath = Jenkins::Plugin::Tools::Loadpath.new
+
         # generate the plugin manifest
         FileUtils.mkdir_p("#{work}/plugins")
         File.open("#{work}/plugins/#{::PluginName}.hpl",mode="w+") do |f|
-          generate_manifest f
+          Jenkins.generate_manifest f
 
-          f.puts "Libraries: "+["lib","models","pkg/vendor"].collect{|r| Dir.pwd+'/'+r}.join(",")
+          # f.puts "Libraries: "+["lib","models","pkg/vendor"].collect{|r| Dir.pwd+'/'+r}.join(",")
           # TODO: where do we put views?
           # TODO: where do we put static resources?
+          f.puts "Load-Path: #{loadpath.to_path}"
           f.puts "Resource-Path: #{Dir.pwd}/views"
-          f.puts "Gems-Home: #{Dir.pwd}/pkg/vendor/gems"
           f.puts "Lib-Path: #{Dir.pwd}/lib/"
           f.puts "Models-Path: #{Dir.pwd}/models"
         end
