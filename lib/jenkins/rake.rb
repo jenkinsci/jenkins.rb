@@ -117,7 +117,7 @@ module Jenkins
           # f.puts "Libraries: "+["lib","models","pkg/vendor"].collect{|r| Dir.pwd+'/'+r}.join(",")
           # TODO: where do we put views?
           # TODO: where do we put static resources?
-          f.puts "Load-Path: #{loadpath.to_path}"
+          f.puts "Load-Path: #{loadpath.to_a.join(':')}"
           f.puts "Resource-Path: #{Dir.pwd}/views"
           f.puts "Lib-Path: #{Dir.pwd}/lib/"
           f.puts "Models-Path: #{Dir.pwd}/models"
