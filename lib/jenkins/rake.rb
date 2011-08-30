@@ -59,9 +59,12 @@ module Jenkins
       desc "bundle gems"
       task :bundle => [target] do
         require 'java'
+        require 'bundler'
+        require 'bundler/cli'
+
         puts "bundling..."
         ENV['BUNDLE_APP_CONFIG'] = "#{target}/vendor/bundle"
-        sh "bundle install --standalone --path #{target}/vendor/gems --without development"
+        Bundler::CLI.start ["--standalone", "--path", "#{target}/vendor/gems", "--without", "development"]
       end
 
       desc "package up stuff into HPI file"
