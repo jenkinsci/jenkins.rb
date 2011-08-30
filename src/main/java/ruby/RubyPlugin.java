@@ -8,8 +8,8 @@ import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
+import org.jruby.RubyArray;
 import org.jruby.embed.ScriptingContainer;
-import sun.security.pkcs11.Secmod;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +38,12 @@ import java.util.Collection;
 @SuppressWarnings({"UnusedDeclaration"})
 public class RubyPlugin extends PluginImpl {
 
+
+	/**
+	 * A reference to the loadpath where this ruby runtime will search whenever
+	 * a library is `require`d
+	 */
+	private RubyArray loadPath;
 
 	/**
 	 * sets up an XSTREAM to be able to handle jruby objects
@@ -141,15 +147,19 @@ public class RubyPlugin extends PluginImpl {
 			ruby = new ScriptingContainerHolder().ruby;
 
 			initRubyLoadPaths();
-			initXStreams();
-			Object pluginClass = this.ruby.runScriptlet("require 'jenkins/plugin/runtime'; Jenkins::Plugin");
-			this.plugin = this.ruby.callMethod(pluginClass, "new", this);
-
-			this.ruby.callMethod(plugin, "start");
+			initRubyXStreams();
+			initRubyNativePlugin();
 		}
 	}
 
-	private void initXStreams() {
+	private void initRubyNativePlugin() {
+		require("jenkins/plugin/runtime");
+		Object pluginClass = eval("Jenkins::Plugin");
+		this.plugin = callMethod(pluginClass, "new", this);
+		callMethod(plugin, "start");
+	}
+
+	private void initRubyXStreams() {
 		RubyPluginRuntimeResolver resolver = new RubyPluginRuntimeResolver(this);
 		JRubyXStream.register(Jenkins.XSTREAM2, resolver);
 		JRubyXStream.register(Items.XSTREAM2, resolver);
@@ -162,28 +172,50 @@ public class RubyPlugin extends PluginImpl {
 	}
 
 	private void initRubyLoadPaths() throws Exception {
+		this.loadPath = (RubyArray)eval("$:");
         this.libPath = getPathFromManifest("Lib-Path","lib");
         this.modelsPath = getPathFromManifest("Models-Path","models");
 
-        File gemsHome = getPathFromManifest("Gems-Home", "vendor/gems");
-		if (!gemsHome.exists()) {
-		    throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + gemsHome.getAbsolutePath());
+		//the Load-Path entry will be explicitly set when we are running the test server
+		//during plugin development. This allows you to just load the right gems off of the
+
+		String loadPaths = getWrapper().getManifest().getMainAttributes().getValue("Load-Path");
+		if (loadPaths != null) {
+			for (String path: loadPaths.split(File.pathSeparator)) {
+				addLoadPath(path);
+			}
+		} else {
+			//If we aren't explicitly passing the Load-Path, then this must be in production mode.
+			//we will have a full standalone gem bundle, that generates the loadpaths for us
+			File gemsHome = getPathFromManifest("Bundle-Path", "vendor/gems");
+			if (!gemsHome.exists()) {
+				throw new Exception("unable to locate gem bundle for " + getWrapper().getShortName() + " at " + gemsHome.getAbsolutePath());
+			}
+			addLoadPath(gemsHome.getAbsolutePath());
+			require("bundler/setup");
 		}
+		addLoadPath(this.libPath.getAbsolutePath());
 
         // make it easier to load arbitrary scripts from the file system, especially during the development
         for (String path : Util.fixNull(System.getProperty("jenkins.ruby.paths")).split(",")) {
             if (path.length()==0)   continue;   // "".split(",")=>[""]
-            this.ruby.runScriptlet("$:.shift \""+path+"\"");
+	        addLoadPath(path);
         }
-
-        // once the Ruby object is created, this doesn't work. This method
-        // apparently only builds the list to be fed into newly constructed runtime
-		// this.ruby.getLoadPaths().add(0, bundle.getAbsolutePath());
-        this.ruby.runScriptlet("$:.unshift \""+gemsHome.getAbsolutePath()+"\"");
-		this.ruby.runScriptlet("require 'bundler/setup'");
 	}
 
-    private File getPathFromManifest(String attributeName, String defaultValue) {
+	private Object eval(String script) {
+		return this.ruby.runScriptlet(script);
+	}
+
+	private void require(String path) {
+		eval("require '" + path + "'");
+	}
+
+	private void addLoadPath(String path) {
+		callMethod(this.loadPath, "unshift", path);
+	}
+
+	private File getPathFromManifest(String attributeName, String defaultValue) {
         String v = getWrapper().getManifest().getMainAttributes().getValue(attributeName);
         if (v ==null)   v = defaultValue;
         return resolve(getScriptDir(), v);
@@ -207,7 +239,7 @@ public class RubyPlugin extends PluginImpl {
 	@Override
 	public void stop() throws Exception {
 		if (this.ruby != null) {
-			this.ruby.callMethod(plugin, "stop");
+			callMethod(plugin, "stop");
 		}
 	}
 
