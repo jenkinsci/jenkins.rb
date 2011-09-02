@@ -1,5 +1,5 @@
 require 'jenkins/plugin'
-require 'jenkins/plugin/version'
+require 'jenkins/plugin/runtime/version'
 require 'jenkins/plugin/proxy'
 require 'jenkins/plugin/proxies'
 require 'jenkins/model'

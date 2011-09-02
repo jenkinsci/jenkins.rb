@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "jenkins/plugin/version"
+require "jenkins/plugin/runtime/version"
 
 Gem::Specification.new do |s|
   s.name        = "jenkins-plugin-runtime"
-  s.version     = Jenkins::Plugin::VERSION
+  s.version     = Jenkins::Plugin::Runtime::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Charles Lowell"]
   s.email       = ["cowboyd@thefrontside.net"]
