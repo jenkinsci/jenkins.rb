@@ -162,7 +162,7 @@ public class RubyPlugin extends PluginImpl {
 	private void initRubyNativePlugin() {
 		require("jenkins/plugin/runtime");
 		Object pluginClass = eval("Jenkins::Plugin");
-		this.plugin = callMethod(pluginClass, "new", this);
+		this.plugin = callMethod(pluginClass, "initialize", this);
 		callMethod(plugin, "start");
 	}
 
