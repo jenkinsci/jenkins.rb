@@ -9,6 +9,9 @@ module Jenkins
   # On the Java side, it contains a reference to an instance
   # of RubyPlugin. These two objects talk to each other to
   # get things done.
+  #
+  # Each running ruby plugin has exactly one instance of
+  # `Jenkins::Plugin`
   class Plugin
 
     # A list of all the hudson.model.Descriptor objects
@@ -37,11 +40,43 @@ module Jenkins
       @start = @stop = proc {}
       @descriptors = {}
       @proxies = Proxies.new(self)
-      load_models
+    end
 
-       # load model definitions
-       # TODO: auto-register them
-       self.instance_eval @java.loadBootScript(), "models.rb"
+    # Initialize the singleton instance that will run for a
+    # ruby plugin. This method is designed to be called by the
+    # Java side when setting up the ruby plugin
+    # @return [Jenkins::Plugin] the singleton instance
+    def self.initialize(java)
+      #TODO: check for double initialization?!?
+      @instance = new(java)
+      @instance.load_models
+      return @instance
+    end
+
+    # Get the singleton instance associated with this plugin
+    #
+    # This is useful when code in the plugin needs to get a
+    # reference to the plugin in which it is running e.g.
+    #
+    #     Jenkins::Plugin.instance #=> the running plugin
+    #
+    # @return [Jenkins::Plugin] the singleton instance
+    def self.instance
+      @instance
+    end
+
+    # Register a ruby class as a Jenkins extension point of
+    # a particular java type
+    #
+    # This method is invoked automatically as part of the auto-registration
+    # process, and should not need to be invoked by plugin code.
+    #
+    # @param [Class] ruby_class the class implementing the extension point
+    # @param [java.lang.Class] java_class that Jenkins will see this extention point as
+    def register_describable(ruby_class, java_class)
+      descriptor = Jenkins::Model::Descriptor.new(ruby_class, self, java_class)
+      @peer.addExtension(descriptor)
+      @descriptors[ruby_class] = descriptor
     end
 
     # unique identifier for this plugin in the Jenkins server

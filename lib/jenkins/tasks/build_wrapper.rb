@@ -8,7 +8,9 @@ module Jenkins
     # {http://javadoc.jenkins-ci.org/hudson/tasks/BuildWrapper.html}
     class BuildWrapper
       include Jenkins::Model
+      include Jenkins::Model::Describable
 
+      describe_as Java.hudson.tasks.BuildWrapper
 
       # Perform setup for a build
       #
@@ -18,7 +20,7 @@ module Jenkins
       # @param [Jenkins::Model::Listener] listener channel for interacting with build output console
       # @param [Hash] env a place to store information needed by #teardown
       def setup(build, launcher, listener, env)
-        listener.log "hello from a build wrapper"
+
       end
 
       # Optionally perform optional teardown for a build
