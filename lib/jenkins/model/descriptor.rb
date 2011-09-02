@@ -5,9 +5,9 @@ module Jenkins
   module Model
     class Descriptor < Java.hudson.model.Descriptor
 
-      def initialize(name, impl, plugin, java_type)
+      def initialize(impl, plugin, java_type)
         super(Java.org.jruby.RubyObject.java_class)
-        @name, @impl, @plugin, @java_type = name, impl, plugin, java_type
+        @impl, @plugin, @java_type = impl, plugin, java_type
       end
 
       def getDisplayName
@@ -16,18 +16,6 @@ module Jenkins
 
       def getT()
         @java_type
-      end
-
-      def getConfigPage
-        "/ruby/plugin/views/#{@name}/config.jelly".tap do |path|
-          puts "getConfigPage -> #{path}"
-        end
-      end
-
-      def getGlobalConfigPage
-        "/ruby/plugin/views/#{@name}/global.jelly".tap do |path|
-          puts "getGlobalConfigPage -> #{path}"
-        end
       end
 
       def newInstance(request, form)
