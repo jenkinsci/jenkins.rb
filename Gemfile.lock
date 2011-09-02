@@ -1,13 +1,9 @@
-PATH
-  remote: ../jenkins-plugin-runtime
-  specs:
-    jenkins-plugin-runtime (0.0.1)
-      json
-
 GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
+    jenkins-plugin-runtime (0.1.0)
+      json
     json (1.5.3)
     json (1.5.3-java)
     rspec (2.6.0)
@@ -24,6 +20,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  jenkins-plugin-runtime!
+  jenkins-plugin-runtime
   json (~> 1.5.0)
   rspec (>= 2.5.0)
