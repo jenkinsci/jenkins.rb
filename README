@@ -1,7 +1,9 @@
 See https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+plugin+development+in+Ruby for other dependencies
 
-1. let bundler bundle all gems
-   (./.bundle/config puts them all under src/main/resources/ruby/vendor/gems/jruby)
-    $ bundle install
+1. switch to JRuby
+    $ rvm jruby
 2. build the plugin with maven
     $ mvn install
+
+If ./src/main/resources/ruby/vendor directory doesn't exist, Maven will run "bundle install".
+But otherwise it'll skip it for efficiency.
