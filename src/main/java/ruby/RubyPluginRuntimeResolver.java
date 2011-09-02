@@ -7,13 +7,15 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import jenkins.model.Jenkins;
 import org.jenkinsci.jruby.RubyRuntimeResolver;
 import org.jruby.Ruby;
+import org.jruby.embed.ScriptingContainer;
 import org.jruby.runtime.builtin.IRubyObject;
 
+/**
+ * Each Ruby plugin gets its own {@link ScriptingContainer}, so put the plugin name
+ * as an attribute so that we can correctly unmarshal it back.
+ */
 class RubyPluginRuntimeResolver extends RubyRuntimeResolver {
-	private RubyPlugin plugin;
-
-	public RubyPluginRuntimeResolver(RubyPlugin plugin) {
-		this.plugin = plugin;
+	public RubyPluginRuntimeResolver() {
 	}
 
 	@Override
@@ -24,7 +26,9 @@ class RubyPluginRuntimeResolver extends RubyRuntimeResolver {
 	}
 
 	@Override
-	public void marshal(IRubyObject iRubyObject, HierarchicalStreamWriter writer, MarshallingContext context) {
-		writer.addAttribute("pluginid", plugin.getWrapper().getShortName());
+	public void marshal(IRubyObject o, HierarchicalStreamWriter writer, MarshallingContext context) {
+        RubyPlugin p = RubyPlugin.from(o.getRuntime());
+        if (p!=null)
+            writer.addAttribute("pluginid", p.getWrapper().getShortName());
 	}
 }

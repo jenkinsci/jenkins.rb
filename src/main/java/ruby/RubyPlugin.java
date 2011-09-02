@@ -8,8 +8,12 @@ import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
+import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.embed.ScriptingContainer;
+import org.jruby.java.proxies.JavaProxy;
+import org.jruby.javasupport.Java;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,16 +48,6 @@ public class RubyPlugin extends PluginImpl {
 	 * a library is `require`d
 	 */
 	private RubyArray loadPath;
-
-	/**
-	 * sets up an XSTREAM to be able to handle jruby objects
-	 * @param xs
-	 */
-	private static void enableJRubyXStream(XStream2 xs) {
-		synchronized (xs) {
-			xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
-        }
-	}
 
 	/**
 	 * The unique JRuby environment used by this plugin and all the objects
@@ -146,29 +140,30 @@ public class RubyPlugin extends PluginImpl {
 			this.extensions = new ArrayList<ExtensionComponent>();
 			ruby = new ScriptingContainerHolder().ruby;
 
+            // inject the plugin reference as a global variable and attribute
+            // so that we can acecss it from inside Ruby
+            Ruby r = ruby.getRuntime();
+            r.getGlobalVariables().set("$RUBYPLUGIN", Java.getInstance(ruby.getRuntime(), this));
+
 			initRubyLoadPaths();
-			initRubyXStreams();
 			initRubyNativePlugin();
 		}
 	}
+
+    /**
+     * Gets the plugin that owns the container.
+     */
+    public static RubyPlugin from(Ruby r) {
+        IRubyObject v = r.getGlobalVariables().get("$RUBYPLUGIN");
+        if (v==null)        return null;
+        return (RubyPlugin) v.toJava(RubyPlugin.class);
+    }
 
 	private void initRubyNativePlugin() {
 		require("jenkins/plugin/runtime");
 		Object pluginClass = eval("Jenkins::Plugin");
 		this.plugin = callMethod(pluginClass, "new", this);
 		callMethod(plugin, "start");
-	}
-
-	private void initRubyXStreams() {
-		RubyPluginRuntimeResolver resolver = new RubyPluginRuntimeResolver(this);
-		JRubyXStream.register(Jenkins.XSTREAM2, resolver);
-		JRubyXStream.register(Items.XSTREAM2, resolver);
-
-		//TODO: these should be in some sort of static initializer, but where?
-		//TODO: if I move it to an initializer block, then it barfs.
-		enableJRubyXStream(Jenkins.XSTREAM2);
-		enableJRubyXStream(Items.XSTREAM2);
-
 	}
 
 	private void initRubyLoadPaths() throws Exception {
