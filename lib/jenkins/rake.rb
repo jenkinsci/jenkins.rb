@@ -130,6 +130,8 @@ module Jenkins
         args << "java"
         args << "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
         args << "-DJENKINS_HOME=#{work}"
+        args << "-Dstapler.trace=true"
+        args << "-Ddebug.YUI=true"
         args << "-jar"
         args << Jenkins::War::LOCATION
         exec *args
