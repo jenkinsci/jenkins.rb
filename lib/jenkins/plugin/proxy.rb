@@ -28,6 +28,12 @@ module Jenkins
         @pluginid = @plugin.name
       end
 
+      # tell Stapler to go look for views from the wrapped object
+      include Java.org.kohsuke.stapler.StaplerProxy
+      def getTarget
+        @object
+      end
+
       # Make sure that proxy classes do not try to persist the plugin parameter.
       # when serializing this proxy to XStream. It will be reconstructed with
       # [Unmarshal#read_completed]
