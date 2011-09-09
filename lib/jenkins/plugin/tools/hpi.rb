@@ -52,8 +52,9 @@ module Jenkins
           FileUtils.mkdir_p(File.dirname(cache))
           open(cache+".tmp","wb") do |f|
             puts "Downloading #{short_name} #{version}"
-            url = "https://updates.jenkins-ci.org/download/plugins/#{short_name}/#{version}/#{short_name}.hpi?for=ruby-plugin"
-             f.write fetch(url).body
+            url = "http://updates.jenkins-ci.org/download/plugins/#{short_name}/#{version}/#{short_name}.hpi?for=ruby-plugin"
+            puts "  from #{url}"
+            f.write fetch(url).body
           end
           FileUtils.mv cache+".tmp", cache
 
@@ -61,7 +62,7 @@ module Jenkins
         end
 
         # download with redirect support
-        def fetch(uri, limit = 10)
+        def self.fetch(uri, limit = 10)
           # You should choose better exception.
           raise ArgumentError, 'HTTP redirect too deep' if limit == 0
 
