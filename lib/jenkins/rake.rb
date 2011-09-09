@@ -114,13 +114,14 @@ module Jenkins
         File.open("#{work}/plugins/#{::PluginName}.hpl",mode="w+") do |f|
           Jenkins.generate_manifest f
 
-          # f.puts "Libraries: "+["lib","models","pkg/vendor"].collect{|r| Dir.pwd+'/'+r}.join(",")
-          # TODO: where do we put views?
-          # TODO: where do we put static resources?
           f.puts "Load-Path: #{loadpath.to_a.join(':')}"
-          f.puts "Resource-Path: #{Dir.pwd}/views"
           f.puts "Lib-Path: #{Dir.pwd}/lib/"
           f.puts "Models-Path: #{Dir.pwd}/models"
+          # Stapler expects view erb/haml scripts to be in the JVM ClassPath
+          f.puts "Class-Path: #{Dir.pwd}/views"
+          # Directory for static images, javascript, css, etc. of this plugin.
+          # The static resources are mapped under #CONTEXTPATH/plugin/SHORTNAME/
+          f.puts "Resource-Path: #{Dir.pwd}/static"
         end
 
         # TODO: assemble dependency plugins
