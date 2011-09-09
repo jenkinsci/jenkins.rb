@@ -6,7 +6,11 @@ import hudson.util.XStream2;
 import jenkins.model.Jenkins;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
+import org.kohsuke.stapler.Facet;
+import org.kohsuke.stapler.WebApp;
+import org.kohsuke.stapler.jelly.jruby.JRubyFacet;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -21,6 +25,17 @@ public class RubyRuntimePlugin extends Plugin {
         super.start();
         LOGGER.info("Injecting JRuby into XStream");    // logging only because we suspect that different plugin classes are instantiated
         initRubyXStreams();
+
+        registerJRubyFacet();
+    }
+
+    private void registerJRubyFacet() {
+        List<Facet> facets = WebApp.get(Jenkins.getInstance().servletContext).facets;
+        for (Facet f : facets) {
+            if (f instanceof JRubyFacet)
+                return; // already there
+        }
+        facets.add(new JRubyFacet());
     }
 
     private static void initRubyXStreams() {
