@@ -9,7 +9,7 @@ describe Jenkins::Model::Action do
     a.display_name.should eql "CoolAction"
   end
 
-  describe "its icon_file" do
+  describe "its icon_filename" do
     it "is nil by default" do
       new_action.icon.should be_nil
     end
@@ -21,8 +21,15 @@ describe Jenkins::Model::Action do
     end
   end
 
-  describe "url_name" do
-    it "can be configured"
+  describe "url_path" do
+    it "is nil by default" do
+      new_action.url_path.should be_nil
+    end
+    it "can be configured" do
+      new_action do
+        url_path "/foo/bar"
+      end.new.url_path.should eql "/foo/bar"
+    end
   end
 
   private

@@ -65,6 +65,33 @@ module Jenkins
       @instance
     end
 
+    # Registers a singleton extension point directly with Jenkins.
+    # Extensions registered via this method are different than
+    # those registered via `register_describable` in that there
+    # are only one instance of them, and so things like configuration
+    # construction, and validation do not apply.
+    #
+    # This method accepts either an instance of the extension point or
+    # a class implementing the extension point. If a class is provided,
+    # it will attempt to construct an instance with the arguments
+    # provided. e.g.
+    #     # construct an instance
+    #     plugin.register_extension SomeRootAction, "gears.png"
+    #     # pass in a preconfigured instance
+    #     ext = MyGreatExtension.build do |c|
+    #       c.name "fantastic"
+    #       c.fizzle :foo
+    #     end
+    #     plugin.register_extension ext
+    #
+    # @param [Class|Object] extension the extension to register
+    # @param [...] arguments to pass to
+
+    def register_extension(class_or_instance, *args)
+      extension = class_or_instance.is_a?(Class) ? class_or_instance.new : class_or_instance
+      @peer.addExtension(export(extension))
+    end
+
     # Register a ruby class as a Jenkins extension point of
     # a particular java type
     #
@@ -75,8 +102,8 @@ module Jenkins
     # @param [java.lang.Class] java_class that Jenkins will see this extention point as
     def register_describable(ruby_class, java_class)
       descriptor = Jenkins::Model::Descriptor.new(ruby_class, self, java_class)
-      @peer.addExtension(descriptor)
       @descriptors[ruby_class] = descriptor
+      @peer.addExtension(descriptor)
     end
 
     # unique identifier for this plugin in the Jenkins server

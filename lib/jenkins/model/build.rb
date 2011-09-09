@@ -6,7 +6,6 @@ module Jenkins
     #
     class Build
 
-      ##
       # the Hudson::Model::AbstractBuild represented by this build
       attr_reader :native
 
