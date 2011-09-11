@@ -15,6 +15,7 @@ import org.jruby.rack.servlet.ServletRackEnvironment;
 import org.jruby.rack.servlet.ServletRackResponseEnvironment;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -284,9 +285,18 @@ public class RubyPlugin extends PluginImpl {
      *      the ruby part of the rack implementation.
      */
     public void rack(IRubyObject servletHandler) {
+        final StaplerRequest req = Stapler.getCurrentRequest();
+        // we don't want the Rack app to consider the portion of the URL that was already consumed
+        // to reach to the Rack app, so for PATH_INFO we use getRestOfPath(), not getPathInfo()
+        ServletRackEnvironment env = new ServletRackEnvironment(req, rackContext) {
+            @Override
+            public String getPathInfo() {
+                return req.getRestOfPath();
+            }
+        };
         DefaultRackApplication dra = new DefaultRackApplication();
         dra.setApplication(servletHandler);
-        dra.call(new ServletRackEnvironment(Stapler.getCurrentRequest(),rackContext))
+        dra.call(env)
                 .respond(new ServletRackResponseEnvironment(Stapler.getCurrentResponse()));
     }
 }
