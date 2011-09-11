@@ -2,18 +2,19 @@ package ruby;
 
 import hudson.ExtensionComponent;
 import hudson.Util;
-import hudson.model.Items;
-import hudson.util.XStream2;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
-import org.jenkinsci.jruby.JRubyMapper;
-import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.embed.ScriptingContainer;
-import org.jruby.java.proxies.JavaProxy;
 import org.jruby.javasupport.Java;
+import org.jruby.rack.DefaultRackApplication;
+import org.jruby.rack.servlet.ServletRackConfig;
+import org.jruby.rack.servlet.ServletRackContext;
+import org.jruby.rack.servlet.ServletRackEnvironment;
+import org.jruby.rack.servlet.ServletRackResponseEnvironment;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.kohsuke.stapler.Stapler;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +77,8 @@ public class RubyPlugin extends PluginImpl {
      */
     private File modelsPath;
 
+    private ServletRackContext rackContext;
+
 	/**
 	 * invokes a Ruby method on the specified object in the context of this plugin's
 	 * {@link ScriptingContainer}
@@ -136,18 +139,20 @@ public class RubyPlugin extends PluginImpl {
 	public void start() throws Exception {
 		//This seems to be instantiatiating RubyPlugin for the abstract instance
 		//I thought it had been working to not do so at one point...
-		if (!this.getWrapper().getShortName().equals("ruby-runtime")) {
-			this.extensions = new ArrayList<ExtensionComponent>();
-			ruby = new ScriptingContainerHolder().ruby;
+		if (this.getWrapper().getShortName().equals("ruby-runtime"))    return;
 
-            // inject the plugin reference as a global variable and attribute
-            // so that we can acecss it from inside Ruby
-            Ruby r = ruby.getRuntime();
-            r.getGlobalVariables().set("$RUBYPLUGIN", Java.getInstance(ruby.getRuntime(), this));
+        this.extensions = new ArrayList<ExtensionComponent>();
+        ruby = new ScriptingContainerHolder().ruby;
 
-			initRubyLoadPaths();
-			initRubyNativePlugin();
-		}
+        // inject the plugin reference as a global variable and attribute
+        // so that we can acecss it from inside Ruby
+        Ruby r = ruby.getRuntime();
+        r.getGlobalVariables().set("$RUBYPLUGIN", Java.getInstance(ruby.getRuntime(), this));
+
+        initRubyLoadPaths();
+        initRubyNativePlugin();
+        
+        rackContext = new ServletRackContext(new ServletRackConfig(Jenkins.getInstance().servletContext));
 	}
 
     /**
@@ -270,4 +275,18 @@ public class RubyPlugin extends PluginImpl {
 	public Object getNativeRubyPlugin() {
 		return this.plugin;
 	}
+
+    /**
+     * Let a Rack application handle the current request.
+     *
+     * @param servletHandler
+     *      Instance of Rack::Handler::Servlet which wraps the actual rack application and provides
+     *      the ruby part of the rack implementation.
+     */
+    public void rack(IRubyObject servletHandler) {
+        DefaultRackApplication dra = new DefaultRackApplication();
+        dra.setApplication(servletHandler);
+        dra.call(new ServletRackEnvironment(Stapler.getCurrentRequest(),rackContext))
+                .respond(new ServletRackResponseEnvironment(Stapler.getCurrentResponse()));
+    }
 }
