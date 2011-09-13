@@ -158,10 +158,15 @@ module Jenkins
 
     def load_models
       p = @java.getModelsPath().getPath()
+      # TODO: can we access to Jenkins console logger?
       puts "Trying to load models from #{p}"
       for filename in Dir["#{p}/**/*.rb"]
         puts "Loading "+filename
-        load filename
+        begin
+          load filename
+        rescue Exception => e
+          puts "#{e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+        end
       end
     end
   end
