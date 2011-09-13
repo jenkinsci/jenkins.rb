@@ -4,6 +4,10 @@ module Jenkins
     ##
     # A single step in the entire build process
     class Builder
+      include Jenkins::Model
+      include Jenkins::Model::Describable
+
+      describe_as Java.hudson.tasks.Builder
 
       ##
       # Runs before the build begins
