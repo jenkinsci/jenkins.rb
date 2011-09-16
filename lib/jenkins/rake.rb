@@ -1,10 +1,16 @@
 require 'jenkins/plugin/version'
+require 'jenkins/plugin/specification'
 require 'jenkins/plugin/tools/hpi'
 require 'jenkins/plugin/tools/loadpath'
 require 'zip/zip'
 
 module Jenkins
   # given the IO handle, produce the basic manifest entries that are common between hpi and hpl formats
+
+  def self.spec
+    @spec ||= Jenkins::Plugin::Specification.load(Dir['*.pluginspec'].first)
+  end
+
   def self.generate_manifest(f)
     f.puts "Manifest-Version: 1.0"
     f.puts "Created-By: #{Jenkins::Plugin::VERSION}"
@@ -12,15 +18,15 @@ module Jenkins
     f.puts "Build-Ruby-Version: #{RUBY_VERSION}"
 
     f.puts "Group-Id: org.jenkins-ci.plugins"
-    f.puts "Short-Name: #{::PluginName}"
-    f.puts "Long-Name: #{::PluginName}" # TODO: better name
+    f.puts "Short-Name: #{Jenkins.spec.name}"
+    f.puts "Long-Name: #{Jenkins.spec.name}" # TODO: better name
     f.puts "Url: http://jenkins-ci.org/" # TODO: better value
     # f.puts "Compatible-Since-Version:"
     f.puts "Plugin-Class: ruby.RubyPlugin"
-    f.puts "Plugin-Version: #{::PluginVersion}"
+    f.puts "Plugin-Version: #{Jenkins.spec.version}"
     f.puts "Jenkins-Version: 1.426"
 
-    f.puts "Plugin-Dependencies: " + ::PluginDeps.map{|k,v| "#{k}:#{v}"}.join(",")
+    f.puts "Plugin-Dependencies: " + Jenkins.spec.dependencies.map{|k,v| "#{k}:#{v}"}.join(",")
     # f.puts "Plugin-Developers:"
   end
 
@@ -71,7 +77,7 @@ module Jenkins
       desc "package up stuff into HPI file"
       task :package => [:verify_constants, target, :bundle] do
 
-        file_name = "#{target}/#{::PluginName}.hpi"
+        file_name = "#{target}/#{Jenkins.spec.name}.hpi"
         File.delete file_name if File.exists?(file_name)
 
         Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zipfile|
@@ -89,7 +95,7 @@ module Jenkins
             end
           end
         end
-        puts "#{::PluginName} plugin #{::PluginVersion} built to #{file_name}"
+        puts "#{Jenkins.spec.name} plugin #{Jenkins.spec.version} built to #{file_name}"
       end
 
       desc "resolve dependency plugins into #{work}/plugins"
@@ -97,7 +103,7 @@ module Jenkins
         FileUtils.mkdir_p("#{work}/plugins")
 
         puts "Copying plugin dependencies into #{work}/plugins"
-        ::PluginDeps.each do |short_name,version|
+        Jenkins.spec.dependencies.each do |short_name,version|
           FileUtils.cp Jenkins::Plugin::Tools::Hpi::resolve(short_name,version), "#{work}/plugins/#{short_name}.hpi", :verbose=>true
         end
       end
@@ -112,7 +118,7 @@ module Jenkins
 
         # generate the plugin manifest
         FileUtils.mkdir_p("#{work}/plugins")
-        File.open("#{work}/plugins/#{::PluginName}.hpl",mode="w+") do |f|
+        File.open("#{work}/plugins/#{Jenkins.spec.name}.hpl",mode="w+") do |f|
           Jenkins.generate_manifest f
 
           f.puts "Load-Path: #{loadpath.to_a.join(':')}"
