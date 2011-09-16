@@ -3,7 +3,7 @@ module Jenkins
 
   # Launch processes on build slaves. No functionality is currently exposed
   class Launcher
-    # the nantive hudson.Launcher object
+    # the native hudson.Launcher object
     attr_reader :native
 
     def initialize(native = nil)
