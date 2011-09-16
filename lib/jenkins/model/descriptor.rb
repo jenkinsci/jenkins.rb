@@ -22,9 +22,9 @@ module Jenkins
         properties = JSON.parse(form.toString(2))
         properties.delete("kind")
         properties.delete("stapler-class")
-        instance = @plugin.export(construct(properties))
-        puts "instance created: #{instance}"
-        return instance
+        instance = construct(properties)
+        puts "instance created: #{instance} (#{@java_type})"
+        return @plugin.export(instance)
       end
 
       private
