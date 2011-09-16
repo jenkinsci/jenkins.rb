@@ -13,6 +13,18 @@ module Jenkins
         @native = native
       end
 
+      def build_var
+        @native.getBuildVariables()
+      end
+
+      def env(listener = nil)
+        if listener
+          # TODO: not tested. dump to listener?
+          listener = Plugin.instance.export(listener)
+        end
+        @native.getEnvironment(listener)
+      end
+
       Jenkins::Plugin::Proxies.register self, Java.hudson.model.AbstractBuild
     end
 
