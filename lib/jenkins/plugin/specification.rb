@@ -1,4 +1,6 @@
 
+require 'pathname'
+
 module Jenkins
   class Plugin
     class Specification
@@ -18,8 +20,8 @@ module Jenkins
       attr_accessor :dependencies
 
       def initialize
-        @dependencies = []
-        yield if block_given?
+        @dependencies = {}
+        yield(self) if block_given?
       end
 
       # Adds `plugin_name` as a pre-requisite of
@@ -27,7 +29,7 @@ module Jenkins
       # written in Ruby, Java, or any other language. Version right
       # now must be an *exact* version number.
       def depends_on(plugin_name, version)
-        dependencies << {plugin, version}
+        dependencies[plugin_name] = version
       end
 
       # Make sure that your specification is not corrupt.
@@ -35,6 +37,10 @@ module Jenkins
         [:name, :version, :description].each do |field|
           fail SpecificationError, "field may not be nil" unless send(field)
         end
+      end
+
+      def self.load(path)
+        eval(File.read(path), binding, path, 1)
       end
     end
 
