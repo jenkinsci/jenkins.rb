@@ -8,12 +8,16 @@ module Jenkins
         include Java.jenkins.ruby.Get
         include Jenkins::Plugin::Proxy
 
-        def prebuild(build, launcher, listener)
-          @object.prebuild(import(build), import(launcher), import(listener)) ? true : false
+        def prebuild(build, listener)
+          @object.prebuild(import(build), import(listener)) ? true : false
         end
 
         def perform(build, launcher, listener)
           @object.perform(import(build), import(launcher), import(listener)) ? true : false
+        end
+
+        def getDescriptor
+          @plugin.descriptors[@object.class]
         end
 
         def get(name)

@@ -10,8 +10,8 @@ describe Jenkins::Plugin::Proxies::Builder do
 
   describe "prebuild" do
     it "calls through to its implementation" do
-      @object.should_receive(:prebuild).with(@build, @launcher, @listener)
-      @builder.prebuild(@jBuild, @jLauncher, @jListener)
+      @object.should_receive(:prebuild).with(@build, @listener)
+      @builder.prebuild(@jBuild, @jListener)
     end
   end
 
