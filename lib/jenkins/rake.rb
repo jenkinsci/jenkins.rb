@@ -58,6 +58,7 @@ module Jenkins
       directory target = "pkg"
       desc "bundle gems"
       task :bundle => [target] do
+        fail "we still need to backport some features from bundler 1.1 prereleases for this feature to work"
         require 'java'
         require 'bundler'
         require 'bundler/cli'
