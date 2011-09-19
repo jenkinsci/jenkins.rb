@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'jpi/cli'
+require 'jenkins/plugin/cli'
 
-JPI::CLI.start
+Jenkins::Plugin::CLI.start ARGV
