@@ -2,6 +2,7 @@
 require 'thor'
 require 'jenkins/plugin/specification'
 require 'jenkins/plugin/cli/formatting'
+require 'jenkins/plugin/cli/new'
 
 
 module Jenkins
@@ -9,10 +10,7 @@ module Jenkins
     class CLI < Thor
       extend Formatting
 
-      desc "new NAME", "create a new plugin called NAME"
-      def new(name)
-        shell.say "TODO: new(#{name})"
-      end
+      register New, "new", "new NAME", "create a new plugin called NAME"
 
       desc "generate", "generate code for extensions points"
       def generate

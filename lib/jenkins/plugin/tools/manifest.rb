@@ -35,7 +35,7 @@ module Jenkins
           io.puts "Lib-Path: #{Dir.pwd}/lib/"
           io.puts "Models-Path: #{Dir.pwd}/models"
           # Stapler expects view erb/haml scripts to be in the JVM ClassPath
-          io.puts "Class-Path: #{Dir.pwd}/views"
+          io.puts "Class-Path: #{Dir.pwd}/views" if File.exists?("#{Dir.pwd}/views")
           # Directory for static images, javascript, css, etc. of this plugin.
           # The static resources are mapped under #CONTEXTPATH/plugin/SHORTNAME/
           io.puts "Resource-Path: #{Dir.pwd}/static"

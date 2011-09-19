@@ -1,0 +1,8 @@
+
+Jenkins::Plugin::Specification.new do |plugin|
+  plugin.name = '<%= name %>'
+  plugin.version = '0.0.1'
+  plugin.description = 'enter description here'
+
+  plugin.depends_on 'ruby-runtime', '0.3'
+end

@@ -37,7 +37,7 @@ module Jenkins
           list = printable_tasks
           print shell.set_color("jpi", :black, true)
           shell.say <<-USEAGE
-- tools to create, build, develop and release Jenkins plugins
+ - tools to create, build, develop and release Jenkins plugins
 
 Usage: jpi command [arguments] [options]
 

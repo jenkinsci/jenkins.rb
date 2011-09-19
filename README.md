@@ -26,8 +26,16 @@ The gem provides the `jpi` executeable
       jpi server          # run a test server with plugin
       jpi version         # show jpi version information
 
-Once you have a plugin project, you can run a Jenkins test server like so:
+The first thing you'll probably want to do is create a new ruby plugin.
 
+    $ jpi new one-great-plugin
+          create  one-great-plugin/Gemfile
+          create  one-great-plugin/one-great-plugin.pluginspec
+
+This will create a minimal plugin project structure, to which you can add later.
+Once you have your plugin created, you can run a server with it loaded
+
+    $ cd one-great-plugin
     $ jpi server
 
     Listening for transport dt_socket at address: 8000
@@ -43,9 +51,6 @@ Once you have a plugin project, you can run a Jenkins test server like so:
     INFO: Listed all plugins
     Sep 19, 2011 12:01:39 PM ruby.RubyRuntimePlugin start
     INFO: Injecting JRuby into XStream
-    Loading models/builder.rb
-    Loading logging_wrapper.rb
-    Loading root_action.rb
     Sep 19, 2011 12:01:49 PM jenkins.model.Jenkins$6 onAttained
     INFO: Prepared all plugins
     Sep 19, 2011 12:01:49 PM jenkins.model.Jenkins$6 onAttained
@@ -60,6 +65,12 @@ Once you have a plugin project, you can run a Jenkins test server like so:
     INFO: JNLP slave agent listener started on TCP port 52262
     Sep 19, 2011 12:02:01 PM hudson.WebAppMain$2 run
     INFO: Jenkins is fully up and running
+
+Of course, this plugin isn't actually doing anything because we haven't defined any extension
+points. Let's go ahead and create one of the most common extension points: a `Builder`
+
+    $ jpi generate builder logging
+    TODO: implement generators
 
 
 
