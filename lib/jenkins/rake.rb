@@ -48,7 +48,7 @@ module Jenkins
       end
 
       desc "package up stuff into HPI file"
-      task :package => [:verify_constants, target, :bundle] do
+      task :package => [target, :bundle] do
 
         file_name = "#{target}/#{Jenkins.spec.name}.hpi"
         File.delete file_name if File.exists?(file_name)
@@ -73,37 +73,11 @@ module Jenkins
 
       desc "run a Jenkins server with this plugin"
       task :server do
-        require 'jenkins/plugin/tools/resolver'
-        require 'jenkins/plugin/tools/manifest'
+        require 'jenkins/plugin/tools/server'
 
-        require 'jenkins/war'
-        require 'zip/zip'
-        require 'fileutils'
-
-        loadpath = Jenkins::Plugin::Tools::Loadpath.new
-        manifest = Jenkins::Plugin::Tools::Manifest.new(Jenkins.spec)
-        resolver = Jenkins::Plugin::Tools::Resolver.new(Jenkins.spec, "#{work}/plugins")
-
-        resolver.resolve!
-        # generate the plugin manifest
-        FileUtils.mkdir_p("#{work}/plugins")
-        File.open("#{work}/plugins/#{Jenkins.spec.name}.hpl",mode="w+") do |f|
-          manifest.write_hpl(f, loadpath)
-        end
-
-
-        # execute Jenkins
-        args = []
-        args << "java"
-        args << "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
-        args << "-DJENKINS_HOME=#{work}"
-        args << "-Dstapler.trace=true"
-        args << "-Ddebug.YUI=true"
-        args << "-jar"
-        args << Jenkins::War::LOCATION
-        exec *args
+        server = Jenkins::Plugin::Tools::Server.new(Jenkins.spec, "work")
+        server.run!
       end
-
     end
   end
 end
