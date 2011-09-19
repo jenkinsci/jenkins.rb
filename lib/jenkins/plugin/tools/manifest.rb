@@ -1,4 +1,6 @@
 
+require 'jenkins/plugin/version'
+
 module Jenkins
   class Plugin
     module Tools
