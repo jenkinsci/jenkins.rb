@@ -11,26 +11,6 @@ module Jenkins
     @spec ||= Jenkins::Plugin::Specification.load(Dir['*.pluginspec'].first)
   end
 
-  def self.generate_manifest(f)
-    f.puts "Manifest-Version: 1.0"
-    f.puts "Created-By: #{Jenkins::Plugin::VERSION}"
-    f.puts "Build-Ruby-Platform: #{RUBY_PLATFORM}"
-    f.puts "Build-Ruby-Version: #{RUBY_VERSION}"
-
-    f.puts "Group-Id: org.jenkins-ci.plugins"
-    f.puts "Short-Name: #{Jenkins.spec.name}"
-    f.puts "Long-Name: #{Jenkins.spec.name}" # TODO: better name
-    f.puts "Url: http://jenkins-ci.org/" # TODO: better value
-    # f.puts "Compatible-Since-Version:"
-    f.puts "Plugin-Class: ruby.RubyPlugin"
-    f.puts "Plugin-Version: #{Jenkins.spec.version}"
-    f.puts "Jenkins-Version: 1.426"
-
-    f.puts "Plugin-Dependencies: " + Jenkins.spec.dependencies.map{|k,v| "#{k}:#{v}"}.join(",")
-    # f.puts "Plugin-Developers:"
-  end
-
-
   class Rake
     def self.install_tasks
       self.new.install
@@ -46,13 +26,6 @@ module Jenkins
       task :clean do
         sh "rm -rf pkg"
         sh "rm -rf vendor"
-      end
-
-      # verify that necessary metadata constants are defined
-      task :verify_constants do
-        ["PluginName","PluginVersion"].each do |n|
-          fail("Constant #{n} is not defined") unless Object.const_defined?(n)
-        end
       end
 
       desc "output the development servers loadpath"
@@ -98,40 +71,26 @@ module Jenkins
         puts "#{Jenkins.spec.name} plugin #{Jenkins.spec.version} built to #{file_name}"
       end
 
-      desc "resolve dependency plugins into #{work}/plugins"
-      task :'resolve-dependency-plugins' => [work] do
-        FileUtils.mkdir_p("#{work}/plugins")
-
-        puts "Copying plugin dependencies into #{work}/plugins"
-        Jenkins.spec.dependencies.each do |short_name,version|
-          FileUtils.cp Jenkins::Plugin::Tools::Hpi::resolve(short_name,version), "#{work}/plugins/#{short_name}.hpi", :verbose=>true
-        end
-      end
-
       desc "run a Jenkins server with this plugin"
-      task :server => :'resolve-dependency-plugins' do
+      task :server do
+        require 'jenkins/plugin/tools/resolver'
+        require 'jenkins/plugin/tools/manifest'
+
         require 'jenkins/war'
         require 'zip/zip'
         require 'fileutils'
 
         loadpath = Jenkins::Plugin::Tools::Loadpath.new
+        manifest = Jenkins::Plugin::Tools::Manifest.new(Jenkins.spec)
+        resolver = Jenkins::Plugin::Tools::Resolver.new(Jenkins.spec, "#{work}/plugins")
 
+        resolver.resolve!
         # generate the plugin manifest
         FileUtils.mkdir_p("#{work}/plugins")
         File.open("#{work}/plugins/#{Jenkins.spec.name}.hpl",mode="w+") do |f|
-          Jenkins.generate_manifest f
-
-          f.puts "Load-Path: #{loadpath.to_a.join(':')}"
-          f.puts "Lib-Path: #{Dir.pwd}/lib/"
-          f.puts "Models-Path: #{Dir.pwd}/models"
-          # Stapler expects view erb/haml scripts to be in the JVM ClassPath
-          f.puts "Class-Path: #{Dir.pwd}/views"
-          # Directory for static images, javascript, css, etc. of this plugin.
-          # The static resources are mapped under #CONTEXTPATH/plugin/SHORTNAME/
-          f.puts "Resource-Path: #{Dir.pwd}/static"
+          manifest.write_hpl(f, loadpath)
         end
 
-        # TODO: assemble dependency plugins
 
         # execute Jenkins
         args = []
