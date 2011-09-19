@@ -18,6 +18,13 @@ module Jenkins
         server.run!
       end
 
+      desc "version", "show jpi version information"
+      def version
+        require 'jenkins/plugin/version'
+        shell.say Jenkins::Plugin::VERSION
+      end
+      map ["-v","--version"] => "version"
+
       desc "help [COMMAND]", "get help for COMMAND, or for jpi itself"
       def help(command = nil)
         super
