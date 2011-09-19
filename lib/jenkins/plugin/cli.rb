@@ -9,11 +9,12 @@ module Jenkins
     class CLI < Thor
       extend Formatting
 
-      desc "server", "load jenkins plugin in a test server"
-      method_option :home, :desc => "directory to use as "
+      desc "server", "run a test server with plugin"
+      method_option :home, :desc => "set server work directory", :default => 'work'
+      method_option :port, :desc => "server http port (currently ignored)", :default => 8080
       def server
         require 'jenkins/plugin/tools/server'
-        server = Jenkins::Plugin::Tools::Server.new(spec, "work")
+        server = Jenkins::Plugin::Tools::Server.new(spec, options[:home])
         server.run!
       end
 

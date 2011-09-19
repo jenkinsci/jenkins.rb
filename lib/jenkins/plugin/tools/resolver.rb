@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Jenkins
   class Plugin
     module Tools
