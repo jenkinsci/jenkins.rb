@@ -18,6 +18,22 @@ module Jenkins
         @java_type
       end
 
+      # TODO: We removed @name from Descriptor (see playground) so we need to use another name.
+      # Just use class name which is in CamelCase.
+      def getConfigPage
+        "/#{name_to_path}/config".tap { |path|
+          puts "getConfigPage -> #{path}"
+        }
+      end
+
+      # TODO: We removed @name from Descriptor (see playground) so we need to use another name.
+      # Just use class name which is in CamelCase.
+      def getGlobalConfigPage
+        "/#{name_to_path}/global".tap { |path|
+          puts "getGlobalConfigPage -> #{path}"
+        }
+      end
+
       def newInstance(request, form)
         properties = JSON.parse(form.toString(2))
         properties.delete("kind")
@@ -33,6 +49,10 @@ module Jenkins
         @impl.new(attrs)
       rescue ArgumentError
         @impl.new
+      end
+
+      def name_to_path
+        @impl.name.split('::').join('/')
       end
     end
 
