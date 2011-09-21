@@ -1,23 +1,7 @@
-
-#TODO: does this make more sense as a class? maybe
-
 module Jenkins
   module Model
-    module Action
+    class Action
       include Model
-
-      module Included
-        def included(cls)
-          super(cls)
-          if cls.class == Module
-            cls.extend(Included)
-          else
-            cls.extend(ClassMethods)
-            cls.send(:include, InstanceMethods)
-          end
-        end
-      end
-      extend Included
 
       module InstanceMethods
         def icon
@@ -28,7 +12,7 @@ module Jenkins
           self.class.url_path
         end
       end
-      #
+
       module ClassMethods
         def icon(filename = nil)
           filename.nil? ? @icon : @icon = filename.to_s
@@ -38,6 +22,9 @@ module Jenkins
           path.nil? ? @url_path : @url_path = path.to_s
         end
       end
+
+      include InstanceMethods
+      extend ClassMethods
     end
   end
 end

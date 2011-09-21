@@ -1,16 +1,12 @@
-require 'jenkins/model/root_action'
+require 'jenkins/model/action'
 
 module Jenkins
   class Plugin
     class Proxies
-      class RootAction
-        include Java.hudson.model.RootAction
+      class Action
+        include Java.hudson.model.Action
         include Java.jenkins.ruby.Get
         include Jenkins::Plugin::Proxy
-
-        def getDisplayName
-          @object.display_name
-        end
 
         def getIconFileName
           @object.icon
@@ -29,7 +25,7 @@ module Jenkins
         end
       end
 
-      register Jenkins::Model::RootAction, RootAction
+      register Jenkins::Model::Action, Action
     end
   end
 end

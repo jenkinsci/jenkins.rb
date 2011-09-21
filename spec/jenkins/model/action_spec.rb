@@ -35,8 +35,7 @@ describe Jenkins::Model::Action do
   private
 
   def new_action(&body)
-    action = Class.new
-    action.send(:include, Jenkins::Model::Action)
+    action = Class.new(Jenkins::Model::Action)
     action.class_eval(&body) if block_given?
     return action
   end
