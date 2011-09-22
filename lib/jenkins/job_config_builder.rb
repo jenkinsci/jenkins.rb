@@ -4,6 +4,7 @@ module Jenkins
   class JobConfigBuilder
     attr_accessor :job_type
     attr_accessor :steps, :rubies
+    attr_accessor :triggers
     attr_accessor :scm, :public_scm, :scm_branches
     attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
@@ -20,6 +21,7 @@ module Jenkins
     # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Jenkins job config.
     # +scm_branches+  - array of branches to run builds. Default: ['master']
     # +rubies+        - list of RVM rubies to run tests (via Jenkins Axes).
+    # +triggers+      - list of triggers to start the build. Currently only support time triggers
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
@@ -43,7 +45,7 @@ module Jenkins
         b.canRoam !assigned_node
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
-        b.triggers :class => "vector"
+        build_triggers b
         b.concurrentBuild false
         build_axes b if matrix_project?
         build_steps b
@@ -174,7 +176,30 @@ module Jenkins
         b.buildWrappers
       end
     end
-    
+
+    # Example
+    # <triggers class="vector">
+    #   <hudson.triggers.TimerTrigger>
+    #     <spec>* * * * *</spec>
+    #   </hudson.triggers.TimerTrigger>
+    # </triggers>
+    def build_triggers(b)
+      if triggers
+        b.triggers :class => "vector" do
+          triggers.each do |trigger|
+            case trigger[:class]
+            when :timer
+              b.tag! "hudson.triggers.TimerTrigger" do
+                b.spec trigger[:spec]
+              end
+            end
+          end
+        end
+      else
+        b.triggers :class => "vector"
+      end
+    end
+
     # The important sequence of steps that are run to process a job build.
     # Can be defaulted by the +job_type+ using +default_steps(job_type)+,
     # or customized via +steps+ array.

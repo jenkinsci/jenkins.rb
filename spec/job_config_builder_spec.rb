@@ -19,7 +19,6 @@ describe Jenkins::JobConfigBuilder do
     end
   end
   
-  
   describe "rails job; single axis" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -30,8 +29,6 @@ describe Jenkins::JobConfigBuilder do
       config_xml("rails", "single").should == @config.to_xml
     end
   end
-  
-  
   
   describe "many rubies" do
     before do
@@ -132,6 +129,25 @@ describe Jenkins::JobConfigBuilder do
         </buildWrappers>
       XML
       Hpricot.XML(@config.to_xml).search("buildWrappers").to_s.should == xml_bite.strip
+    end
+  end
+
+  describe "setup build triggers" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        c.triggers = [{:class => :timer, :spec => "5 * * * *"}]
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <triggers class="vector">
+          <hudson.triggers.TimerTrigger>
+            <spec>5 * * * *</spec>
+          </hudson.triggers.TimerTrigger>
+        </triggers>
+      XML
+      Hpricot.XML(@config.to_xml).search("triggers").to_s.should == xml_bite.strip
     end
   end
 
