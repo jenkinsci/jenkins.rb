@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'jenkins/model/action'
+
 describe Jenkins::Model::Action do
 
   it "has the same display_name semantics as Model" do

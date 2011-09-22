@@ -1,3 +1,6 @@
+
+require 'jenkins/model'
+
 module Jenkins
   module Model
     class Action
