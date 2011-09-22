@@ -17,7 +17,7 @@ module Jenkins
     # you can use this ruby class too. e.g.
     #
     #     class Builder
-    #       include Jenkins::Model::Describeable
+    #       include Jenkins::Model::Describable
     #       describe_as Java.hudson.tasks.Builder
     #     end
     #
