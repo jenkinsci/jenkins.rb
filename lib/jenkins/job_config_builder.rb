@@ -6,7 +6,6 @@ module Jenkins
     attr_accessor :steps, :rubies
     attr_accessor :triggers
     attr_accessor :scm, :public_scm, :scm_branches
-    attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
     
