@@ -5,6 +5,7 @@ module Jenkins
     attr_accessor :job_type
     attr_accessor :steps, :rubies
     attr_accessor :triggers
+    attr_accessor :publishers
     attr_accessor :scm, :public_scm, :scm_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
@@ -48,7 +49,7 @@ module Jenkins
         b.concurrentBuild false
         build_axes b if matrix_project?
         build_steps b
-        b.publishers
+        build_publishers b
         build_wrappers b
         b.runSequentially false if matrix_project?
       end
@@ -199,6 +200,58 @@ module Jenkins
       end
     end
 
+    # Example
+    # <publishers>
+    #   <hudson.plugins.chucknorris.CordellWalkerRecorder>
+    #     <factGenerator/>
+    #   </hudson.plugins.chucknorris.CordellWalkerRecorder>
+    #   <hudson.tasks.BuildTrigger>
+    #     <childProjects>Dependent Job, Even more dependent job</childProjects>
+    #     <threshold>
+    #       <name>SUCCESS</name>
+    #       <ordinal>0</ordinal>
+    #       <color>BLUE</color>
+    #     </threshold>
+    #   </hudson.tasks.BuildTrigger>
+    #   <hudson.tasks.Mailer>
+    #     <recipients>some.guy@example.com, another.guy@example.com</recipients>
+    #     <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+    #     <sendToIndividuals>true</sendToIndividuals>
+    #   </hudson.tasks.Mailer>
+    # </publishers>
+    def build_publishers(b)
+      if publishers
+        b.publishers do
+          publishers.each do |publisher|
+            publisher_name, params = publisher.to_a.first
+            case publisher_name
+            when :mailer
+              b.tag! "hudson.tasks.Mailer" do
+                b.recipients params.join(', ')
+                b.dontNotifyEveryUnstableBuild false
+                b.sendToIndividuals true
+              end
+            when :job_triggers
+              b.tag! "hudson.tasks.BuildTrigger" do
+                b.childProjects params.join(', ')
+                b.threshold do
+                  b.name "SUCCESS"
+                  b.ordinal 0
+                  b.color "BLUE"
+                end
+              end
+            when :chuck_norris
+              b.tag! "hudson.plugins.chucknorris.CordellWalkerRecorder" do
+                b.factGenerator
+              end
+            end
+          end
+        end
+      else
+        b.publishers
+      end
+    end
+    
     # The important sequence of steps that are run to process a job build.
     # Can be defaulted by the +job_type+ using +default_steps(job_type)+,
     # or customized via +steps+ array.

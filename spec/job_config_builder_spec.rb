@@ -151,6 +151,42 @@ describe Jenkins::JobConfigBuilder do
     end
   end
 
+  describe "setup publishers for a build" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:none) do |c|
+        c.publishers = [
+          { :chuck_norris => true },
+          { :job_triggers => ["Dependent Job", "Even more dependent job"] },
+          { :mailer       => ["some.guy@example.com", "another.guy@example.com"] }
+        ]
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <publishers>
+          <hudson.plugins.chucknorris.CordellWalkerRecorder>
+            <factGenerator />
+          </hudson.plugins.chucknorris.CordellWalkerRecorder>
+          <hudson.tasks.BuildTrigger>
+            <childProjects>Dependent Job, Even more dependent job</childProjects>
+            <threshold>
+              <name>SUCCESS</name>
+              <ordinal>0</ordinal>
+              <color>BLUE</color>
+            </threshold>
+          </hudson.tasks.BuildTrigger>
+          <hudson.tasks.Mailer>
+            <recipients>some.guy@example.com, another.guy@example.com</recipients>
+            <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+            <sendToIndividuals>true</sendToIndividuals>
+          </hudson.tasks.Mailer>
+        </publishers>
+      XML
+      Hpricot.XML(@config.to_xml).search("publishers").to_s.should == xml_bite.strip
+    end
+  end
+
   describe "erlang job; single axis" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:erlang) do |c|
