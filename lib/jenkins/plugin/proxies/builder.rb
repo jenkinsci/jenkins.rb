@@ -9,11 +9,15 @@ module Jenkins
         include Jenkins::Plugin::Proxy
 
         def prebuild(build, listener)
-          @object.prebuild(import(build), import(listener)) ? true : false
+          boolean_result(listener) do
+            @object.prebuild(import(build), import(listener))
+          end
         end
 
         def perform(build, launcher, listener)
-          @object.perform(import(build), import(launcher), import(listener)) ? true : false
+          boolean_result(listener) do
+            @object.perform(import(build), import(launcher), import(listener))
+          end
         end
 
         def getDescriptor
@@ -24,6 +28,18 @@ module Jenkins
           @object.respond_to?(name) ? @object.send(name) : nil
         end
 
+      private
+
+        def boolean_result(listener, &block)
+          begin
+            yield
+            true
+          rescue Exception => e
+            msg = "# e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+            listener.log(msg + "\n")
+            false
+          end
+        end
       end
 
       register Jenkins::Tasks::Builder, Builder

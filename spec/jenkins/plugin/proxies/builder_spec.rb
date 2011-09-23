@@ -13,6 +13,17 @@ describe Jenkins::Plugin::Proxies::Builder do
       @object.should_receive(:prebuild).with(@build, @listener)
       @builder.prebuild(@jBuild, @jListener)
     end
+
+    it "returns true whatever Ruby side impl returns" do
+      @object.should_receive(:prebuild).and_return(false)
+      @builder.prebuild(@jBuild, @jListener).should == true
+    end
+
+    it "returns false when Ruby side impl raise an Error" do
+      @object.should_receive(:prebuild).and_raise(NoMethodError)
+      @jListener.should_receive(:log)
+      @builder.prebuild(@jBuild, @jListener).should == false
+    end
   end
 
   describe "perform" do
