@@ -5,6 +5,7 @@ module Jenkins
 
     ExportError = Class.new(StandardError)
     ImportError = Class.new(StandardError)
+    NativeJavaObject = Struct.new(:native)
 
     # Maps JRuby objects part of the idomatic Ruby API
     # to a plain Java object representation and vice-versa.
@@ -60,7 +61,9 @@ module Jenkins
           end
           cls = cls.superclass
         end
-        raise ImportError, "unable to find suitable representation for #{object.inspect}"
+        internal = NativeJavaObject.new(object)
+        link(internal, object)
+        return internal
       end
 
       # Reflect a native Ruby object into its External Java form.

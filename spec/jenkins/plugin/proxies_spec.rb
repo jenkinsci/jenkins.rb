@@ -41,7 +41,7 @@ describe Jenkins::Plugin::Proxies do
       end
 
       describe "and there is not an appropriate proxy class registered for it" do
-        it "raises an exception on import" do
+        it "raises an exception on export" do
           expect {@proxies.export(@object)}.should raise_error
         end
       end
@@ -131,6 +131,22 @@ describe Jenkins::Plugin::Proxies do
       end
     end
 
+  end
+
+  describe "importing an unmapped native java object" do
+    before do
+      @umappable = java.lang.Object.new
+      @import = @proxies.import(@umappable)
+    end
+    it "maps it do an opaque native java object structure" do
+      @import.native.should be @umappable
+    end
+    it "reuses the same opaque proxy on subsequent imports" do
+      @proxies.import(@umappable).should be @import
+    end
+    it "exports the object as the original java value" do
+      @proxies.export(@import).should be @umappable
+    end
   end
 
   private
