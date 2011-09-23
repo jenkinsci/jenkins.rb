@@ -3,6 +3,10 @@ require 'jenkins/model'
 
 module Jenkins
   module Model
+
+    # TODO: I turned Action into Class from Module but it should be a bad idea.
+    # The change may be reverted. I used class Action for implementing a model
+    # as a describable but I really should do is implementing describable.
     class Action
       include Model
 
