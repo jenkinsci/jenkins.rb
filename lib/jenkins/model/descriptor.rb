@@ -6,12 +6,16 @@ module Jenkins
     class Descriptor < Java.hudson.model.Descriptor
 
       def initialize(impl, plugin, java_type)
-        super(Java.org.jruby.RubyObject.java_class)
+        super(java_type)
         @impl, @plugin, @java_type = impl, plugin, java_type
       end
 
       def getDisplayName
         @impl.display_name
+      end
+
+      def getId()
+        "#{@plugin.name}-#{@impl.name}"
       end
 
       def getT()
