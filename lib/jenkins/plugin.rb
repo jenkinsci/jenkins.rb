@@ -157,16 +157,47 @@ module Jenkins
     end
 
     def load_models
-      p = @java.getModelsPath().getPath()
+      path = @java.getModelsPath().getPath()
       # TODO: can we access to Jenkins console logger?
-      puts "Trying to load models from #{p}"
-      for filename in Dir["#{p}/**/*.rb"]
-        puts "Loading "+filename
-        begin
-          load filename
-        rescue Exception => e
-          puts "#{e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+      puts "Trying to load models from #{path}"
+      with_extra_load_path(path) do
+        load_file_in_dir(path)
+      end
+    end
+
+    private
+
+    # Loads files in the specified directory.
+    # It seaches directories in depth first with loading files for each directory.
+    def load_file_in_dir(dirpath)
+      dirs = []
+      Dir.new(dirpath).each do |entry|
+        next if entry == '.' || entry == '..'
+        path = File.join(dirpath, entry)
+        if File.directory?(path)
+          dirs << path
+        else
+          puts "Loading " + path
+          begin
+            load path
+          rescue Exception => e
+            puts "#{e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+          end
+            nil
         end
+      end
+      dirs.each do |dir|
+        load_file_in_dir(dir)
+      end
+    end
+
+    def with_extra_load_path(path)
+      backup = $LOAD_PATH.dup
+      begin
+        $LOAD_PATH << path
+        yield
+      ensure
+        $LOAD_PATH.replace(backup)
       end
     end
   end
