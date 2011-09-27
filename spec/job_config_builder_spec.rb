@@ -156,7 +156,7 @@ describe Jenkins::JobConfigBuilder do
       @config = Jenkins::JobConfigBuilder.new(:none) do |c|
         c.publishers = [
           { :chuck_norris => true },
-          { :job_triggers => ["Dependent Job", "Even more dependent job"] },
+          { :job_triggers => { :projects => ["Dependent Job", "Even more dependent job"], :on => "FAILURE" } },
           { :mailer       => ["some.guy@example.com", "another.guy@example.com"] }
         ]
       end
@@ -171,7 +171,7 @@ describe Jenkins::JobConfigBuilder do
           <hudson.tasks.BuildTrigger>
             <childProjects>Dependent Job, Even more dependent job</childProjects>
             <threshold>
-              <name>SUCCESS</name>
+              <name>FAILURE</name>
               <ordinal>0</ordinal>
               <color>BLUE</color>
             </threshold>

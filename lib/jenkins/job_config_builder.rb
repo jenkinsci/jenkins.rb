@@ -233,9 +233,9 @@ module Jenkins
               end
             when :job_triggers
               b.tag! "hudson.tasks.BuildTrigger" do
-                b.childProjects params.join(', ')
+                b.childProjects params[:projects].join(', ')
                 b.threshold do
-                  b.name "SUCCESS"
+                  b.name params[:on] || "SUCCESS"
                   b.ordinal 0
                   b.color "BLUE"
                 end
