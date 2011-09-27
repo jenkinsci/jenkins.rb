@@ -6,6 +6,7 @@ module Jenkins
     attr_accessor :steps, :rubies
     attr_accessor :triggers
     attr_accessor :publishers
+    attr_accessor :log_rotate
     attr_accessor :scm, :public_scm, :scm_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
@@ -23,6 +24,8 @@ module Jenkins
     # +rubies+        - list of RVM rubies to run tests (via Jenkins Axes).
     # +triggers+      - list of triggers to start the build. Currently only support time triggers
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
+    # +publishers+    - define publishers to be performed after a build
+    # +log_rotate+    - define log rotation
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
       
@@ -38,6 +41,7 @@ module Jenkins
       b.tag!(matrix_project? ? "matrix-project" : "project") do
         b.actions
         b.description
+        build_log_rotator b
         b.keepDependencies false
         b.properties
         build_scm b
@@ -197,6 +201,24 @@ module Jenkins
         end
       else
         b.triggers :class => "vector"
+      end
+    end
+
+    # Example
+    # <logRotator>
+    #   <daysToKeep>14</daysToKeep>
+    #   <numToKeep>-1</numToKeep>
+    #   <artifactDaysToKeep>-1</artifactDaysToKeep>
+    #   <artifactNumToKeep>-1</artifactNumToKeep>
+    # </logRotator>
+    def build_log_rotator(b)
+      if log_rotate
+        b.logRotator do
+          b.daysToKeep         log_rotate[:days_to_keep] || -1
+          b.numToKeep          log_rotate[:num_to_keep] || -1
+          b.artifactDaysToKeep log_rotate[:artifact_days_to_keep] || -1
+          b.artifactNumToKeep  log_rotate[:artifact_num_to_keep] || -1
+        end
       end
     end
 

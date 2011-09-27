@@ -132,6 +132,26 @@ describe Jenkins::JobConfigBuilder do
     end
   end
 
+  describe "setup log rotator" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        c.log_rotate = { :days_to_keep => 14 }
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <logRotator>
+          <daysToKeep>14</daysToKeep>
+          <numToKeep>-1</numToKeep>
+          <artifactDaysToKeep>-1</artifactDaysToKeep>
+          <artifactNumToKeep>-1</artifactNumToKeep>
+        </logRotator>
+      XML
+      Hpricot.XML(@config.to_xml).search("logRotator").to_s.should == xml_bite.strip
+    end
+  end
+
   describe "setup build triggers" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
