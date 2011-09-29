@@ -1,10 +1,10 @@
-require 'jenkins/tasks/builder'
+require 'jenkins/tasks/publisher'
 require 'jenkins/plugin/proxies/build_step'
 
 module Jenkins
   class Plugin
     class Proxies
-      class Builder < Java.hudson.tasks.Builder
+      class Publisher < Java.hudson.tasks.Publisher
         include Java.jenkins.ruby.Get
         include Jenkins::Plugin::Proxy
 
@@ -19,7 +19,7 @@ module Jenkins
         end
       end
 
-      register Jenkins::Tasks::Builder, Builder
+      register Jenkins::Tasks::Publisher, Publisher
     end
   end
 end
