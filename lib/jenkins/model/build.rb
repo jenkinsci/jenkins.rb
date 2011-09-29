@@ -1,3 +1,4 @@
+require 'jenkins/filepath'
 
 module Jenkins
   module Model
@@ -11,6 +12,10 @@ module Jenkins
 
       def initialize(native = nil)
         @native = native
+      end
+
+      def workspace
+        FilePath.new(@native.getWorkspace())
       end
 
       def build_var

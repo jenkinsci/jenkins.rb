@@ -6,6 +6,5 @@ describe Jenkins::Model::Build do
     Jenkins::Model::Build.new(mock(Java.hudson.model.AbstractBuild))
   end
 
-  # TODO: spec for build_var and env
-  # Just a mocking and method invocation checks are enough?
+  # TODO: spec for workspace, build_var and env
 end
