@@ -9,8 +9,8 @@ describe Jenkins::Model::Listener do
   end
 
   it "logs messages" do
-    @listener.log('Hi')
-    @output.toString.should eql "Hi"
+    @listener.info('Hi')
+    @output.toString.should eql "Hi\n"
   end
 
   it "logs errors" do
@@ -23,9 +23,6 @@ describe Jenkins::Model::Listener do
     @output.toString.should match /^FATAL: boom!/
   end
 
-  it "logs hyperlinks" do
-    @java.should_receive(:hyperlink).with("/foo/bar", "click here")
-    @listener.hyperlink("/foo/bar", "click here")
-  end
+  # TODO: spec for level
 end
 
