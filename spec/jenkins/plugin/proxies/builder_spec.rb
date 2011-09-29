@@ -21,7 +21,7 @@ describe Jenkins::Plugin::Proxies::Builder do
 
     it "returns false when Ruby side impl raise an Error" do
       @object.should_receive(:prebuild).and_raise(NoMethodError)
-      @jListener.should_receive(:log)
+      @jListener.should_receive(:error)
       @builder.prebuild(@jBuild, @jListener).should == false
     end
   end

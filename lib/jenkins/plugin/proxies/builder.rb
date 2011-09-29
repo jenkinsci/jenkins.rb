@@ -35,8 +35,8 @@ module Jenkins
             yield
             true
           rescue Exception => e
-            msg = "# e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
-            listener.log(msg + "\n")
+            msg = "#{e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+            listener.error(msg + "\n")
             false
           end
         end
