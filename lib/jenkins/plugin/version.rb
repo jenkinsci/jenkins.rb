@@ -1,5 +1,5 @@
 module Jenkins
   class Plugin
-    VERSION = "0.1.9"
+    VERSION = "0.1.10"
   end
 end
