@@ -19,6 +19,7 @@ module Jenkins
 
       def kill
         @native.kill()
+        nil
       end
 
       def stdin
@@ -100,6 +101,9 @@ module Jenkins
           env = args.shift
         elsif args.first.respond_to?(:to_hash)
           env = args.shift.to_hash
+        end
+        if env
+          env = env.inject({}) { |r, (key, value)| r[key.to_s] = value.to_s; r }
         end
       end
       if args.length == 1

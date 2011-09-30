@@ -22,12 +22,8 @@ module Jenkins
         @native.getBuildVariables()
       end
 
-      def env(listener = nil)
-        if listener
-          # TODO: not tested. dump to listener?
-          listener = Plugin.instance.export(listener)
-        end
-        @native.getEnvironment(listener)
+      def env
+        @native.getEnvironment(nil)
       end
 
       Jenkins::Plugin::Proxies.register self, Java.hudson.model.AbstractBuild

@@ -15,14 +15,19 @@ describe Jenkins::Model::Listener do
 
   it "logs errors" do
     @listener.error('Oh no!')
-    @output.toString.should match /^ERROR: Oh no!/
+    @output.toString.should match /^ERROR: Oh no/
   end
 
   it "logs fatal errors" do
     @listener.fatal('boom!')
-    @output.toString.should match /^FATAL: boom!/
+    @output.toString.should match /^FATAL: boom/
   end
 
-  # TODO: spec for level
+  it "logs if only severe" do
+    @listener.level = Logger::INFO
+    @listener.debug "debug"
+    @listener.info "info"
+    @output.toString.should == "info\n"
+  end
 end
 

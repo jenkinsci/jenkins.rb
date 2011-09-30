@@ -1,4 +1,5 @@
 require 'java'
+require 'tmpdir'
 
 require 'jenkins/war'
 for path in Dir[File.join(ENV['HOME'], '.jenkins', 'wars', Jenkins::War::VERSION, "**/*.jar")]

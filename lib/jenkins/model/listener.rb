@@ -10,7 +10,7 @@ module Jenkins
       attr_reader :natvie
       attr_accessor :level
 
-      def initialize(native)
+      def initialize(native = nil)
         @native = native
         @level = Logger::DEBUG
       end
