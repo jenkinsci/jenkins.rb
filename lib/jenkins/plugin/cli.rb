@@ -3,6 +3,7 @@ require 'thor'
 require 'jenkins/plugin/specification'
 require 'jenkins/plugin/cli/formatting'
 require 'jenkins/plugin/cli/new'
+require 'jenkins/plugin/cli/generate'
 
 
 module Jenkins
@@ -11,11 +12,7 @@ module Jenkins
       extend Formatting
 
       register New, "new", "new NAME", "create a new plugin called NAME"
-
-      desc "generate", "generate code for extensions points"
-      def generate
-        shell.say "TODO: generate()"
-      end
+      register Generate, "generate", "generate [options] [arguments]", "add new classes/templates and views to your project"
       map "g" => "generate"
 
 
