@@ -3,7 +3,7 @@ module Jenkins
   # Launch processes on build slaves. No functionality is currently exposed
   class Launcher
     class Proc
-      attr_reader :natvie
+      attr_reader :native
 
       def initialize(native)
         @native = native
