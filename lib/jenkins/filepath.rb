@@ -16,6 +16,10 @@ module Jenkins
       FilePath.new(@native.child(name))
     end
 
+    def join(*names)
+      FilePath.new names.inject(@native) {|native, name| native.child(name) }
+    end
+
     def to_s
       @native.getRemote()
     end

@@ -17,6 +17,12 @@ describe Jenkins::FilePath do
     (create(".") + "foo" + "bar").to_s.should == "foo/bar"
   end
 
+  it "returns child for join" do
+    create('.').join('foo').to_s.should == "foo"
+    create('.').join('foo', 'bar').to_s.should == "foo/bar"
+    create('.').join('foo', 'bar', 'baz').to_s.should == "foo/bar/baz"
+  end
+
   it "returns path for to_s" do
     create(".").to_s.should == "."
   end
