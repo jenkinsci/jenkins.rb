@@ -7,9 +7,8 @@ class <%= name.capitalize %><%= @step_class %> < Jenkins::Tasks::<%= @step_class
     # Runs before the build begins
     #
     # @param [Jenkins::Model::Build] build the build which will begin
-    # @param [Jenkins::Launcher] launcher the launcher that can run code on the node running this build
     # @param [Jenkins::Model::Listener] listener the listener for this build.
-    def prebuild(build, launcher, listener)
+    def prebuild(build, listener)
       # do any setup that needs to be done before this build runs.
     end
 
