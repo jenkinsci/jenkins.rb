@@ -1,10 +1,11 @@
 
-require 'jenkins/plugin/version'
+#require 'jenkins/plugin/version'
 
 module Jenkins
   class Plugin
     module Tools
       class Manifest
+        MAX_LENGTH = 72.to_i
 
         def initialize(spec)
           @spec = spec
@@ -31,15 +32,30 @@ module Jenkins
         def write_hpl(io, loadpath)
           write_hpi(io)
 
-          io.puts "Load-Path: #{loadpath.to_a.join(':')}"
-          io.puts "Lib-Path: #{Dir.pwd}/lib/"
-          io.puts "Models-Path: #{Dir.pwd}/models"
+          io.puts manifest_truncate("Load-Path: #{loadpath.to_a.join(':')}")
+          io.puts manifest_truncate("Lib-Path: #{Dir.pwd}/lib/")
+          io.puts manifest_truncate("Models-Path: #{Dir.pwd}/models")
           # Stapler expects view erb/haml scripts to be in the JVM ClassPath
-          io.puts "Class-Path: #{Dir.pwd}/views" if File.exists?("#{Dir.pwd}/views")
+          io.puts manifest_truncate("Class-Path: #{Dir.pwd}/views") if File.exists?("#{Dir.pwd}/views")
           # Directory for static images, javascript, css, etc. of this plugin.
           # The static resources are mapped under #CONTEXTPATH/plugin/SHORTNAME/
-          io.puts "Resource-Path: #{Dir.pwd}/static"
+          io.puts manifest_truncate("Resource-Path: #{Dir.pwd}/static")
 
+        end
+
+        def manifest_truncate(message)
+          if message.length < MAX_LENGTH
+            return message
+          end
+
+          line = message[0 ... MAX_LENGTH] + "\n"
+          offset = MAX_LENGTH
+
+          while offset < message.length
+            line += " #{message[offset ... (offset + MAX_LENGTH - 1)]}\n"
+            offset += (MAX_LENGTH - 1)
+          end
+          return line
         end
       end
     end
