@@ -15,8 +15,11 @@ module Jenkins
 
         def setUp(build, launcher, listener)
           env = {}
-          @object.setup(import(build), import(launcher), import(listener), env)
-          EnvironmentWrapper.new(self, @plugin, @object, env)
+          if @object.setup(import(build), import(launcher), import(listener), env)
+            EnvironmentWrapper.new(self, @plugin, @object, env)
+          else
+            nil
+          end
         end
 
         def getDescriptor
