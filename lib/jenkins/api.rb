@@ -132,6 +132,7 @@ module Jenkins
         default_options.merge!(
           :slave_port  => 2222,
           :slave_user  => 'vagrant',
+          :slave_pass  => '',
           :master_key  => "/Library/Ruby/Gems/1.8/gems/vagrant-0.6.7/keys/vagrant", # FIXME - hardcoded master username assumption
           :slave_fs    => "/vagrant/tmp/jenkins-slave/",
           :description => "Automatically created by Jenkins.rb",
@@ -142,6 +143,7 @@ module Jenkins
         default_options.merge!(
           :slave_port  => 22,
           :slave_user  => 'deploy',
+          :slave_pass  => '',
           :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
           :slave_fs    => "/data/jenkins-slave/",
           :description => "Automatically created by Jenkins.rb",
@@ -176,19 +178,25 @@ module Jenkins
             "host"          => slave_host,
             "port"          => options[:slave_port],
             "username"      => options[:slave_user],
+            "password"      => options[:slave_pass],
             "privatekey"    => options[:master_key],
           }
         }.to_json
       }
+      
+      if @username && @password && @options
+        conn = Jenkins::Connection.new(@username, @password, @options)
+        response = conn.post("/computer/doCreateItem", nil, nil, fields)
+      else
+        url = URI.parse("#{base_uri}/computer/doCreateItem")
 
-      url = URI.parse("#{base_uri}/computer/doCreateItem")
+        req = Net::HTTP::Post.new(url.path)
+        req.set_form_data(fields)
 
-      req = Net::HTTP::Post.new(url.path)
-      req.set_form_data(fields)
+        http = Net::HTTP.new(url.host, url.port)
 
-      http = Net::HTTP.new(url.host, url.port)
-
-      response = http.request(req)
+        response = http.request(req)
+      end
       case response
       when Net::HTTPFound
         { :name => name, :slave_host => slave_host }
@@ -321,11 +329,12 @@ module Jenkins
       end
     end
     
-    def post(path, body, content_type=nil)
+    def post(path, body=nil, content_type=nil, fields=nil)
       #puts body
       #puts header(content_type)
       request = Net::HTTP::Post.new(path, header(content_type))
-      request.body = body
+      request.body = body if body
+      request.set_form_data(fields) if fields
       response = @connection.request(request)
       case response
         when Net::HTTPOK
