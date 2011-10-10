@@ -4,14 +4,21 @@ module Jenkins
   class JobConfigBuilder
     attr_accessor :job_type
     attr_accessor :steps, :rubies
+    attr_accessor :triggers
+    attr_accessor :publishers
+    attr_accessor :log_rotate
     attr_accessor :scm, :public_scm, :scm_branches
-    attr_accessor :scm, :public_scm, :git_branches
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
     
     InvalidTemplate = Class.new(StandardError)
     
     VALID_JOB_TEMPLATES = %w[none rails rails3 ruby rubygem erlang]
+    JOB_TRIGGER_THRESHOLDS = {
+      "SUCCESS"  => {:ordinal => 0, :color => "BLUE"},
+      "UNSTABLE" => {:ordinal => 1, :color => "YELLOW"},
+      "FAILURE"  => {:ordinal => 2, :color => "RED"}
+    }
     
     # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
@@ -20,7 +27,10 @@ module Jenkins
     # +public_scm+    - convert the +scm+ URL to a publicly accessible URL for the Jenkins job config.
     # +scm_branches+  - array of branches to run builds. Default: ['master']
     # +rubies+        - list of RVM rubies to run tests (via Jenkins Axes).
+    # +triggers+      - list of triggers to start the build. Currently only support time triggers
     # +assigned_node+ - restrict this job to running on slaves with these labels (space separated)
+    # +publishers+    - define publishers to be performed after a build
+    # +log_rotate+    - define log rotation
     def initialize(job_type = :ruby, &block)
       self.job_type = job_type.to_s if job_type
       
@@ -36,6 +46,7 @@ module Jenkins
       b.tag!(matrix_project? ? "matrix-project" : "project") do
         b.actions
         b.description
+        build_log_rotator b
         b.keepDependencies false
         b.properties
         build_scm b
@@ -43,11 +54,11 @@ module Jenkins
         b.canRoam !assigned_node
         b.disabled false
         b.blockBuildWhenUpstreamBuilding false
-        b.triggers :class => "vector"
+        build_triggers b
         b.concurrentBuild false
         build_axes b if matrix_project?
         build_steps b
-        b.publishers
+        build_publishers b
         build_wrappers b
         b.runSequentially false if matrix_project?
       end
@@ -172,6 +183,100 @@ module Jenkins
         end
       else
         b.buildWrappers
+      end
+    end
+
+    # Example
+    # <triggers class="vector">
+    #   <hudson.triggers.TimerTrigger>
+    #     <spec>* * * * *</spec>
+    #   </hudson.triggers.TimerTrigger>
+    # </triggers>
+    def build_triggers(b)
+      if triggers
+        b.triggers :class => "vector" do
+          triggers.each do |trigger|
+            case trigger[:class]
+            when :timer
+              b.tag! "hudson.triggers.TimerTrigger" do
+                b.spec trigger[:spec]
+              end
+            end
+          end
+        end
+      else
+        b.triggers :class => "vector"
+      end
+    end
+
+    # Example
+    # <logRotator>
+    #   <daysToKeep>14</daysToKeep>
+    #   <numToKeep>-1</numToKeep>
+    #   <artifactDaysToKeep>-1</artifactDaysToKeep>
+    #   <artifactNumToKeep>-1</artifactNumToKeep>
+    # </logRotator>
+    def build_log_rotator(b)
+      if log_rotate
+        b.logRotator do
+          b.daysToKeep         log_rotate[:days_to_keep] || -1
+          b.numToKeep          log_rotate[:num_to_keep] || -1
+          b.artifactDaysToKeep log_rotate[:artifact_days_to_keep] || -1
+          b.artifactNumToKeep  log_rotate[:artifact_num_to_keep] || -1
+        end
+      end
+    end
+
+    # Example
+    # <publishers>
+    #   <hudson.plugins.chucknorris.CordellWalkerRecorder>
+    #     <factGenerator/>
+    #   </hudson.plugins.chucknorris.CordellWalkerRecorder>
+    #   <hudson.tasks.BuildTrigger>
+    #     <childProjects>Dependent Job, Even more dependent job</childProjects>
+    #     <threshold>
+    #       <name>SUCCESS</name>
+    #       <ordinal>0</ordinal>
+    #       <color>BLUE</color>
+    #     </threshold>
+    #   </hudson.tasks.BuildTrigger>
+    #   <hudson.tasks.Mailer>
+    #     <recipients>some.guy@example.com, another.guy@example.com</recipients>
+    #     <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+    #     <sendToIndividuals>true</sendToIndividuals>
+    #   </hudson.tasks.Mailer>
+    # </publishers>
+    def build_publishers(b)
+      if publishers
+        b.publishers do
+          publishers.each do |publisher|
+            publisher_name, params = publisher.to_a.first
+            case publisher_name
+            when :mailer
+              b.tag! "hudson.tasks.Mailer" do
+                b.recipients params.join(', ')
+                b.dontNotifyEveryUnstableBuild false
+                b.sendToIndividuals true
+              end
+            when :job_triggers
+              b.tag! "hudson.tasks.BuildTrigger" do
+                b.childProjects params[:projects].join(', ')
+                b.threshold do
+                  trigger_event = params[:on] || "SUCCESS"
+                  b.name trigger_event
+                  b.ordinal JOB_TRIGGER_THRESHOLDS[trigger_event][:ordinal]
+                  b.color JOB_TRIGGER_THRESHOLDS[trigger_event][:color]
+                end
+              end
+            when :chuck_norris
+              b.tag! "hudson.plugins.chucknorris.CordellWalkerRecorder" do
+                b.factGenerator
+              end
+            end
+          end
+        end
+      else
+        b.publishers
       end
     end
     
