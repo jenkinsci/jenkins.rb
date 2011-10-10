@@ -192,8 +192,8 @@ describe Jenkins::JobConfigBuilder do
             <childProjects>Dependent Job, Even more dependent job</childProjects>
             <threshold>
               <name>FAILURE</name>
-              <ordinal>0</ordinal>
-              <color>BLUE</color>
+              <ordinal>2</ordinal>
+              <color>RED</color>
             </threshold>
           </hudson.tasks.BuildTrigger>
           <hudson.tasks.Mailer>

@@ -14,6 +14,11 @@ module Jenkins
     InvalidTemplate = Class.new(StandardError)
     
     VALID_JOB_TEMPLATES = %w[none rails rails3 ruby rubygem erlang]
+    JOB_TRIGGER_THRESHOLDS = {
+      "SUCCESS"  => {:ordinal => 0, :color => "BLUE"},
+      "UNSTABLE" => {:ordinal => 1, :color => "YELLOW"},
+      "FAILURE"  => {:ordinal => 2, :color => "RED"}
+    }
     
     # +job_type+ - template of default steps to create with the job
     # +steps+ - array of [:method, cmd], e.g. [:build_shell_step, "bundle initial"]
@@ -257,9 +262,10 @@ module Jenkins
               b.tag! "hudson.tasks.BuildTrigger" do
                 b.childProjects params[:projects].join(', ')
                 b.threshold do
-                  b.name params[:on] || "SUCCESS"
-                  b.ordinal 0
-                  b.color "BLUE"
+                  trigger_event = params[:on] || "SUCCESS"
+                  b.name trigger_event
+                  b.ordinal JOB_TRIGGER_THRESHOLDS[trigger_event][:ordinal]
+                  b.color JOB_TRIGGER_THRESHOLDS[trigger_event][:color]
                 end
               end
             when :chuck_norris
