@@ -16,6 +16,7 @@ module Jenkins
     # http_proxy 'localhost', '8888'
 
     JobAlreadyExistsError = Class.new(Exception)
+    NoConfigError = Class.new(Exception)
 
     def self.setup_base_url(options)
       options = options.with_clean_keys
@@ -72,6 +73,64 @@ module Jenkins
       rescue REXML::ParseException => e
         # For some reason, if the job exists we get back half a page of HTML
         raise JobAlreadyExistsError.new(name)
+      end
+    end
+    
+    # returns true if successfully updated a new job on Jenkins
+    # currently only option available to update is nodes on a matrix-project
+    def self.update_job(name, opts={})
+      options = {
+        :nodes => []
+      }.merge!(opts)
+      
+      # Getting the config.xml from Jenkins
+      xml_data = nil
+      res = get_plain "/job/#{name}/config.xml"
+      if res.code.to_i == 200
+        xml_data = res.body
+      else
+        raise NoConfigError.new(res.body)
+      end
+      
+      # Modifying config.xml to remove old nodes and add our new nodes.
+      doc = REXML::Document.new(xml_data)
+      doc.elements.delete_all('matrix-project/axes/hudson.matrix.LabelAxis/values/string')
+      el = nil
+      doc.elements.each('matrix-project/axes/hudson.matrix.LabelAxis/values') do |element|
+        el = element if element.name == "values"
+      end
+      options[:nodes].each_with_index do |node, index|
+        i = index + 1
+        el.add_element('string')
+        el.elements["string[#{i}]"].text = node
+      end
+      
+      # Posting config.xml back to Jenkins
+      xml_data = doc.to_s
+      if @username && @password && @options
+        conn = Jenkins::Connection.new(@username, @password, @options)
+        res = conn.post("/job/#{CGI.escape(name)}/config.xml", xml_data, 'application/xml')
+      else
+        res = post "/job/#{CGI.escape(name)}/config.xml", {
+          :body => xml_data, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+        }
+      end
+      if res.code.to_i == 200
+        cache_configuration!
+        true
+      else
+        require "hpricot"
+        doc = Hpricot(res.body)
+        error_msg = doc.search("td#main-panel p")
+        unless error_msg.inner_text.blank?
+          $stderr.puts error_msg.inner_text
+        else
+          # TODO - what are the errors we get?
+          puts "Server error:"
+          p res.code
+          puts res.body
+        end
+        false
       end
     end
 
