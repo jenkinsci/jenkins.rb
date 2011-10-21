@@ -152,7 +152,7 @@ public class RubyPlugin extends PluginImpl {
 
         initRubyLoadPaths();
         initRubyNativePlugin();
-        
+
         rackContext = new ServletRackContext(new ServletRackConfig(Jenkins.getInstance().servletContext));
 	}
 
@@ -227,7 +227,7 @@ public class RubyPlugin extends PluginImpl {
         if(rel.isAbsolute())
             return rel;
         else
-            return new File(base.getParentFile(),relative);
+            return new File(base,relative);
     }
 
 	/**
