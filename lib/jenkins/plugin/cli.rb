@@ -18,7 +18,8 @@ module Jenkins
 
       desc "build", "build plugin into .hpi file suitable for distribution"
       def build
-        shell.say "TODO: build()"
+        require 'jenkins/plugin/tools/package'
+        Tools::Package.new("pkg").build
       end
 
       desc "server", "run a test server with plugin"
@@ -27,7 +28,7 @@ module Jenkins
       method_option :war,  :desc => "specify a custom jenkins.war to run the plugin with"
       def server
         require 'jenkins/plugin/tools/server'
-        server = Jenkins::Plugin::Tools::Server.new(spec, options[:home], options[:war])
+        server = Tools::Server.new(spec, options[:home], options[:war])
         server.run!
       end
       map "s" => "server"
