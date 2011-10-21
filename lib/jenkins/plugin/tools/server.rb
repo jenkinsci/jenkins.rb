@@ -9,10 +9,11 @@ module Jenkins
     module Tools
       class Server
 
-        def initialize(spec, workdir)
+        def initialize(spec, workdir, war)
           @spec = spec
           @workdir = workdir
           @plugindir = "#{workdir}/plugins"
+          @war = war || Jenkins::War::LOCATION
         end
 
         def run!
@@ -36,8 +37,10 @@ module Jenkins
           args << "-DJENKINS_HOME=#{@workdir}"
           args << "-Dstapler.trace=true"
           args << "-Ddebug.YUI=true"
+#          args << "-Djruby.debug.loadService=true"
+#          args << "-Djruby.debug.loadService.timing=true"
           args << "-jar"
-          args << Jenkins::War::LOCATION
+          args << @war
           exec *args
         end
       end

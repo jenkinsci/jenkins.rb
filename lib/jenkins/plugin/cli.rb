@@ -24,9 +24,10 @@ module Jenkins
       desc "server", "run a test server with plugin"
       method_option :home, :desc => "set server work directory", :default => 'work'
       method_option :port, :desc => "server http port (currently ignored)", :default => 8080
+      method_option :war,  :desc => "specify a custom jenkins.war to run the plugin with"
       def server
         require 'jenkins/plugin/tools/server'
-        server = Jenkins::Plugin::Tools::Server.new(spec, options[:home])
+        server = Jenkins::Plugin::Tools::Server.new(spec, options[:home], options[:war])
         server.run!
       end
       map "s" => "server"
