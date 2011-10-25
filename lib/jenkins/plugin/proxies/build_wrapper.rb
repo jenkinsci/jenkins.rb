@@ -1,5 +1,6 @@
 
 require 'jenkins/tasks/build_wrapper'
+require 'jenkins/model/build'
 
 module Jenkins
   class Plugin
@@ -15,10 +16,12 @@ module Jenkins
 
         def setUp(build, launcher, listener)
           env = {}
-          if @object.setup(import(build), import(launcher), import(listener), env)
-            EnvironmentWrapper.new(self, @plugin, @object, env)
-          else
+          begin
+            @object.setup(import(build), import(launcher), import(listener), env)
+          rescue Jenkins::Model::HaltError
             nil
+          else
+            EnvironmentWrapper.new(self, @plugin, @object, env)
           end
         end
 
