@@ -2,14 +2,16 @@ require 'jenkins/filepath'
 
 module Jenkins
   module Model
-    # Raised to indicate that a build wrapper halted a build.
-    # Raising this does *not* set the build result to error.
-    class HaltError < Exception; end
 
     ##
     # Represents a single build. In general, you won't need this
     #
     class Build
+
+      # Raised to indicate that a build wrapper halted a build.
+      # Raising this does *not* set the build result to error.
+      class Halt < Exception; end
+
 
       # the Hudson::Model::AbstractBuild represented by this build
       attr_reader :native
@@ -26,7 +28,7 @@ module Jenkins
       #
       # @param [String] reason the reason for your halt, optional.
       def halt(reason = nil)
-        raise HaltError.new(reason)
+        raise Halt, reason
       end
 
       # Abort the current build, causing a build failure.

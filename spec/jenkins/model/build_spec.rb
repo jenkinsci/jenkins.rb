@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe Jenkins::Model::Build do
+  include Jenkins::Model
 
   before :each do
     @native = mock("AbstractBuild")
-    @subject = Jenkins::Model::Build.new(@native)
+    @build = Jenkins::Model::Build.new(@native)
   end
 
   it "can be instantiated" do
@@ -15,16 +16,24 @@ describe Jenkins::Model::Build do
     fs = Jenkins::FilePath.new(nil)
     fs.should_receive(:getRemote).and_return(".")
     @native.should_receive(:getWorkspace).and_return(fs)
-    @subject.workspace.to_s.should == "."
+    @build.workspace.to_s.should == "."
   end
 
   it "returns build variables as Hash-like" do
     @native.should_receive(:getBuildVariables).and_return("FOO" => "BAR")
-    @subject.build_var.should == {"FOO" => "BAR"}
+    @build.build_var.should == {"FOO" => "BAR"}
   end
 
   it "returns environment variables as Hash-like" do
     @native.should_receive(:getEnvironment).with(nil).and_return("FOO" => "BAR")
-    @subject.env.should == {"FOO" => "BAR"}
+    @build.env.should == {"FOO" => "BAR"}
+  end
+
+  it "can halt" do
+    expect {@build.halt "stopping"}.should raise_error(Jenkins::Model::Build::Halt, "stopping")
+  end
+
+  it "can abort" do
+    expect {@build.abort "aborting"}.should raise_error(Java.hudson.AbortException, "aborting")
   end
 end

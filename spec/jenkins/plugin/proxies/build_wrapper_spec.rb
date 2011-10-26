@@ -22,4 +22,14 @@ describe Jenkins::Plugin::Proxies::BuildWrapper do
     @object.should_receive(:teardown).with(@build, @listener, env)
     environment.tearDown(@jBuild, @jListener)
   end
+
+  describe "halting behavior" do
+    before do
+      @object.stub(:setup).and_raise(Jenkins::Model::Build::Halt)
+    end
+
+    it "returns false if the build was halted explicitly" do
+      @wrapper.setUp(@jBuild, @jLauncher, @jListener).should be_nil
+    end
+  end
 end

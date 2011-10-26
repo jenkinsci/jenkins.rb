@@ -16,13 +16,10 @@ module Jenkins
 
         def setUp(build, launcher, listener)
           env = {}
-          begin
-            @object.setup(import(build), import(launcher), import(listener), env)
-          rescue Jenkins::Model::HaltError
+          @object.setup(import(build), import(launcher), import(listener), env)
+          EnvironmentWrapper.new(self, @plugin, @object, env)
+        rescue Jenkins::Model::Build::Halt
             nil
-          else
-            EnvironmentWrapper.new(self, @plugin, @object, env)
-          end
         end
 
         def getDescriptor
