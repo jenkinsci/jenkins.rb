@@ -22,10 +22,16 @@ module Jenkins
         FilePath.new(@native.getWorkspace())
       end
 
+      # Halt the current build, without setting the result to failure
+      #
+      # @param [String] reason the reason for your halt, optional.
       def halt(reason = nil)
         raise HaltError.new(reason)
       end
 
+      # Abort the current build, causing a build failure.
+      #
+      # @param [String] reason the reason for your abort, optional.
       def abort(reason = nil)
         raise Java.hudson.AbortException.new(reason)
       end
