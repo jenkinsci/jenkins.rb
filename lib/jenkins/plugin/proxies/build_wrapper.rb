@@ -44,6 +44,9 @@ module Jenkins
 
         def tearDown(build, listener)
           @impl.teardown(@plugin.import(build), @plugin.import(listener), @env)
+          true
+        rescue Jenkins::Model::Build::Halt
+          false
         end
       end
 

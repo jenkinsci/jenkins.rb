@@ -32,4 +32,30 @@ describe Jenkins::Plugin::Proxies::BuildWrapper do
       @wrapper.setUp(@jBuild, @jLauncher, @jListener).should be_nil
     end
   end
+
+  describe "halting behavior on teardown" do
+    environment = nil
+    before do
+      @object.stub(:teardown).and_raise(Jenkins::Model::Build::Halt)
+      @object.stub(:setup)
+      environment = @wrapper.setUp(@jBuild, @jLauncher, @jListener)
+    end
+
+    it "returns false if the build was halted explicitly" do
+      environment.tearDown(@jBuild, @jListener).should be_false
+    end
+  end
+
+  describe "normal behavior on teardown" do
+    environment = nil
+    before do
+      @object.stub(:teardown).and_return(nil)
+      @object.stub(:setup)
+      environment = @wrapper.setUp(@jBuild, @jLauncher, @jListener)
+    end
+
+    it "returns true if the build was not halted explicitly" do
+      environment.tearDown(@jBuild, @jListener).should be_true
+    end
+  end
 end
