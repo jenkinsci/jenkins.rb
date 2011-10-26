@@ -7,7 +7,7 @@ module Jenkins
     class Listener
 
       # the underlying hudson.model.TaskListener object
-      attr_reader :natvie
+      attr_reader :native
       attr_accessor :level
 
       def initialize(native = nil)
