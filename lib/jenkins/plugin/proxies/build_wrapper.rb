@@ -15,11 +15,10 @@ module Jenkins
         include Jenkins::Plugin::Proxy
 
         def setUp(build, launcher, listener)
-          env = {}
-          @object.setup(import(build), import(launcher), import(listener), env)
+          env = @object.setup(import(build), import(launcher), import(listener))
           EnvironmentWrapper.new(self, @plugin, @object, env)
         rescue Jenkins::Model::Build::Halt
-            nil
+          nil
         end
 
         def getDescriptor
