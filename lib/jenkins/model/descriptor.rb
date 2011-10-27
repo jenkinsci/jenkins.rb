@@ -55,8 +55,15 @@ module Jenkins
         @impl.new
       end
 
+      # compute the path name of views for this class
       def name_to_path
-        @impl.name.split('::').join('/')
+        # camel case to underscore conversion taken from ActiveSupport::Inflector::underscore,
+        # which is MIT-licensed.
+        @impl.name.split('::').join('/').gsub(/::/, '/').
+            gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
+            gsub(/([a-z\d])([A-Z])/, '\1_\2').
+            tr("-", "_").
+            downcase
       end
     end
 
