@@ -66,6 +66,12 @@ module Jenkins
         @native.getEnvironment(nil)
       end
 
+      def build_wrapper_environment(cls)
+        @native.getEnvironmentList().find do |e|
+          e.instance_of?(Jenkins::Plugin::Proxies::EnvironmentWrapper) && e.build_wrapper.instance_of?(cls)
+        end
+      end
+
       Jenkins::Plugin::Proxies.register self, Java.hudson.model.AbstractBuild
     end
 

@@ -33,11 +33,17 @@ module Jenkins
 
 
       class EnvironmentWrapper < Java.hudson.tasks.BuildWrapper::Environment
+        attr_accessor :env
 
         def initialize(build_wrapper, plugin, impl)
           super(build_wrapper)
           @plugin = plugin
           @impl = impl
+        end
+
+        # build wrapper that created this environment
+        def build_wrapper
+          @impl
         end
 
         def tearDown(build, listener)
