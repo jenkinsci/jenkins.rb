@@ -14,12 +14,12 @@ describe Jenkins::Plugin::Proxies::BuildWrapper do
 
   it "passes in an env file which will be called to " do
     env = nil
-    @object.should_receive(:setup).with(@build, @launcher, @listener, an_instance_of(Hash)) do |*args|
+    @object.should_receive(:setup).with(@build, @launcher, @listener) do |*args|
       env = args.last
     end
     environment = @wrapper.setUp(@jBuild, @jLauncher, @jListener)
 
-    @object.should_receive(:teardown).with(@build, @listener, env)
+    @object.should_receive(:teardown).with(@build, @listener)
     environment.tearDown(@jBuild, @jListener)
   end
 

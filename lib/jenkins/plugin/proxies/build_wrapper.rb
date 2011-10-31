@@ -15,8 +15,8 @@ module Jenkins
         include Jenkins::Plugin::Proxy
 
         def setUp(build, launcher, listener)
-          env = @object.setup(import(build), import(launcher), import(listener))
-          EnvironmentWrapper.new(self, @plugin, @object, env)
+          @object.setup(import(build), import(launcher), import(listener))
+          EnvironmentWrapper.new(self, @plugin, @object)
         rescue Jenkins::Model::Build::Halt
           nil
         end
@@ -34,15 +34,14 @@ module Jenkins
 
       class EnvironmentWrapper < Java.hudson.tasks.BuildWrapper::Environment
 
-        def initialize(build_wrapper, plugin, impl, env)
+        def initialize(build_wrapper, plugin, impl)
           super(build_wrapper)
           @plugin = plugin
           @impl = impl
-          @env = env
         end
 
         def tearDown(build, listener)
-          @impl.teardown(@plugin.import(build), @plugin.import(listener), @env)
+          @impl.teardown(@plugin.import(build), @plugin.import(listener))
           true
         rescue Jenkins::Model::Build::Halt
           false

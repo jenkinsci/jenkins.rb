@@ -18,6 +18,26 @@ module Jenkins
 
       def initialize(native = nil)
         @native = native
+        @variables = {}
+      end
+
+      # Gets a build value. Each build stores a map of key,value
+      # pairs which can be used by each build step in the pipeline
+      #
+      # @param [String|Symbol] key
+      # @return [Object] value
+      def [](key)
+        @variables[key.to_s]
+      end
+
+      # Sets a build value. Each build has a map of key,value
+      # pairs which allow build steps to share information
+      #
+      # @param [String|Symbol] key
+      # @param [Object] value
+      # @return [Object] value
+      def []=(key, value)
+        @variables[key.to_s] = value
       end
 
       def workspace

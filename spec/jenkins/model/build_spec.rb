@@ -36,4 +36,25 @@ describe Jenkins::Model::Build do
   it "can abort" do
     expect {@build.abort "aborting"}.should raise_error(Java.hudson.AbortException, "aborting")
   end
+
+  describe "hash-y interface" do
+    before do
+      @val = Object.new
+      @build['val'] = @val
+    end
+
+    it "gets" do
+      @build['val'].should be @val
+    end
+
+    it "sets" do
+      @build['val'] = :foo
+      @build['val'].should be :foo
+    end
+
+    it "has symbol/string indifferent access" do
+      @build[:val].should be @val
+    end
+  end
+
 end

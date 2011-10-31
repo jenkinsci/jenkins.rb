@@ -17,8 +17,7 @@ module Jenkins
       # @param [Jenkins::Model::Build] build the build about to run
       # @param [Jenkins::Launcher] launcher a launcher for the orderly starting/stopping of processes.
       # @param [Jenkins::Model::Listener] listener channel for interacting with build output console
-      # @param [Hash] env a place to store information needed by #teardown
-      def setup(build, launcher, listener, env)
+      def setup(build, launcher, listener)
 
       end
 
@@ -29,8 +28,7 @@ module Jenkins
       #
       # @param [Jenkins::Model::Build] the build which has completed
       # @param [Jenkins::Model::Listener] listener channel for interacting with build output console
-      # @param [Hash] env contains anything that #setup needs to tell #teardown about
-      def teardown(build, listener, env)
+      def teardown(build, listener)
 
       end
     end
