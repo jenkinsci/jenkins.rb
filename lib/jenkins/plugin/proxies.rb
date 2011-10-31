@@ -5,7 +5,7 @@ module Jenkins
 
     ExportError = Class.new(StandardError)
     ImportError = Class.new(StandardError)
-    NativeJavaObject = Struct.new(:native)
+    OpaqueJavaObject = Struct.new(:native)
 
     # Maps JRuby objects part of the idomatic Ruby API
     # to a plain Java object representation and vice-versa.
@@ -49,20 +49,20 @@ module Jenkins
       # @param [Object] object the object to bring in from the outside
       # @return the best representation of that object for this plugin
       def import(object)
-        if ref = @ext2int[object]
-          return ref.get() if ref.get()
+        if proxy = deref(@ext2int, object)
+          return proxy
         end
         cls = object.class
         while cls do
           if internal_class = @@extcls2intcls[cls]
             internal = internal_class.new(object)
-            link(internal, object)
+            linkin(internal, object)
             return internal
           end
           cls = cls.superclass
         end
-        internal = NativeJavaObject.new(object)
-        link(internal, object)
+        internal = OpaqueJavaObject.new(object)
+        linkin(internal, object)
         return internal
       end
 
@@ -73,33 +73,71 @@ module Jenkins
       # @return [java.lang.Object] the Java wrapper that provides an interface to `object`
       # @throw [ExportError] if no suitable Java representation can be found
       def export(object)
-        if ref = @int2ext[object]
-          return ref.get() if ref.get()
+        if proxy = deref(@int2ext, object)
+          return proxy
         end
 
         cls = object.class
         while cls do
-          if proxy_class = @@intcls2extcls[cls]
-            proxy = proxy_class.new(@plugin, object)
-            link(object, proxy)
-            return proxy
+          if external_class = @@intcls2extcls[cls]
+            external = external_class.new(@plugin, object)
+            linkout(object, external)
+            return external
           end
           cls = cls.superclass
         end
         raise ExportError, "unable to find suitable Java Proxy for #{object.inspect}"
       end
 
-      ##
-      # Link a plugin-local Ruby object to an external Java object such that they will
-      # be subsituted for one another when passing values back and forth between Jenkins
-      # and this plugin. An example of this is associating the Ruby Jenkins::Launcher object
-      # with an equivalent
+
+      # Forms an incoming reference to an internal Ruby object from an
+      # external Java object. These two objects will be referentially
+      # equivalent whenever they are passed back and forth between the Ruby
+      # plugin and the Jenkins runtime.
+      #
+      # The fact that this reference is "in" means
+      # that GC-wise, the internal Ruby object depends on the external
+      # Java object. In other words, it will not be garbage collected
+      # until the Java object is.
+      #
+      # This behavior is important for things like AbstractBuild objects. We
+      # don't want our Ruby `Build` object that corresponds to it to be GC'd
+      # until the `hudson.model.AbstractBuild` it represents is itself
+      # collected. That allows us to maintain state on the Ruby object, and know
+      # that the same state will be accessible wherever.
+      #
+      # Only weak refereces are maintained to the external Java object.
       #
       # @param [Object] internal the object on the Ruby side of the link
       # @param [java.lang.Object] external the object on the Java side of the link
-      def link(internal, external)
+      def linkin(internal, external)
         @int2ext.put(internal, java.lang.ref.WeakReference.new(external))
+        @ext2int.put(external, internal)
+      end
+
+      # Forms an outgoing reference from an internal Ruby object to an
+      # external Java object. These two objects will be referentially
+      # equivalent whenever they are passed back and forth between the Ruby
+      # plugin and the Jenkins runtime.
+      #
+      # The fact that this reference goes "out" means
+      # that GC-wise, the external Java object depends on the internal
+      # Ruby object. In other words, The Java object will not be garbage
+      # collected until the local Ruby object is.
+      #
+      # Only weak refereces are maintained to the internal Ruby object.
+      #
+      # @param [Object] internal the object on the Ruby side of the link
+      # @param [java.lang.Object] external the object on the Java side of the link
+      def linkout(internal, external)
+        @int2ext.put(internal, external)
         @ext2int.put(external, java.lang.ref.WeakReference.new(internal))
+      end
+
+      def deref(reflist, object)
+        if ref = reflist[object]
+          ref.is_a?(java.lang.ref.Reference) ? ref.get() : ref
+        end
       end
 
       ##

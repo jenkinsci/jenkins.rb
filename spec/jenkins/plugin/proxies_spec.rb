@@ -50,7 +50,7 @@ describe Jenkins::Plugin::Proxies do
     describe "when a wrapper has already existed" do
       before do
         @proxy = Object.new
-        @proxies.link @object, @proxy
+        @proxies.linkin @object, @proxy
       end
 
       it "finds the same proxy on export" do
@@ -138,7 +138,7 @@ describe Jenkins::Plugin::Proxies do
       @umappable = java.lang.Object.new
       @import = @proxies.import(@umappable)
     end
-    it "maps it do an opaque native java object structure" do
+    it "maps it to an opaque native java object structure" do
       @import.native.should be @umappable
     end
     it "reuses the same opaque proxy on subsequent imports" do

@@ -152,8 +152,8 @@ module Jenkins
     #
     # @param [Object] internal the object on the Ruby side of the link
     # @param [java.lang.Object] external the object on the Java side of the link
-    def link(internal, external)
-      @proxies.link internal, external
+    def linkout(internal, external)
+      @proxies.linkout internal, external
     end
 
     def load_models

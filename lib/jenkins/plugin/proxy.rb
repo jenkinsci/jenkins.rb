@@ -56,7 +56,7 @@ module Jenkins
         # so that they remain referentially equivalent.
         def read_completed
           @plugin = Java.jenkins.model.Jenkins.getInstance().getPlugin(@pluginid).getNativeRubyPlugin()
-          @plugin.link @object, self
+          @plugin.linkout @object, self
         end
 
       end

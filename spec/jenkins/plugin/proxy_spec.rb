@@ -34,7 +34,7 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
     end
 
     it "reconstructs the @plugin field" do
-      @plugin.should_receive(:link).with(@impl, @proxy)
+      @plugin.should_receive(:linkout).with(@impl, @proxy)
       @proxy.read_completed
       @proxy.plugin.should be(@plugin)
     end
