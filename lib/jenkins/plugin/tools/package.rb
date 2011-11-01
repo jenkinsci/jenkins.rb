@@ -32,7 +32,10 @@ module Jenkins
             ["lib","models","views", "#{@target}/vendor"].each do |d|
               Dir.glob("#{d}/**/*") do |f|
                 if !File.directory? f
-                  zipfile.add("WEB-INF/classes/#{f.gsub("#{@target}/",'')}",f)
+                  p = f.gsub("#{@target}/",'')
+                  if !(p =~ /vendor\/gems\/jruby\/1.[0-9]+\/cache\/.*/)
+                    zipfile.add("WEB-INF/classes/#{p}",f)
+                  end
                 end
               end
             end
