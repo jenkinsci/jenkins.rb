@@ -77,10 +77,13 @@ module Jenkins
     end
     
     # returns true if successfully updated a new job on Jenkins
-    # currently only option available to update is nodes on a matrix-project
+    # Available Options:
+    # - to update is nodes on a matrix-project
+    # - disable a job
     def self.update_job(name, opts={})
       options = {
-        :nodes => []
+        :nodes => [],
+        :disable => false
       }.merge!(opts)
       
       # Getting the config.xml from Jenkins
@@ -92,17 +95,25 @@ module Jenkins
         raise NoConfigError.new(res.body)
       end
       
-      # Modifying config.xml to remove old nodes and add our new nodes.
       doc = REXML::Document.new(xml_data)
-      doc.elements.delete_all('matrix-project/axes/hudson.matrix.LabelAxis/values/string')
-      el = nil
-      doc.elements.each('matrix-project/axes/hudson.matrix.LabelAxis/values') do |element|
-        el = element if element.name == "values"
+      
+      # Modifying config.xml to remove old nodes and add our new nodes if we want to update nodes.
+      if !options[:nodes].empty?
+        doc.elements.delete_all('matrix-project/axes/hudson.matrix.LabelAxis/values/string')
+        el = nil
+        doc.elements.each('matrix-project/axes/hudson.matrix.LabelAxis/values') do |element|
+          el = element if element.name == "values"
+        end
+        options[:nodes].each_with_index do |node, index|
+          i = index + 1
+          el.add_element('string')
+          el.elements["string[#{i}]"].text = node
+        end
       end
-      options[:nodes].each_with_index do |node, index|
-        i = index + 1
-        el.add_element('string')
-        el.elements["string[#{i}]"].text = node
+      
+      # Disabling the job if we set disable to true
+      if options[:disable]
+        doc.root.elements["disabled"].text = "true"
       end
       
       # Posting config.xml back to Jenkins
