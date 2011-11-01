@@ -13,8 +13,14 @@ module Jenkins
           require 'bundler'
           require 'bundler/cli'
           puts "bundling..."
+
+          # We set these in ENV instead of passing the --without and --path
+          # options because the CLI options are remembered in .bundle/config and
+          # will interfere with regular usage of bundle exec / install.
           ENV['BUNDLE_APP_CONFIG'] = "#{@target}/vendor/bundle"
-          Bundler::CLI.start ["--path", "#{@target}/vendor/gems", "--without", "development"]
+          ENV['BUNDLE_WITHOUT'] =  "development"
+          ENV['BUNDLE_PATH'] = "#{@target}/vendor/gems"
+          Bundler::CLI.start
 
           generate_standalone([])
         end
