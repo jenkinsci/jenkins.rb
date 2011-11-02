@@ -11,53 +11,19 @@ module Jenkins
         def install
           require 'java'
           require 'bundler'
-          require 'bundler/cli'
           puts "bundling..."
 
           # We set these in ENV instead of passing the --without and --path
           # options because the CLI options are remembered in .bundle/config and
           # will interfere with regular usage of bundle exec / install.
-          ENV['BUNDLE_APP_CONFIG'] = "#{@target}/vendor/bundle"
-          ENV['BUNDLE_WITHOUT'] =  "development"
-          ENV['BUNDLE_PATH'] = "#{@target}/vendor/gems"
-          Bundler::CLI.start
-
-          generate_standalone([])
+          Bundler.with_clean_env {
+            ENV['BUNDLE_APP_CONFIG'] = "#{@target}/vendor/bundle"
+            ENV['BUNDLE_WITHOUT'] =  "development"
+            ENV['BUNDLE_PATH'] = "#{@target}/vendor/gems"
+            ENV.delete 'RUBYOPT'
+            system('bundle --standalone')
+          }
         end
-
-        # this code lifted from Bundler::Installer v1.1, so that it will work with 1.0
-        def generate_standalone(groups)
-         standalone_path = Bundler.settings[:path]
-         bundler_path = File.join(standalone_path, "bundler")
-         FileUtils.mkdir_p(bundler_path)
-
-         paths = []
-
-         if groups.empty?
-           specs = Bundler.definition.requested_specs
-         else
-           specs = Bundler.definition.specs_for groups.map { |g| g.to_sym }
-         end
-
-         specs.each do |spec|
-           next if spec.name == "bundler"
-
-           spec.require_paths.each do |path|
-             full_path = File.join(spec.full_gem_path, path)
-             paths << Pathname.new(full_path).relative_path_from(Bundler.root.join(bundler_path))
-           end
-         end
-
-
-         File.open File.join(bundler_path, "setup.rb"), "w" do |file|
-           file.puts "path = File.expand_path('..', __FILE__)"
-           paths.each do |path|
-             file.puts %{$:.unshift File.expand_path("\#{path}/#{path}")}
-           end
-         end
-       end
-
-
       end
     end
   end

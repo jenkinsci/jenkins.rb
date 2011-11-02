@@ -33,7 +33,7 @@ module Jenkins
               Dir.glob("#{d}/**/*") do |f|
                 if !File.directory? f
                   p = f.gsub("#{@target}/",'')
-                  if !(p =~ /vendor\/gems\/jruby\/1.[0-9]+\/cache\/.*/)
+                  if p !~ %r{/cache/}
                     zipfile.add("WEB-INF/classes/#{p}",f)
                   end
                 end
