@@ -9,6 +9,7 @@ module Jenkins
     attr_accessor :assigned_node, :node_labels # TODO just one of these
     attr_accessor :envfile
     attr_accessor :description
+    attr_accessor :sidebar_links
     attr_accessor :child_projects
     attr_accessor :mail_recipients
     attr_accessor :mail_build_breakers
@@ -47,7 +48,8 @@ module Jenkins
         b.actions
         b.description description
         b.keepDependencies false
-        b.properties
+        #b.properties
+        build_properties b
         build_scm b
         b.assignedNode assigned_node if assigned_node
         b.canRoam !assigned_node
@@ -170,6 +172,26 @@ module Jenkins
       end
     end
     
+    def build_properties(b)
+      if !sidebar_links
+        b.properties
+      else
+        b.properties do
+          b.tag! "hudson.plugins.sidebar__link.ProjectLinks" do
+            b.links do
+              sidebar_links.each do |link|
+                b.tag! "hudson.plugins.sidebar__link.LinkAction" do
+                  b.url link[:url]
+                  b.text link[:text]
+                  b.icon link[:icon]
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    
     def build_publishers(b)
       b.publishers do
         if publish_dupe_code_results
@@ -224,11 +246,24 @@ module Jenkins
         if publish_documents
           b.tag! "hudson.plugins.doclinks.DocLinksPublisher" do
             b.documents do
-              b.tag! "hudson.plugins.doclinks.Document" do
-                b.title publish_documents[:title]
-                b.directory publish_documents[:directory]
-                b.file publish_documents[:file]
-                b.id 1
+              if publish_documents.class == String # if you pass a string, it will input only that one document to publish
+                b.tag! "hudson.plugins.doclinks.Document" do
+                  b.title publish_documents[:title]
+                  b.description publish_documents[:description] if publish_documents[:description]
+                  b.directory publish_documents[:directory]
+                  b.file publish_documents[:file] if publish_documents[:file]
+                  b.id 1
+                end
+              else
+                publish_documents.each_with_index do |doc, index| # if you pass an array, it will publish all the docs passed in the array
+                  b.tag! "hudson.plugins.doclinks.Document" do
+                    b.title doc[:title]
+                    b.description doc[:description] if doc[:description]
+                    b.directory doc[:directory]
+                    b.file doc[:file] if doc[:file]
+                    b.id (index + 1)
+                  end
+                end
               end
             end
           end
