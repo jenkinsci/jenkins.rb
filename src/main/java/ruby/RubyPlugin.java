@@ -145,11 +145,6 @@ public class RubyPlugin extends PluginImpl {
         this.extensions = new ArrayList<ExtensionComponent>();
         ruby = new ScriptingContainerHolder().ruby;
 
-        // inject the plugin reference as a global variable and attribute
-        // so that we can acecss it from inside Ruby
-        Ruby r = ruby.getRuntime();
-        r.getGlobalVariables().set("$RUBYPLUGIN", Java.getInstance(ruby.getRuntime(), this));
-
         initRubyLoadPaths();
         initRubyNativePlugin();
 
@@ -160,7 +155,7 @@ public class RubyPlugin extends PluginImpl {
      * Gets the plugin that owns the container.
      */
     public static RubyPlugin from(Ruby r) {
-        IRubyObject v = r.getGlobalVariables().get("$RUBYPLUGIN");
+		IRubyObject v = r.evalScriptlet("Jenkins::Plugin.instance");
         if (v==null)        return null;
         return (RubyPlugin) v.toJava(RubyPlugin.class);
     }
