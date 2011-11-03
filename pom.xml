@@ -59,40 +59,6 @@
     </plugins>
   </build>
 
-  <profiles>
-    <profile><!-- this profiles runs bundler. see README for rvm requirements -->
-      <id>bundle</id>
-      <activation>
-        <file><!-- activated automatically if gems are missing, but otherwise we'll skip it because it's too slow -->
-          <missing>src/main/resources/ruby/vendor/</missing>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <executable>bundle</executable>
-                  <arguments>
-                    <argument>install</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 	<!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
