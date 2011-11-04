@@ -179,7 +179,7 @@ module Jenkins
           begin
             load path
           rescue Exception => e
-            puts "#{e.message} (#{e.class})\n" << (e.backtrace || []).join("\n")
+            puts "#{e.message} (#{e.class})\n  " << (e.backtrace || ["(not available)"]).join("\n  ")
           end
           nil
         end
