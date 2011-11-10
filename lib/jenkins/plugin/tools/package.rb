@@ -29,7 +29,7 @@ module Jenkins
             end
             zipfile.mkdir("WEB-INF/classes")
 
-            ["lib","models","views", "#{@target}/vendor"].each do |d|
+            ["lib","models","#{@target}/vendor"].each do |d|
               Dir.glob("#{d}/**/*") do |f|
                 if !File.directory? f
                   p = f.gsub("#{@target}/",'')
@@ -37,6 +37,13 @@ module Jenkins
                     zipfile.add("WEB-INF/classes/#{p}",f)
                   end
                 end
+              end
+            end
+
+            # stapler expects views to be directly in the classpath without any prefix
+            Dir.glob("views/**/*") do |f|
+              if !File.directory? f
+                zipfile.add("WEB-INF/classes/#{f[6..-1]}",f)
               end
             end
           end
