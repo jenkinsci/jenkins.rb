@@ -19,7 +19,7 @@ module Jenkins
         def check_error(rsp)
           # in case of 401 Unauthorized, the server just resets the connection and Net::HTTP fails to parse the response,
           # so we don't really get any meaningful error message.
-          rsp.value
+          rsp.value # TODO: is this how we check for the error?
         end
 
         def run
