@@ -15,12 +15,19 @@ module Jenkins
       # Free form text description of the plugin. No character limit, but please, keep it civil.
       attr_accessor :description
 
+      # URL to the wiki page of the plugin
+      attr_accessor :url
+
+      # A hash of developers, 'id' => 'name <email>' or 'id' => 'name'
+      attr_accessor :developers
+
       # A hash of dependencies, like 'foo' => '1.2.3', 'bar' => '0.0.1'
       # Our dependency handling is not smart (yet).
       attr_accessor :dependencies
 
       def initialize
         @dependencies = {}
+        @developers = {}
         yield(self) if block_given?
       end
 
@@ -30,6 +37,13 @@ module Jenkins
       # now must be an *exact* version number.
       def depends_on(plugin_name, version)
         dependencies[plugin_name] = version
+      end
+
+      # Adds `id` to the list of developers - this is your jenkins-ci.org
+      # account, with the displayed name of `name`. `name` can be "Your Name" or
+      # "Your Name <yname@example.com>" if you want to include your e-mail.
+      def developed_by(id, name=nil)
+        developers[id] = name || id
       end
 
       # Make sure that your specification is not corrupt.
