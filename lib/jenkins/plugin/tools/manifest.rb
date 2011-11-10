@@ -2,6 +2,7 @@
 #require 'jenkins/plugin/version'
 
 require 'jenkins/plugin/version'
+require 'etc'
 
 module Jenkins
   class Plugin
@@ -18,6 +19,7 @@ module Jenkins
           w.put "Created-By", Jenkins::Plugin::VERSION
           w.put "Build-Ruby-Platform", RUBY_PLATFORM
           w.put "Build-Ruby-Version", RUBY_VERSION
+          w.put "Built-By", Etc.getlogin()
 
           w.put "Group-Id", "org.jenkins-ci.plugins"
           w.put "Short-Name", @spec.name
