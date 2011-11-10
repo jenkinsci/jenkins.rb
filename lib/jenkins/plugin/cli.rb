@@ -19,7 +19,9 @@ module Jenkins
       desc "build", "build plugin into .hpi file suitable for distribution"
       def build
         require 'jenkins/plugin/tools/package'
-        Tools::Package.new("pkg").build
+        pkg = Tools::Package.new(spec, "pkg")
+        pkg.build
+        pkg
       end
 
       desc "server", "run a test server with plugin"
@@ -32,6 +34,13 @@ module Jenkins
         server.run!
       end
       map "s" => "server"
+
+      desc "release", "release to jenkins-ci.org"
+      def release
+        require 'jenkins/plugin/tools/release'
+
+        Tools::Release.new(spec,build().file_name).run
+      end
 
       desc "version", "show jpi version information"
       def version

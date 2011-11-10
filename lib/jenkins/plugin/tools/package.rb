@@ -7,19 +7,23 @@ module Jenkins
     module Tools
       class Package
 
-        def initialize(target)
+        def initialize(spec,target)
           @target = target
+          @spec = spec
+        end
+
+        # where to generate the package?
+        def file_name
+          file_name = "#{@target}/#{@spec.name}.hpi"
         end
 
         def build
           FileUtils.mkdir_p @target
-          spec = Jenkins::Plugin::Specification.find!
 
           Bundle.new(@target).install
 
-          manifest = Manifest.new(spec)
+          manifest = Manifest.new(@spec)
 
-          file_name = "#{@target}/#{spec.name}.hpi"
           File.delete file_name if File.exists?(file_name)
 
           Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zipfile|
@@ -47,7 +51,7 @@ module Jenkins
               end
             end
           end
-          puts "#{spec.name} plugin #{spec.version} built to #{file_name}"
+          puts "#{@spec.name} plugin #{@spec.version} built to #{file_name}"
 
         end
       end

@@ -37,7 +37,7 @@ module Jenkins
       desc "package up stuff into HPI file"
       task :package do
         require 'jenkins/plugin/tools/package'
-        Jenkins::Plugin::Tools::Package.new("pkg").build
+        Jenkins::Plugin::Tools::Package.new(Jenkins.spec,"pkg").build
       end
 
       desc "run a Jenkins server with this plugin"
