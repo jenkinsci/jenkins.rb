@@ -36,10 +36,11 @@ module Jenkins
       map "s" => "server"
 
       desc "release", "release to jenkins-ci.org"
+      method_option :release, :desc => "deploy as a release (as opposed to a snapshot)", :type => :boolean
       def release
         require 'jenkins/plugin/tools/release'
 
-        Tools::Release.new(spec,build().file_name).run
+        Tools::Release.new(spec,build().file_name, !options[:release]).run
       end
 
       desc "version", "show jpi version information"

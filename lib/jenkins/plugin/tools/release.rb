@@ -1,5 +1,6 @@
 require 'jenkins/plugin/tools/bundle'
 require 'jenkins/plugin/tools/manifest'
+require 'jenkins/jenkins-ci.org/credential'
 require 'net/http'
 require 'erb'
 
@@ -9,9 +10,10 @@ module Jenkins
       # task for deploying a plugin
       class Release
 
-        def initialize(spec,hpi)
+        def initialize(spec,hpi,snapshot)
           @spec = spec
           @hpi = hpi  # hpi file to release
+          @snapshot = snapshot # if true, deploy as a snapshot, otherwise as release
         end
 
         def check_error(rsp)
@@ -21,18 +23,19 @@ module Jenkins
         end
 
         def run
-          cred = JenkinsCiOrg::Credential.new
+          cred = Jenkins::CiOrg::Credential.new
           if !cred.has_credential? then
             raise Exception.new("no credential available to connect to jenkins-ci.org. Please create ~/.jenkins-ci.org. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
           end
 
           http = Net::HTTP.new("maven.jenkins-ci.org",8081)
 
+          puts @snapshot ? "deploying as a snapshot" : "deploying as a release"
           puts "Generating POM"
-          version = @spec.version+"-SNAPSHOT"
+          version = @snapshot ? @spec.version+"-SNAPSHOT" : @spec.version
           pom = ERB.new(File.read(File.dirname(__FILE__)+"/templates/release-pom.xml.erb")).result(binding)
 
-          path = "/content/repositories/snapshots/org/jenkins-ci/ruby-plugins/#{@spec.name}/#{@spec.version}-SNAPSHOT/#{@spec.name}-#{@spec.version}-SNAPSHOT"
+          path = "/content/repositories/#{@snapshot?'snapshots':'releases'}/org/jenkins-ci/ruby-plugins/#{@spec.name}/#{version}/#{@spec.name}-#{version}"
           req = Net::HTTP::Put.new("#{path}.pom")
           req.body = pom
           req.basic_auth(cred.user_name,cred.password)
@@ -46,43 +49,8 @@ module Jenkins
             req.content_length = File.size(@hpi)
             check_error(http.request(req))
           end
-        end
-      end
 
-      class JenkinsCiOrg
-        #
-        class Credential
-          CREDENTIAL = File.expand_path("~/.jenkins-ci.org")
-
-          def initialize
-            @props = {}
-
-            if File.exists?(CREDENTIAL) then
-              File.open(CREDENTIAL,'r') do |f|
-                f.each_line do |l|
-                  if l[0]=='#' then
-                    return  # comment
-                  end
-
-                  k,v = l.split("=",2)
-                  @props[k]=v.strip
-                end
-              end
-            end
-          end
-
-          # do we already have the credential?
-          def has_credential?
-            @props["userName"] && @props["password"]
-          end
-
-          def user_name
-            @props["userName"]
-          end
-
-          def password
-            @props["password"]
-          end
+          puts "See http://maven.jenkins-ci.org"+File.dirname(path)
         end
       end
     end
