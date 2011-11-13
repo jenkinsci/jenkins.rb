@@ -13,7 +13,9 @@
   <description><%= @spec.description %></description>
   <packaging>hpi</packaging>
 
-  <!-- TODO: url -->
+<% if not @spec.url.nil? %>
+  <url><%= @spec.url %></url>
+<% end %>
 
   <repositories>
     <repository>
@@ -21,6 +23,18 @@
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </repository>
   </repositories>
+
+  <developers>
+<% each_developer do |id, name, email| %>
+    <developer>
+      <id><%= id %></id>
+      <name><%= name %></name>
+<%  if not email.empty? %>
+      <email><%= email %></email>
+<%  end %>
+    </developer>
+<% end %>
+  </developers>
 
   <dependencies>
 <% @spec.dependencies.each do |k,v| %>

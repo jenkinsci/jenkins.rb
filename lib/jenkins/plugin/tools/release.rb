@@ -22,6 +22,18 @@ module Jenkins
           rsp.value # TODO: is this how we check for the error?
         end
 
+        def each_developer
+          @spec.developers.each do |id, name|
+            email = ''
+            if name =~ /^(.*)<([^>]+)>$/
+              name = $1
+              email = $2.strip
+            end
+
+            yield id, name.strip, email
+          end
+        end
+
         def run
           cred = Jenkins::CiOrg::Credential.new
           if !cred.has_credential? then

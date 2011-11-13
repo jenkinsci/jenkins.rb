@@ -24,7 +24,7 @@ module Jenkins
           w.put "Group-Id", "org.jenkins-ci.plugins"
           w.put "Short-Name", @spec.name
           w.put "Long-Name", @spec.name # TODO: better name
-          w.put "Url", "http://jenkins-ci.org/" # TODO: better value
+          w.put "Url", @spec.url
 
           w.put "Plugin-Class", "ruby.RubyPlugin"
           w.put "Plugin-Version", @spec.version
