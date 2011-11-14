@@ -63,42 +63,35 @@ module Jenkins
         developers[id] = name || id
       end
 
-      # Sets your repository to be `repo` under github.
-      # `repo` can be 'user/my-plugin' or 'my-plugin'.
-      # The latter implies hosting under the jenkinsci organization.
-      def uses_github(repo)
-        if @repository
+      # Sets your repository to be `repo`.
+      # `repo` is a hash of :type => url
+      #  Where :type is one of [:github, :git, :svn]
+      #
+      # Valid uses:
+      #  * uses_repository(:github => 'me/my-plugin')
+      #  * uses_repository(:github => 'my-plugin')
+      #  * * Same as :github => 'jenkinsci/my-plugin'.
+      #  * uses_repository(:git => 'git://repo.or.cz/my-plugin.git')
+      #  * uses_repository(:svn =>
+      #    'https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin')
+      def uses_repository(repo)
+        if @repository or repo.length != 1
           fail SpecificationError , "You can only specify one repository"
         end
 
-        org = 'jenkinsci'
-        if repo.include?('/')
-          org, repo = repo.split('/', 2)
+        type, url = repo.first
+        case type.to_sym
+          when :github
+            org = 'jenkinsci'
+            if url.include?('/')
+              org, url = url.split('/', 2)
+            end
+
+            url = GITHUB_URL_FORMAT % [org, url]
+            @repository = {:type => :git, :url => url}.freeze
+          when :git, :svn
+            @repository = {:type => type.to_sym, :url => url}.freeze
         end
-
-        url = GITHUB_URL_FORMAT % [org, repo]
-        @repository = {:type => :git, :url => url}.freeze
-      end
-
-      # Sets your repository to be in a git repo at `url`
-      # `url` is a git clone-eable URL like git://repo.or.cz/my-plugin.git
-      def uses_git(url)
-        if @repository
-          fail SpecificationError , "You can only specify one repository"
-        end
-
-        @repository = {:type => :git, :url => url}.freeze
-      end
-
-      # Sets your repository to be in an SVN repo at `url`
-      # `url` is an SVN checkout-able URL like
-      # https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin
-      def uses_svn(url)
-        if @repository
-          fail SpecificationError , "You can only specify one repository"
-        end
-
-        @repository = {:type => :svn, :url => url}.freeze
       end
 
       # Make sure that your specification is not corrupt.
