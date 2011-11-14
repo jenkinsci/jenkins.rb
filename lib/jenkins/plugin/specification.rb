@@ -41,10 +41,10 @@ module Jenkins
 
       # Retrieves the display name of the plugin.
       def display_name
-        if @display_name.nil?
-          self.name.capitalize
-        else
+        if @display_name
           @display_name
+        else
+          self.name.capitalize
         end
       end
 
@@ -67,7 +67,7 @@ module Jenkins
       # `repo` can be 'user/my-plugin' or 'my-plugin'.
       # The latter implies hosting under the jenkinsci organization.
       def uses_github(repo)
-        if not @repository.nil?
+        if @repository
           fail SpecificationError , "You can only specify one repository"
         end
 
@@ -83,7 +83,7 @@ module Jenkins
       # Sets your repository to be in a git repo at `url`
       # `url` is a git clone-eable URL like git://repo.or.cz/my-plugin.git
       def uses_git(url)
-        if not @repository.nil?
+        if @repository
           fail SpecificationError , "You can only specify one repository"
         end
 
@@ -94,7 +94,7 @@ module Jenkins
       # `url` is an SVN checkout-able URL like
       # https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin
       def uses_svn(url)
-        if not @repository.nil?
+        if @repository
           fail SpecificationError , "You can only specify one repository"
         end
 
