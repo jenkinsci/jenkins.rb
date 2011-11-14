@@ -13,7 +13,7 @@
   <description><%= @spec.description %></description>
   <packaging>hpi</packaging>
 
-<% if not @spec.url.nil? %>
+<% if @spec.url %>
   <url><%= @spec.url %></url>
 <% end %>
 
@@ -46,7 +46,7 @@
 <% end %>
   </dependencies>
 
-<% if not @spec.repository.nil? %>
+<% if @spec.repository %>
   <scm>
     <connection>scm:<%= @spec.repository[:type] %>:<%= @spec.repository[:url] %></connection>
   </scm>
