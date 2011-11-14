@@ -1,6 +1,7 @@
 
 Jenkins::Plugin::Specification.new do |plugin|
   plugin.name = <%= name.inspect %>
+  plugin.display_name = <%= (name.capitalize + " Plugin").inspect %>
   plugin.version = '0.0.1'
   plugin.description = 'enter description here'
 
