@@ -10,6 +10,10 @@ module Jenkins
       # unique identifier inside the Jenkins server
       attr_accessor :name
 
+      # The name of this plugin, used for display to end-users.
+      # Defaults to name, capitalized.
+      attr_writer :display_name
+
       # Plugin version. This is used during dependency resolution
       attr_accessor :version
 
@@ -33,6 +37,15 @@ module Jenkins
         @dependencies = {}
         @developers = {}
         yield(self) if block_given?
+      end
+
+      # Retrieves the display name of the plugin.
+      def display_name
+        if @display_name.nil?
+          self.name.capitalize
+        else
+          @display_name
+        end
       end
 
       # Adds `plugin_name` as a pre-requisite of
