@@ -9,7 +9,7 @@
   <groupId>org.jenkins-ci.ruby-plugins</groupId>
   <artifactId><%= @spec.name %></artifactId>
   <version><%= version %></version>
-  <name><%= @spec.name %></name>
+  <name><%= @spec.display_name %></name>
   <description><%= @spec.description %></description>
   <packaging>hpi</packaging>
 
@@ -45,4 +45,10 @@
     </dependency>
 <% end %>
   </dependencies>
+
+<% if not @spec.repository.nil? %>
+  <scm>
+    <connection>scm:<%= @spec.repository[:type] %>:<%= @spec.repository[:url] %></connection>
+  </scm>
+<% end %>
 </project>
