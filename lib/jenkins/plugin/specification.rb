@@ -4,6 +4,7 @@ require 'pathname'
 module Jenkins
   class Plugin
     class Specification
+      GITHUB_URL_FORMAT = 'git://github.com/%s/%s.git'
 
       # The name of this plugin. Will be used as a globally
       # unique identifier inside the Jenkins server
@@ -25,6 +26,9 @@ module Jenkins
       # Our dependency handling is not smart (yet).
       attr_accessor :dependencies
 
+      # A hash of :type => [:svn, :git], :url => url to repo
+      attr_reader :repository
+
       def initialize
         @dependencies = {}
         @developers = {}
@@ -44,6 +48,44 @@ module Jenkins
       # "Your Name <yname@example.com>" if you want to include your e-mail.
       def developed_by(id, name=nil)
         developers[id] = name || id
+      end
+
+      # Sets your repository to be `repo` under github.
+      # `repo` can be 'user/my-plugin' or 'my-plugin'.
+      # The latter implies hosting under the jenkinsci organization.
+      def uses_github(repo)
+        if not @repository.nil?
+          fail SpecificationError , "You can only specify one repository"
+        end
+
+        org = 'jenkinsci'
+        if repo.include?('/')
+          org, repo = repo.split('/', 2)
+        end
+
+        url = GITHUB_URL_FORMAT % [org, repo]
+        @repository = {:type => :git, :url => url}.freeze
+      end
+
+      # Sets your repository to be in a git repo at `url`
+      # `url` is a git clone-eable URL like git://repo.or.cz/my-plugin.git
+      def uses_git(url)
+        if not @repository.nil?
+          fail SpecificationError , "You can only specify one repository"
+        end
+
+        @repository = {:type => :git, :url => url}.freeze
+      end
+
+      # Sets your repository to be in an SVN repo at `url`
+      # `url` is an SVN checkout-able URL like
+      # https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin
+      def uses_svn(url)
+        if not @repository.nil?
+          fail SpecificationError , "You can only specify one repository"
+        end
+
+        @repository = {:type => :svn, :url => url}.freeze
       end
 
       # Make sure that your specification is not corrupt.
