@@ -12,6 +12,13 @@ Jenkins::Plugin::Specification.new do |plugin|
   # The first argument is your user name for jenkins-ci.org.
   plugin.developed_by <%= config[:developer_id].inspect %>, <%= config[:developer_name].inspect %>
 
+  # This specifies where your code is hosted.
+  # Alternatives include:
+  #  :github => 'myuser/my-plugin' (without myuser it defaults to jenkinsci)
+  #  :git => 'git://repo.or.cz/my-plugin.git'
+  #  :svn => 'https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin'
+  plugin.uses_repository :github => 'my-plugin'
+
   # This is a required dependency for every ruby plugin.
   plugin.depends_on 'ruby-runtime', '0.4'
 
