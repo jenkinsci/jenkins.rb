@@ -68,12 +68,12 @@ module Jenkins
       #  Where :type is one of [:github, :git, :svn]
       #
       # Valid uses:
-      #  * uses_repository(:github => 'me/my-plugin')
-      #  * uses_repository(:github => 'my-plugin')
+      #  * uses_repository :github => 'me/my-plugin'
+      #  * uses_repository :github => 'my-plugin'
       #  * * Same as :github => 'jenkinsci/my-plugin'.
-      #  * uses_repository(:git => 'git://repo.or.cz/my-plugin.git')
-      #  * uses_repository(:svn =>
-      #    'https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin')
+      #  * uses_repository :git => 'git://repo.or.cz/my-plugin.git'
+      #  * uses_repository :svn =>
+      #    'https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin'
       def uses_repository(repo)
         if @repository or repo.length != 1
           fail SpecificationError , "You can only specify one repository"
