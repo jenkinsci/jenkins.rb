@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["cowboyd@thefrontside.net"]
   s.homepage    = "http://github.com/cowboyd/jenkins-plugin"
   s.summary     = %q{Tools for creating and building Jenkins Ruby plugins}
-  s.description = %q{I'll think of a better description later, but if you're reading this, then I haven't}
+  s.description = %q{Allows you to generate a new Ruby plugin project, build it, test it in Jenkins and release it to the Jenkins Update Center.}
 
   s.rubyforge_project = "jenkins-plugin"
 
