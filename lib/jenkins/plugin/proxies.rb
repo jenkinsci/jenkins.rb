@@ -34,8 +34,8 @@ module Jenkins
 
       def initialize(plugin)
         @plugin = plugin
-        @int2ext = java.util.WeakHashMap.new
-        @ext2int = java.util.WeakHashMap.new
+        @int2ext = java.util.Collections.synchronizedMap(java.util.WeakHashMap.new)
+        @ext2int = java.util.Collections.synchronizedMap(java.util.WeakHashMap.new)
       end
 
       # Reflect a foreign Java object into the context of this plugin.
