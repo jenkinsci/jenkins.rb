@@ -22,16 +22,14 @@ module Jenkins
         @java_type
       end
 
-      # TODO: We removed @name from Descriptor (see playground) so we need to use another name.
-      # Just use class name which is in CamelCase.
+      # we take a fully-qualified class name, like Abc::Def::GhiJkl to underscore-separated tokens, like abc/def/ghi_jkl
+      # and then look for config.* (where *=.erb, .haml, ...)
       def getConfigPage
         "/#{name_to_path}/config".tap { |path|
           puts "getConfigPage -> #{path}"
         }
       end
 
-      # TODO: We removed @name from Descriptor (see playground) so we need to use another name.
-      # Just use class name which is in CamelCase.
       def getGlobalConfigPage
         "/#{name_to_path}/global".tap { |path|
           puts "getGlobalConfigPage -> #{path}"
