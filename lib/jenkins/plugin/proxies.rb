@@ -34,8 +34,8 @@ module Jenkins
 
       def initialize(plugin)
         @plugin = plugin
-        @int2ext = java.util.WeakHashMap.new
-        @ext2int = java.util.WeakHashMap.new
+        @int2ext = ruby.impl.LookupTable.new
+        @ext2int = ruby.impl.LookupTable.new
       end
 
       # Reflect a foreign Java object into the context of this plugin.
@@ -49,7 +49,7 @@ module Jenkins
       # @param [Object] object the object to bring in from the outside
       # @return the best representation of that object for this plugin
       def import(object)
-        if proxy = deref(@ext2int, object)
+        if proxy = @ext2int.get(object)
           return proxy
         end
         cls = object.class
@@ -73,7 +73,7 @@ module Jenkins
       # @return [java.lang.Object] the Java wrapper that provides an interface to `object`
       # @throw [ExportError] if no suitable Java representation can be found
       def export(object)
-        if proxy = deref(@int2ext, object)
+        if proxy = @int2ext.get(object)
           return proxy
         end
 
@@ -111,7 +111,7 @@ module Jenkins
       # @param [Object] internal the object on the Ruby side of the link
       # @param [java.lang.Object] external the object on the Java side of the link
       def linkin(internal, external)
-        @int2ext.put(internal, java.lang.ref.WeakReference.new(external))
+        @int2ext.putWeak(internal, external)
         @ext2int.put(external, internal)
       end
 
@@ -131,13 +131,7 @@ module Jenkins
       # @param [java.lang.Object] external the object on the Java side of the link
       def linkout(internal, external)
         @int2ext.put(internal, external)
-        @ext2int.put(external, java.lang.ref.WeakReference.new(internal))
-      end
-
-      def deref(reflist, object)
-        if ref = reflist[object]
-          ref.is_a?(java.lang.ref.Reference) ? ref.get() : ref
-        end
+        @ext2int.putWeak(external, internal)
       end
 
       ##
