@@ -31,8 +31,10 @@ module Jenkins
       end
 
       def getGlobalConfigPage
-        "/#{name_to_path}/global".tap { |path|
-          puts "getGlobalConfigPage -> #{path}"
+        # TODO: use Descriptor.getPossibleViewNames() that's made protected in 1.441 when it gets released
+        base = "/#{name_to_path}/global"
+        [base+".erb",base+".haml"].find { |n|
+          self.class.java_class.class_loader.getResource(n)
         }
       end
 
