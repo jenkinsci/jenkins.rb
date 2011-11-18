@@ -155,7 +155,7 @@ public class RubyPlugin extends PluginImpl {
      * Gets the plugin that owns the container.
      */
     public static RubyPlugin from(Ruby r) {
-		IRubyObject v = r.evalScriptlet("Jenkins::Plugin.instance");
+        IRubyObject v = r.evalScriptlet("Jenkins::Plugin.instance.peer");
         if (v==null)        return null;
         return (RubyPlugin) v.toJava(RubyPlugin.class);
     }
