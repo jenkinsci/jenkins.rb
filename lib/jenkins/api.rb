@@ -88,7 +88,7 @@ module Jenkins
       
       # Getting the config.xml from Jenkins
       xml_data = nil
-      res = get_plain "/job/#{name}/config.xml"
+      res = get_plain "/job/#{URI.escape(name)}/config.xml"
       if res.code.to_i == 200
         xml_data = res.body
       else
@@ -120,9 +120,9 @@ module Jenkins
       xml_data = doc.to_s
       if @username && @password && @options
         conn = Jenkins::Connection.new(@username, @password, @options)
-        res = conn.post("/job/#{CGI.escape(name)}/config.xml", xml_data, 'application/xml')
+        res = conn.post("/job/#{URI.escape(name)}/config.xml", xml_data, 'application/xml')
       else
-        res = post "/job/#{CGI.escape(name)}/config.xml", {
+        res = post "/job/#{URI.escape(name)}/config.xml", {
           :body => xml_data, :format => :xml, :headers => { 'content-type' => 'application/xml' }
         }
       end

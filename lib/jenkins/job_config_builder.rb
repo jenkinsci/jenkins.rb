@@ -246,7 +246,7 @@ module Jenkins
         if publish_documents
           b.tag! "hudson.plugins.doclinks.DocLinksPublisher" do
             b.documents do
-              if publish_documents.class == String # if you pass a string, it will input only that one document to publish
+              if publish_documents.class == Hash # if you pass a hash, it will input only that one document to publish
                 b.tag! "hudson.plugins.doclinks.Document" do
                   b.title publish_documents[:title]
                   b.description publish_documents[:description] if publish_documents[:description]
@@ -254,14 +254,14 @@ module Jenkins
                   b.file publish_documents[:file] if publish_documents[:file]
                   b.id 1
                 end
-              else
+              else # Array of hashes
                 publish_documents.each_with_index do |doc, index| # if you pass an array, it will publish all the docs passed in the array
                   b.tag! "hudson.plugins.doclinks.Document" do
                     b.title doc[:title]
                     b.description doc[:description] if doc[:description]
                     b.directory doc[:directory]
                     b.file doc[:file] if doc[:file]
-                    b.id (index + 1)
+                    b.id index + 1
                   end
                 end
               end
