@@ -16,7 +16,7 @@ module Jenkins
 
     JobAlreadyExistsError = Class.new(Exception)
 
-    def self.setup_base_url(options)
+    def self.setup_base_url(options = {})
       options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
