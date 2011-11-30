@@ -20,41 +20,67 @@ task :cucumber => 'cucumber:ok'
 
 desc "Start test server; Run cucumber:ok; Kill Test Server;"
 task :default => [:spec, "jenkins:server:killtest", "jenkins:server:test"] do
-  require 'socket'
-  require 'net/http'
-  print "waiting for at most 30 seconds for the server to start"
-  tries = 1
   begin
-    print "."; $stdout.flush
-    tries += 1
-    Net::HTTP.start("localhost", "3010") { |http| http.get('/') }
-    sleep(10)
-    puts ""
     result = Rake::Task["cucumber:ok"].invoke
-  rescue Exception => e
-    if tries <= 15
-      sleep 2
-      retry
-    end
-    raise
   ensure
-    Rake::Task["jenkins:server:killtest"].tap do |task|
-      task.reenable
-      task.invoke
-    end
+    Rake::Task["jenkins:server:killtest"].execute
   end
   raise unless result
+end
+
+# This verifies that Jenkins is started
+# and that it is ready to accept requests.
+def wait_for_server_start
+  require 'socket'
+  require 'net/http'
+  tries = 1
+  max_tries = 30
+  successes = 0
+  max_successes = 2
+  wait = 5
+  print "Waiting for the server to start (max tries: #{max_tries} with a #{wait} second pause between tries): "
+  begin
+    while tries <= max_tries
+      tries += 1
+      begin
+        Net::HTTP.start("localhost", "3010") do |http|
+          response = http.get('/')
+          if response.code == "200"
+            print "O"
+            successes += 1
+            return true if successes >= max_successes
+          else
+            print "o"
+          end
+        end
+      rescue SystemCallError => e
+        successes = 0
+        if tries == max_tries
+          print "!"
+          raise
+        end
+        print "."
+      end
+      $stdout.flush
+      sleep(wait)
+    end
+  ensure
+    puts # Ensure a newline gets added
+    $stdout.flush
+  end
+  return false
 end
 
 namespace :jenkins do
   namespace :server do
     require 'fileutils'
 
+    port = 3010
+    control = 3011
     directory plugin_dir = File.expand_path("../var/jenkins/plugins", __FILE__)
+
     desc "Run a server for tests"
     task :test => plugin_dir do
-      port = 3010
-      control = 3011
       FileUtils.chdir(File.dirname(__FILE__)) do
         Dir["fixtures/jenkins/*.hpi"].each do |plugin|
           FileUtils.cp plugin, plugin_dir
@@ -64,13 +90,14 @@ namespace :jenkins do
         puts "  output will be logged to #{logfile}"
         `bundle exec bin/jenkins server --home #{File.dirname(plugin_dir)} --port #{port} --control #{control} --daemon --logfile #{logfile}`
       end
+      wait_for_server_start
     end
 
     desc "Kill jenkins test server if it is running."
     task :killtest do
       FileUtils.chdir(File.dirname(__FILE__)) do
         puts "Killing any running server processes..."
-        `ruby bin/jenkins server --control 3011 --kill 2>/dev/null`
+        `ruby bin/jenkins server --control #{control} --kill 2>/dev/null`
       end
     end
 
@@ -78,5 +105,3 @@ namespace :jenkins do
 end
 
 Dir['tasks/**/*.rake'].each {|f| load f}
-
-
