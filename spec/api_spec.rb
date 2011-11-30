@@ -7,6 +7,21 @@ describe Jenkins::Api do
       uri = Jenkins::Api.setup_base_url :host => 'hash.example.com', :port => '123'
       uri.host.should == 'hash.example.com'
       uri.port.should == 123
+      uri.path.should == ''
+    end
+
+    it "should accept 'http://localhost:3010/somepath' as a string argument" do
+      uri = Jenkins::Api.setup_base_url 'http://string.example.com:1/somepath'
+      uri.host.should == 'string.example.com'
+      uri.port.should == 1
+      uri.path.should == '/somepath'
+    end
+
+    it "should accept 'http://localhost:3010/' as a :host argument" do
+      uri = Jenkins::Api.setup_base_url :host => 'http://string.example.com:2'
+      uri.host.should == 'string.example.com'
+      uri.port.should == 2
+      uri.path.should == ''
     end
 
     context "with environment variables" do
@@ -27,6 +42,14 @@ describe Jenkins::Api do
         ENV['JENKINS_HOST'] = 'wrong.example.com'
         ENV['JENKINS_PORT'] = '123'
         uri = Jenkins::Api.setup_base_url :host => 'right.example.com', :port => '111'
+        uri.host.should == 'right.example.com'
+        uri.port.should == 111
+      end
+
+      it "should not let environment variables override a string URL" do
+        ENV['JENKINS_HOST'] = 'wrong.example.com'
+        ENV['JENKINS_PORT'] = '123'
+        uri = Jenkins::Api.setup_base_url 'http://right.example.com:111/'
         uri.host.should == 'right.example.com'
         uri.port.should == 111
       end

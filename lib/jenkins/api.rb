@@ -17,16 +17,38 @@ module Jenkins
     JobAlreadyExistsError = Class.new(Exception)
 
     def self.setup_base_url(options = {})
+      # Handle single strings
+      options = { :host => options } if options.is_a? String
       options = options.with_clean_keys
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
+
+      # Handle URL style hosts by parsing the URL
+      if options.keys.length == 1 && options.key?(:host)
+        parsed_uri = URI::parse(options[:host])
+        options = {
+            :host => parsed_uri.host,
+            :port => parsed_uri.port,
+            :path => parsed_uri.path,
+            :ssl => parsed_uri.scheme == 'https'
+            }
+      end
+
       options = setup_authentication(options)
       options[:host] ||= ENV['JENKINS_HOST']
       options[:port] ||= ENV['JENKINS_PORT']
       options[:port] &&= options[:port].to_i
-      return false unless options[:host] || Jenkins::Config.config["base_uri"]
-      uri_class = options.delete(:ssl) ? URI::HTTPS : URI::HTTP
-      uri = options[:host] ? uri_class.build(options) : Jenkins::Config.config["base_uri"]
+
+      if options[:host]
+        uri_class = options.delete(:ssl) ? URI::HTTPS : URI::HTTP
+        uri = uri_class.build(options)
+      else
+        if Jenkins::Config.config["base_uri"]
+          uri = Jenkins::Config.config["base_uri"]
+        else
+          return false # Nothing to work with.
+        end
+      end
       base_uri uri.to_s
       uri
     end
