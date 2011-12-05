@@ -273,29 +273,30 @@ USEAGE
     end
 
     private
-      def method_missing(name, *args)
-        console(name, *args)
-      end
 
-      def select_jenkins_server(options)
-        unless @uri = Jenkins::Api.setup_base_url(options)
-          error "Either use --host or add remote servers."
-        end
-        @uri
-      end
+    def method_missing(name, *args)
+      console(name, *args)
+    end
 
-      def display(text)
-        shell.say text
-        exit
+    def select_jenkins_server(options)
+      unless @uri = Jenkins::Api.setup_base_url(options)
+        error "Either use --host or add remote servers."
       end
+      @uri
+    end
 
-      def error(text)
-        shell.say "ERROR: #{text}", :red
-        exit
-      end
+    def display(text)
+      shell.say text
+      exit
+    end
 
-      def cmd
-        ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
-      end
+    def error(text)
+      shell.say "ERROR: #{text}", :red
+      exit
+    end
+
+    def cmd
+      ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
+    end
   end
 end
