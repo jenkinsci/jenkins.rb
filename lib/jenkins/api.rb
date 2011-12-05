@@ -2,9 +2,12 @@ require 'httparty'
 require 'cgi'
 require 'uri'
 require 'json'
+require 'yaml'
 
 require 'jenkins/core_ext/hash'
 require 'jenkins/config'
+
+YAML::ENGINE.yamler = "syck"
 
 module Jenkins
   module Api
