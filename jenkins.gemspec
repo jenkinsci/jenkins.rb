@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("hpricot")
   s.add_dependency("json_pure", ">= 1.5.1")
 
-  s.add_development_dependency("jenkins-war", ">= 1.396")
+  s.add_development_dependency "jenkins-war", ">= 1.396"
   s.add_development_dependency "rake"
   s.add_development_dependency "cucumber", "~> 1.0"
   s.add_development_dependency "rspec", "~> 2.0"

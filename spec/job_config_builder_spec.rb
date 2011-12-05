@@ -19,7 +19,6 @@ describe Jenkins::JobConfigBuilder do
     end
   end
   
-  
   describe "rails job; single axis" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -30,8 +29,6 @@ describe Jenkins::JobConfigBuilder do
       config_xml("rails", "single").should == @config.to_xml
     end
   end
-  
-  
   
   describe "many rubies" do
     before do
@@ -132,6 +129,81 @@ describe Jenkins::JobConfigBuilder do
         </buildWrappers>
       XML
       Hpricot.XML(@config.to_xml).search("buildWrappers").to_s.should == xml_bite.strip
+    end
+  end
+
+  describe "setup log rotator" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        c.log_rotate = { :days_to_keep => 14 }
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <logRotator>
+          <daysToKeep>14</daysToKeep>
+          <numToKeep>-1</numToKeep>
+          <artifactDaysToKeep>-1</artifactDaysToKeep>
+          <artifactNumToKeep>-1</artifactNumToKeep>
+        </logRotator>
+      XML
+      Hpricot.XML(@config.to_xml).search("logRotator").to_s.should == xml_bite.strip
+    end
+  end
+
+  describe "setup build triggers" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        c.triggers = [{:class => :timer, :spec => "5 * * * *"}]
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <triggers class="vector">
+          <hudson.triggers.TimerTrigger>
+            <spec>5 * * * *</spec>
+          </hudson.triggers.TimerTrigger>
+        </triggers>
+      XML
+      Hpricot.XML(@config.to_xml).search("triggers").to_s.should == xml_bite.strip
+    end
+  end
+
+  describe "setup publishers for a build" do
+    before do
+      @config = Jenkins::JobConfigBuilder.new(:none) do |c|
+        c.publishers = [
+          { :chuck_norris => true },
+          { :job_triggers => { :projects => ["Dependent Job", "Even more dependent job"], :on => "FAILURE" } },
+          { :mailer       => ["some.guy@example.com", "another.guy@example.com"] }
+        ]
+      end
+    end
+
+    it 'builds config.xml' do
+      xml_bite = <<-XML.gsub(/^      /, '')
+      <publishers>
+          <hudson.plugins.chucknorris.CordellWalkerRecorder>
+            <factGenerator />
+          </hudson.plugins.chucknorris.CordellWalkerRecorder>
+          <hudson.tasks.BuildTrigger>
+            <childProjects>Dependent Job, Even more dependent job</childProjects>
+            <threshold>
+              <name>FAILURE</name>
+              <ordinal>2</ordinal>
+              <color>RED</color>
+            </threshold>
+          </hudson.tasks.BuildTrigger>
+          <hudson.tasks.Mailer>
+            <recipients>some.guy@example.com, another.guy@example.com</recipients>
+            <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+            <sendToIndividuals>true</sendToIndividuals>
+          </hudson.tasks.Mailer>
+        </publishers>
+      XML
+      Hpricot.XML(@config.to_xml).search("publishers").to_s.should == xml_bite.strip
     end
   end
 

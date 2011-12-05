@@ -75,22 +75,31 @@ module Jenkins
           cache_configuration!
           true
         else
-          require "hpricot"
-          doc = Hpricot(res.body)
-          error_msg = doc.search("td#main-panel p")
-          unless error_msg.inner_text.blank?
-            $stderr.puts error_msg.inner_text
-          else
-            # TODO - what are the errors we get?
-            puts "Server error:"
-            p res.code
-            puts res.body
-          end
+          show_me_the_error(res)
           false
         end
       rescue REXML::ParseException => e
         # For some reason, if the job exists we get back half a page of HTML
         raise JobAlreadyExistsError.new(name)
+      end
+    end
+
+    # returns true if successfully updated a job on Jenkins
+    # +job_config+ is a Jenkins::JobConfigBuilder instance
+    #
+    # returns true if successful, else false
+    #
+    # TODO Exceptions?
+    def self.update_job(name, job_config)
+      res = post "#{job_url name}/config.xml", {
+        :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+      }
+      if res.code.to_i == 200
+        cache_configuration!
+        true
+      else
+        show_me_the_error(res)
+        false
       end
     end
 
@@ -279,7 +288,21 @@ module Jenkins
     end
 
     def self.job_url(name)
-      "#{base_uri}/job/#{name}"
+      "#{base_uri}/job/#{URI.escape(name)}"
+    end
+
+    def self.show_me_the_error(response)
+      require "hpricot"
+      doc = Hpricot(response.body)
+      error_msg = doc.search("td#main-panel p")
+      unless error_msg.inner_text.blank?
+        $stderr.puts error_msg.inner_text
+      else
+        # TODO - what are the errors we get?
+        puts "Server error:"
+        p response.code
+        puts response.body
+      end
     end
   end
 end
