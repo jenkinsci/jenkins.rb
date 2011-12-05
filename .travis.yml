@@ -5,8 +5,9 @@
 
 # Specify which ruby versions you wish to run your tests on, each version will be used
 rvm:
-  - 1.8.7 # (current default)
-  # - 1.9.2
+  - 1.8.7
+  - 1.9.2
+  - 1.9.3
   # - rbx
   # - rbx-2.0
   # - ree
@@ -27,7 +28,7 @@ script: "bundle exec rake"
 #   - command_2
 
 # Specify an ENV variable to run before: 'bundle install' and 'rake' (or your defined 'script')
-#env: "RAILS_ENV='test' "        # 
+#env: "RAILS_ENV='test' "        #
 
 # Specify the recipients for email notification
 notifications:
