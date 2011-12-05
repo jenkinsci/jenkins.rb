@@ -115,6 +115,16 @@ module Jenkins
       end
     end
 
+    # Return the console log information about a build.
+    def self.console(job_name, axe, build_number)
+      path  = "/job/#{job_name}/#{build_number}/"
+      path << "#{axe}/" if axe
+      path << "consoleText"
+      log   = get_plain path
+      cache_configuration!
+      log.body
+    end
+
     def self.nodes
       json = get "/computer/api/json"
       cache_configuration!

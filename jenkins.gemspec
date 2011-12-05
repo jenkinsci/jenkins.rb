@@ -15,14 +15,14 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "jenkins"
 
   s.files         = `git ls-files`.split("\n")
-
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency("term-ansicolor", [">= 1.0.4"])
-  s.add_dependency("httparty", ["~> 0.6.1"])
-  s.add_dependency("builder", ["~> 2.1.2"])
-  s.add_dependency("thor", ["~> 0.14.2"])
+  s.add_dependency("term-ansicolor", ">= 1.0.4")
+  s.add_dependency("httparty", "~> 0.6.1")
+  s.add_dependency("builder", "~> 2.1.2")
+  s.add_dependency("thor", "~> 0.14.2")
   s.add_dependency("hpricot")
   s.add_dependency("json_pure", ">= 1.5.1")
   s.add_development_dependency("jenkins-war", ">= 1.396")
