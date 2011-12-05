@@ -6,3 +6,4 @@ var
 pkg/
 *.swp
 .rvmrc
+Gemfile.lock
