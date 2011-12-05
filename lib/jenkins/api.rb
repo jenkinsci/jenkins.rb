@@ -7,7 +7,7 @@ require 'yaml'
 require 'jenkins/core_ext/hash'
 require 'jenkins/config'
 
-YAML::ENGINE.yamler = "syck"
+YAML::ENGINE.yamler = "syck" if RUBY_VERSION >= '1.9'
 
 module Jenkins
   module Api
