@@ -4,7 +4,7 @@ module Jenkins
   class FilePath
     Stat = Struct.new(:size, :mode, :mtime)
 
-    attr_reader :natvie
+    attr_reader :native
 
     def initialize(native)
       @native = native
