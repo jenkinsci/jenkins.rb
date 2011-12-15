@@ -2,22 +2,12 @@ require 'spec_helper'
 
 describe Jenkins::Model::Build do
   include Jenkins::Model
+  include SpecHelper
 
   before :each do
-    group = Java.hudson.model.ItemGroup.new
-    project = Class.new(Java.hudson.model.Project).new(group,"Mock Project")
-    @native = Class.new(Java.hudson.model.AbstractBuild).tap do |cls|
-      cls.class_eval do
-        def initialize
-          super(project)
-        end
-      end
-    end.new
+    @native = mockito(Java.hudson.model.AbstractBuild)
+    @native.buildEnvironments = java.util.ArrayList.new
     @build = Jenkins::Model::Build.new(@native)
-  end
-
-  it "can be instantiated" do
-    Jenkins::Model::Build.new
   end
 
   it "returns workspace path" do
@@ -25,16 +15,6 @@ describe Jenkins::Model::Build do
     fs.should_receive(:getRemote).and_return(".")
     @native.should_receive(:getWorkspace).and_return(fs)
     @build.workspace.to_s.should == "."
-  end
-
-  it "returns build variables as Hash-like" do
-    @native.should_receive(:getBuildVariables).and_return("FOO" => "BAR")
-    @build.build_var.should == {"FOO" => "BAR"}
-  end
-
-  it "returns environment variables as Hash-like" do
-    @native.should_receive(:getEnvironment).with(nil).and_return("FOO" => "BAR")
-    @build.env.should == {"FOO" => "BAR"}
   end
 
   it "can halt" do
@@ -69,7 +49,8 @@ describe Jenkins::Model::Build do
     before do
       @build.env['FOO'] = 'bar'
       @build.env[:bar] = :baz
-      @vars = @native.getEnvironment(Proc.new {})
+      Java.org.mockito.Mockito.when(@native.getEvironment(nil)).thenCallRealMethod()
+      @vars = @native.getEnvironment(nil)
     end
 
     it "sets environment variables into the native build environment" do

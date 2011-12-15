@@ -29,8 +29,9 @@ module Jenkins
       # like .profile and .rc files.
       attr_reader :env
 
-      def initialize(native = nil)
+      def initialize(native)
         @native = native
+        @variables = {}
         @env = {}
         @native.buildEnvironments.add(EnvironmentVariables.new(@env))
       end
@@ -76,6 +77,7 @@ module Jenkins
 
       class EnvironmentVariables < Java.hudson.model.Environment
         def initialize(variables)
+          super()
           @variables = variables
         end
 
