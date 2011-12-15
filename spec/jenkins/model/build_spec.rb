@@ -4,7 +4,15 @@ describe Jenkins::Model::Build do
   include Jenkins::Model
 
   before :each do
-    @native = mock("AbstractBuild")
+    group = Java.hudson.model.ItemGroup.new
+    project = Class.new(Java.hudson.model.Project).new(group,"Mock Project")
+    @native = Class.new(Java.hudson.model.AbstractBuild).tap do |cls|
+      cls.class_eval do
+        def initialize
+          super(project)
+        end
+      end
+    end.new
     @build = Jenkins::Model::Build.new(@native)
   end
 
@@ -54,6 +62,22 @@ describe Jenkins::Model::Build do
 
     it "has symbol/string indifferent access" do
       @build[:val].should be @val
+    end
+  end
+
+  describe "environment variables" do
+    before do
+      @build.env['FOO'] = 'bar'
+      @build.env[:bar] = :baz
+      @vars = @native.getEnvironment(Proc.new {})
+    end
+
+    it "sets environment variables into the native build environment" do
+      @vars.get('FOO').should eql 'bar'
+    end
+
+    it "capitalizes and stringifies keys and stringifies values" do
+      @vars.get('BAR').should eql 'baz'
     end
   end
 
