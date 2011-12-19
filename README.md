@@ -8,7 +8,7 @@ Provide the facility to create, develop and release extensions for [Jenkins](htt
 
 Using JRuby, install the plugin tools
 
-    $ gem install jenkins-plugin
+    $ gem install jpi
 
 The gem provides the `jpi` executeable
 
@@ -70,7 +70,7 @@ Of course, this plugin isn't actually doing anything because we haven't defined 
 points. Let's go ahead and create one of the most common extension points: a `Builder`
 
     $ jpi generate builder logging
-    TODO: implement generators
+
 
 
 
