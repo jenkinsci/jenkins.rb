@@ -2,4 +2,4 @@
 
 require 'jenkins/plugin/cli'
 
-Jenkins::Plugin::CLI.start ARGV
+puts File.read File.expand_path '../../lib/jenkins/plugin/PSA.txt', __FILE__

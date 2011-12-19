@@ -9,22 +9,11 @@ Gem::Specification.new do |s|
   s.authors     = ["Charles Lowell"]
   s.email       = ["cowboyd@thefrontside.net"]
   s.homepage    = "http://github.com/cowboyd/jenkins-plugin"
-  s.summary     = %q{Tools for creating and building Jenkins Ruby plugins}
-  s.description = %q{Allows you to generate a new Ruby plugin project, build it, test it in Jenkins and release it to the Jenkins Update Center.}
+  s.summary     = %q{DEPRECATED - Tools for creating and building Jenkins Ruby plugins}
+  s.description = %q{This gem has moved. Further development will be done on the `jpi` gem}
+  s.post_install_message = File.read File.expand_path "lib/jenkins/plugin/PSA.txt"
 
   s.rubyforge_project = "jenkins-plugin"
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
-
-  s.add_dependency "rubyzip"
-  s.add_dependency "thor"
-  s.add_dependency "jenkins-war", ">= 1.427"
-  s.add_dependency "bundler", "~> 1.1.rc"
-  s.add_dependency "jenkins-plugin-runtime", "~> 0.1.13"
-
-  s.add_development_dependency "rspec", "~> 2.0"
-  s.add_development_dependency "cucumber", "~> 1.0"
 end

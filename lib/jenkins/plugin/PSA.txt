@@ -1,0 +1,10 @@
+
+[DEPRECATION WARNING]
+
+This version of the Jenkins plugin has been deprecated. For the new version,
+please use the `jpi` gem. You can install it with
+
+gem install `jpi`
+
+You can continue to use older versions of this tool by explicitly
+installing version 0.1.x
