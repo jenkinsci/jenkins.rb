@@ -2,14 +2,12 @@ require 'spec_helper'
 
 describe Jenkins::Model::Build do
   include Jenkins::Model
+  include SpecHelper
 
   before :each do
-    @native = mock("AbstractBuild")
+    @native = mockito(Java.hudson.model.AbstractBuild)
+    @native.buildEnvironments = java.util.ArrayList.new
     @build = Jenkins::Model::Build.new(@native)
-  end
-
-  it "can be instantiated" do
-    Jenkins::Model::Build.new
   end
 
   it "returns workspace path" do
@@ -17,16 +15,6 @@ describe Jenkins::Model::Build do
     fs.should_receive(:getRemote).and_return(".")
     @native.should_receive(:getWorkspace).and_return(fs)
     @build.workspace.to_s.should == "."
-  end
-
-  it "returns build variables as Hash-like" do
-    @native.should_receive(:getBuildVariables).and_return("FOO" => "BAR")
-    @build.build_var.should == {"FOO" => "BAR"}
-  end
-
-  it "returns environment variables as Hash-like" do
-    @native.should_receive(:getEnvironment).with(nil).and_return("FOO" => "BAR")
-    @build.env.should == {"FOO" => "BAR"}
   end
 
   it "can halt" do
@@ -54,6 +42,23 @@ describe Jenkins::Model::Build do
 
     it "has symbol/string indifferent access" do
       @build[:val].should be @val
+    end
+  end
+
+  describe "environment variables" do
+    before do
+      @build.env['FOO'] = 'bar'
+      @build.env[:bar] = :baz
+      Java.org.mockito.Mockito.when(@native.getEvironment(nil)).thenCallRealMethod()
+      @vars = @native.getEnvironment(nil)
+    end
+
+    it "sets environment variables into the native build environment" do
+      @vars.get('FOO').should eql 'bar'
+    end
+
+    it "capitalizes and stringifies keys and stringifies values" do
+      @vars.get('BAR').should eql 'baz'
     end
   end
 

@@ -10,6 +10,7 @@ $:.unshift Pathname(__FILE__).dirname.join('../lib')
 
 require 'jenkins/plugin/runtime'
 require 'jenkins/plugin/proxies/proxy_helper'
+require File.expand_path '../mockito-all-1.8.5.jar', __FILE__
 
 module SpecHelper
   # Java does not support opening directory as a File: File.open(".")
@@ -41,5 +42,9 @@ module SpecHelper
     File.open(path, "wb") do |f|
       f << content
     end
+  end
+
+  def mockito(cls)
+    Java.org.mockito.Mockito.mock(cls.java_class)
   end
 end
