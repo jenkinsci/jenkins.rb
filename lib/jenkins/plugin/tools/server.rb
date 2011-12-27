@@ -39,6 +39,7 @@ module Jenkins
           args << "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
           args << "-DJENKINS_HOME=#{@workdir}"
           args << "-Dstapler.trace=true"
+          args << "-Djenkins.development-mode=true"
           args << "-Ddebug.YUI=true"
 #          args << "-Djruby.debug.loadService=true"
 #          args << "-Djruby.debug.loadService.timing=true"
