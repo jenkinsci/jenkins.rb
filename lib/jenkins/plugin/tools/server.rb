@@ -29,6 +29,9 @@ module Jenkins
             manifest.write_hpl(f, loadpath)
           end
 
+          # cancel out the effect of being invoked from Bundler
+          # otherwise this will affect Bundler that we run from inside Jenkins run by "jpi server"
+          ENV['BUNDLE_GEMFILE'] = nil
 
           # execute Jenkins
           args = []
