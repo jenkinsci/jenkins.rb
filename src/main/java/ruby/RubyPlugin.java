@@ -6,6 +6,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
+import org.jruby.RubyModule;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.Java;
 import org.jruby.rack.DefaultRackApplication;
@@ -16,6 +17,8 @@ import org.jruby.rack.servlet.ServletRackResponseEnvironment;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.jelly.jruby.RubyKlassNavigator;
+import org.kohsuke.stapler.lang.Klass;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +59,8 @@ public class RubyPlugin extends PluginImpl {
 	 * and classes that it contains.
 	 */
 	ScriptingContainer ruby;
+
+    private /*almost final*/ RubyKlassNavigator navigator;
 
     /**
      * Kinda acts like the "agent" of this ruby plugin in the Ruby world.
@@ -144,6 +149,7 @@ public class RubyPlugin extends PluginImpl {
 
         this.extensions = new ArrayList<ExtensionComponent>();
         ruby = new ScriptingContainerHolder().ruby;
+        navigator = new RubyKlassNavigator(ruby.getProvider().getRuntime(),getWrapper().classLoader);
 
         initRubyLoadPaths();
         initRubyNativePlugin();
@@ -158,6 +164,10 @@ public class RubyPlugin extends PluginImpl {
         IRubyObject v = r.evalScriptlet("Jenkins::Plugin.instance.peer");
         if (v==null)        return null;
         return (RubyPlugin) v.toJava(RubyPlugin.class);
+    }
+    
+    public Klass<RubyModule> klassFor(RubyModule module) {
+        return module!=null ? new Klass<RubyModule>(module,navigator) : null;
     }
 
 	private void initRubyNativePlugin() {
