@@ -22,6 +22,11 @@ module Jenkins
         @java_type
       end
 
+      # let Jenkins use our Ruby class for resource lookup and all
+      def getKlass()
+        @plugin.peer.klassFor(@impl)
+      end
+
       # we take a fully-qualified class name, like Abc::Def::GhiJkl to underscore-separated tokens, like abc/def/ghi_jkl
       # and then look for config.* (where *=.erb, .haml, ...)
       def getConfigPage
