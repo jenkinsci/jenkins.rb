@@ -201,8 +201,12 @@ module Jenkins
                       "FAILURE"
                     when "green", "blue"
                       "SUCCESS"
+                    when "aborted"
+                      "ABORTED"
+                    when /anime/
+                      "BUILDING"
                     else
-                      "building/cancelled"
+                      "UNKNOWN (#{status["color"]}"
                     end
       shell.say status_name
     end
