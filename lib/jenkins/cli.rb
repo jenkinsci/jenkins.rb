@@ -191,6 +191,22 @@ module Jenkins
       puts Jenkins::Api.console(job_name, build_number, axe)
     end
 
+    desc "status JOB_NAME [options]", "show the status of the last build of a job"
+    common_options
+    def status(job_name)
+      select_jenkins_server(options)
+      status = Jenkins::Api.job(job_name)
+      status_name = case status["color"]
+                    when "red"
+                      "FAILURE"
+                    when "green", "blue"
+                      "SUCCESS"
+                    else
+                      "building/cancelled"
+                    end
+      shell.say status_name
+    end
+
     desc "list [options]", "list jobs on a jenkins server"
     common_options
     def list
