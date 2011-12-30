@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.8 - 2011/12/30
+
+* re-releasing 0.6.7 which failed to register in RubyGems.org
+
 ## 0.6.4 - 2011/04/13
 
 * change from json to json_pure
