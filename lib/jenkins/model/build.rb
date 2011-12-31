@@ -21,7 +21,7 @@ module Jenkins
       #
       # build.env['GEM_HOME'] = '/path/to/my/gem/home'
       #
-      # Note that this is not an exhaustive list of all environement variables,
+      # Note that this is not an exhaustive list of all environment variables,
       # only those which have been explicitly set by code inside this Ruby
       # plugin.
       #
