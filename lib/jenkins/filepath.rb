@@ -128,6 +128,10 @@ module Jenkins
     # TODO: createTempDir
     # TODO: createTempFile
 
+    def create_launcher(listener)
+      Launcher.new(@native.createLauncher(listener.native))
+    end
+
   private
 
     def create_filepath(path)
