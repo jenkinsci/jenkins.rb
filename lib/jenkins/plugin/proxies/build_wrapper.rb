@@ -11,8 +11,7 @@ module Jenkins
       # Ruby API Jenkins::Tasks::BuildWrapper
 
       class BuildWrapper < Java.hudson.tasks.BuildWrapper
-        include Java.jenkins.ruby.Get
-        include Jenkins::Plugin::Proxy
+        include Jenkins::Plugin::Proxies::Describable
 
         def setUp(build, launcher, listener)
           @object.setup(import(build), import(launcher), import(listener))
@@ -20,15 +19,6 @@ module Jenkins
         rescue Jenkins::Model::Build::Halt
           nil
         end
-
-        def getDescriptor
-          @plugin.descriptors[@object.class]
-        end
-
-        def get(name)
-          @object.respond_to?(name) ? @object.send(name) : nil
-        end
-
       end
 
 
