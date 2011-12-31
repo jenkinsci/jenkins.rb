@@ -57,6 +57,7 @@ module Jenkins
       def construct(attrs)
         @impl.new(attrs)
       rescue ArgumentError
+        # TODO: this automatic rescue can mask a user-problem in the constructor
         @impl.new
       end
 
