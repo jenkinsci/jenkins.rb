@@ -3,13 +3,13 @@ require 'json'
 
 module Jenkins
   module Model
-    class Descriptor < Java.hudson.model.Descriptor
-
-      def initialize(impl, plugin, java_type)
-        super(java_type)
-        @impl, @plugin, @java_type = impl, plugin, java_type
-      end
-
+    #
+    # Jenkins typically defines one Descriptor subtype per extension point, and
+    # in Ruby we want to subtype those to add Ruby-specific behaviours.
+    #
+    # This class captures commonality of such "Ruby-specific behaviours" across different Descriptors
+    # so it can be mixed into the Descriptor subtypes
+    module RubyDescriptor
       def getDisplayName
         @impl.display_name
       end
@@ -72,5 +72,12 @@ module Jenkins
       end
     end
 
+    class Descriptor < Java.hudson.model.Descriptor
+      include RubyDescriptor
+      def initialize(impl, plugin, java_type)
+        super(java_type)
+        @impl, @plugin, @java_type = impl, plugin, java_type
+      end
+    end
   end
 end

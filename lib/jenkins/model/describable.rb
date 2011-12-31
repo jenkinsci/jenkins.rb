@@ -19,6 +19,7 @@ module Jenkins
     #     class Builder
     #       include Jenkins::Model::Describable
     #       describe_as Java.hudson.tasks.Builder
+    #       descriptor_is Jenkins::Tasks::BuildStepDescriptor
     #     end
     #
     # behind the scenes, this creates a `Descriptor` instance registered against the java type
@@ -31,15 +32,23 @@ module Jenkins
       DescribableError = Class.new(StandardError)
 
       module DescribeAs
+        # Java class that represents the extension point, which gets eventually set to Descriptor.clazz
         def describe_as cls
-          if defined?(cls.java_class) && cls.is_a?(Class)
-            @describe_as_type = cls.java_class
-          else
+          @describe_as_type = verify_java_class(cls).java_class
+        end
+        attr_reader :describe_as_type
+
+        # Java-Descriptor-subtype-subclassed-in-Ruby type that represents the class used to instantiate a Descriptor.
+        def descriptor_is cls
+          @descriptor_is = verify_java_class(cls)
+        end
+
+      private
+        def verify_java_class cls
+          if !defined?(cls.java_class) || !cls.is_a?(Class)
             fail DescribableError, "#{cls.class.inspect} is not an instance of java.lang.Class"
           end
-        end
-        def describe_as_type
-          @describe_as_type
+          cls
         end
       end
 
@@ -52,8 +61,12 @@ module Jenkins
           cls.class_eval do
             @describe_as_type = describe_as_type
           end
+          descriptor_is = @descriptor_is
+          cls.class_eval do
+            @descriptor_is = describe_as_type
+          end
           if Jenkins::Plugin.instance
-            Jenkins::Plugin.instance.register_describable(cls, describe_as_type)
+            Jenkins::Plugin.instance.register_describable(cls, describe_as_type, descriptor_is)
           end
         end
       end

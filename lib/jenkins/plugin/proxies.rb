@@ -149,7 +149,7 @@ module Jenkins
       # that links can be built automatically.
       #
       # @param [Class] internal_class the Ruby class
-      # @param [java.lang.Class] external_class the Java class on the othe side of this link.
+      # @param [java.lang.Class] external_class the Java class on the other side of this link.
       def self.register(internal_class, external_class)
         @@intcls2extcls[internal_class] = external_class
         @@extcls2intcls[external_class] = internal_class

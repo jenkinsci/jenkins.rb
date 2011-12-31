@@ -6,6 +6,8 @@ module Jenkins
     class Proxies
       class Action
         include Java.hudson.model.Action
+        include Java.jenkins.ruby.Get
+        include Jenkins::Plugin::Proxy
         include Jenkins::Plugin::Proxies::Describable
 
         def getIconFileName

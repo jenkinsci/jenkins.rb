@@ -5,6 +5,8 @@ module Jenkins
     class Proxies
       class RootAction
         include Java.hudson.model.RootAction
+        include Java.jenkins.ruby.Get
+        include Jenkins::Plugin::Proxy
         include Jenkins::Plugin::Proxies::Describable
 
         def getDisplayName

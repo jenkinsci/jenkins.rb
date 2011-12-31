@@ -12,6 +12,8 @@ module Jenkins
 
       class BuildWrapper < Java.hudson.tasks.BuildWrapper
         include Jenkins::Plugin::Proxies::Describable
+        include Java.jenkins.ruby.Get
+        include Jenkins::Plugin::Proxy
 
         def setUp(build, launcher, listener)
           @object.setup(import(build), import(launcher), import(listener))
