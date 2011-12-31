@@ -8,7 +8,7 @@ module Jenkins
     include Java.jenkins.ruby.DoDynamic
 
     def doDynamic(request, response)
-      $RUBYPLUGIN.rack(Rack::Handler::Servlet.new(self))
+      Plugin.instance.peer.rack(Rack::Handler::Servlet.new(self))
     end
   end
 end
