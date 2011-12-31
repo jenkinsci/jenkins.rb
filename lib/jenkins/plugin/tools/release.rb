@@ -42,7 +42,7 @@ module Jenkins
 
           http = Net::HTTP.new("maven.jenkins-ci.org",8081)
 
-          puts @snapshot ? "deploying as a snapshot" : "deploying as a release"
+          puts @snapshot ? "deploying as a snapshot. Run with the --release option to release it for real when you are ready" : "deploying as a release"
           puts "Generating POM"
           version = @snapshot ? @spec.version+"-SNAPSHOT" : @spec.version
           pom = ERB.new(File.read(File.dirname(__FILE__)+"/templates/release-pom.xml.erb")).result(binding)
