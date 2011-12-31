@@ -22,8 +22,9 @@ module Jenkins
       #
       # @param [Jenkins::Plugin] plugin the plugin from whence this proxy object came
       # @param [Object] object the implementation to which this proxy will delegate.
-      def initialize(plugin, object)
-        super() if defined? super
+      # @param super_args               pass through arguments to the super type
+      def initialize(plugin, object, *super_args)
+        super(*super_args) if defined? super
         @plugin, @object = plugin, object
         @pluginid = @plugin.name
       end
