@@ -2,6 +2,7 @@ package ruby;
 
 import hudson.Plugin;
 import hudson.model.Items;
+import hudson.model.Run;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
 import org.jenkinsci.jruby.JRubyMapper;
@@ -42,11 +43,13 @@ public class RubyRuntimePlugin extends Plugin {
         RubyPluginRuntimeResolver resolver = new RubyPluginRuntimeResolver();
         JRubyXStream.register(Jenkins.XSTREAM2, resolver);
         JRubyXStream.register(Items.XSTREAM2, resolver);
+        JRubyXStream.register(Run.XSTREAM2, resolver);
 
         //TODO: these should be in some sort of static initializer, but where?
         //TODO: if I move it to an initializer block, then it barfs.
         enableJRubyXStream(Jenkins.XSTREAM2);
         enableJRubyXStream(Items.XSTREAM2);
+        enableJRubyXStream(Run.XSTREAM2);
     }
 
     /**
