@@ -32,6 +32,8 @@ module Jenkins
           # cancel out the effect of being invoked from Bundler
           # otherwise this will affect Bundler that we run from inside Jenkins run by "jpi server"
           ENV['BUNDLE_GEMFILE'] = nil
+          ENV['BUNDLE_BIN_PATH'] = nil
+          ENV['RUBYOPT'] = nil
 
           # execute Jenkins
           args = []
