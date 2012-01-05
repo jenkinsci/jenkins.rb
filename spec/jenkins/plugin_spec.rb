@@ -2,9 +2,6 @@ require 'spec_helper'
 require 'tmpdir'
 
 describe Jenkins::Plugin do
-  it "is unbelievable that I don't have a spec for this class" do
-    Jenkins::Plugin.instance_method(:initialize).should_not be_nil
-  end
 
   describe "when plugin loads models" do
     include SpecHelper

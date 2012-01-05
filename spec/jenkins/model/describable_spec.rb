@@ -47,5 +47,16 @@ describe Jenkins::Model::Describable do
         end
       end
     end
+
+    describe "with a custom descriptor type" do
+      it "registers that custom descriptor" do
+        @class.describe_as java.lang.Object, :with => java.lang.String
+        @subclass = Class.new(@class)
+        @plugin.should have_received(:register_describable).with(@subclass, java.lang.Object.java_class, java.lang.String.java_class)
+      end
+      it "must be a real java class" do
+        lambda {@class.describe_as java.lang.Object, :with => Object}.should raise_error(Jenkins::Model::Describable::DescribableError)
+      end
+    end
   end
 end
