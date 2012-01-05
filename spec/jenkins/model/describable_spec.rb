@@ -34,7 +34,7 @@ describe Jenkins::Model::Describable do
       end
 
       it "is registered as an extension of the java type" do
-        @plugin.should have_received(:register_describable).with(@subclass, java.lang.Object.java_class)
+        @plugin.should have_received(:register_describable).with(@subclass, java.lang.Object.java_class, nil)
       end
 
       describe ". a sub-subclass" do
@@ -43,7 +43,7 @@ describe Jenkins::Model::Describable do
         end
 
         it "is also registered as an extension of the original java type" do
-          @plugin.should have_received(:register_describable).with(@subsubclass, java.lang.Object.java_class)
+          @plugin.should have_received(:register_describable).with(@subsubclass, java.lang.Object.java_class, nil)
         end
       end
     end
