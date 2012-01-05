@@ -1,4 +1,5 @@
 require 'jenkins/model/action'
+require 'jenkins/plugin/proxies/describable'
 
 module Jenkins
   class Plugin
@@ -7,6 +8,7 @@ module Jenkins
         include Java.hudson.model.Action
         include Java.jenkins.ruby.Get
         include Jenkins::Plugin::Proxy
+        include Jenkins::Plugin::Proxies::Describable
 
         def getIconFileName
           @object.icon
@@ -14,14 +16,6 @@ module Jenkins
 
         def getUrlName
           @object.url_path
-        end
-
-        def getDescriptor
-          @plugin.descriptors[@object.class]
-        end
-
-        def get(name)
-          @object.respond_to?(name) ? @object.send(name) : nil
         end
       end
 
