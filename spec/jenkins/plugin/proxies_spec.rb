@@ -149,6 +149,20 @@ describe Jenkins::Plugin::Proxies do
     end
   end
 
+  describe "exporting an alreay external java object" do
+    before do
+      @java_object = java.lang.Object.new
+      @export = @proxies.export(@java_object)
+    end
+
+    it "just passes the java object through" do
+      @export.should be @java_object
+    end
+    it "is idempotent" do
+      @proxies.export(@export).should be @export
+    end
+  end
+
   private
 
   def proxy_class

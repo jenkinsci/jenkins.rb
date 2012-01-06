@@ -69,6 +69,8 @@ module Jenkins
       # Reflect a native Ruby object into its External Java form.
       #
       # Try to find a suitable form for this object and if one is found then decorate it.
+      # If the object already is a java.lang.Object, then just let it pass through.
+      #
       # @param [Object] object the ruby object that is being exported to Java
       # @return [java.lang.Object] the Java wrapper that provides an interface to `object`
       # @throw [ExportError] if no suitable Java representation can be found
@@ -78,6 +80,9 @@ module Jenkins
         end
 
         cls = object.class
+        if cls.respond_to? :java_class
+          return object
+        end
         while cls do
           if external_class = @@intcls2extcls[cls]
             external = external_class.new(@plugin, object)
