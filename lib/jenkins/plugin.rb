@@ -102,10 +102,11 @@ module Jenkins
     # @param [java.lang.Class] describable_class that Jenkins will see this extention point as
     # @param [Class] descriptor_class that we use to instantiate Descriptor.
     #                          nil to use the plain-vanilla Descriptor class for those extension points that don't define its own Descriptor type
-    def register_describable(ruby_class, describable_class, descriptor_class=nil)
-      descriptor = (descriptor_class || Jenkins::Model::Descriptor).new(ruby_class, self, describable_class)
+    def register_describable(ruby_class, describable_class, descriptor_class = nil)
+      descriptor_class ||= Jenkins::Model::Descriptor
+      descriptor = descriptor_class.new(ruby_class, self, describable_class)
       @descriptors[ruby_class] = descriptor
-      @peer.addExtension(descriptor)
+      register_extension(descriptor)
     end
 
     # unique identifier for this plugin in the Jenkins server
