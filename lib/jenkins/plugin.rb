@@ -88,7 +88,7 @@ module Jenkins
     # @param [...] arguments to pass to
 
     def register_extension(class_or_instance, *args)
-      extension = class_or_instance.is_a?(Class) ? class_or_instance.new : class_or_instance
+      extension = class_or_instance.is_a?(Class) ? class_or_instance.new(*args) : class_or_instance
       @peer.addExtension(export(extension))
     end
 
