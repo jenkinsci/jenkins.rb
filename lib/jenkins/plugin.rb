@@ -65,15 +65,6 @@ module Jenkins
       @instance
     end
 
-    # Make the singleton instance available from the top-level
-    # namespace
-    #
-    #     Jenkins.plugin
-    # @see [Jenkins::Plugin.instance]
-    def ::Jenkins.plugin
-      self::Plugin.instance
-    end
-
     # Registers a singleton extension point directly with Jenkins.
     # Extensions registered via this method are different than
     # those registered via `register_describable` in that there
@@ -200,5 +191,14 @@ module Jenkins
         load_file_in_dir(dir)
       end
     end
+  end
+
+  # Make the singleton instance available from the top-level
+  # namespace
+  #
+  #     Jenkins.plugin
+  # @see [Jenkins::Plugin.instance]
+  def self.plugin
+    self::Plugin.instance
   end
 end
