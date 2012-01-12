@@ -28,6 +28,17 @@ module Jenkins
     # the instance of jenkins.ruby.RubyPlugin with which this Plugin is associated
     attr_reader :peer
 
+    # Add listeners for things that might happen to a plugin. E.g.
+    #
+    #     plugin.on.start do |plugin|
+    #       #do some setup
+    #     end
+    #     plugin.on.stop do |plugin|
+    #       #do some teardown
+    #     end
+    # @return [Lifecycle]
+    attr_reader :on
+
     # Initializes this plugin by reading the models.rb
     # file. This is a manual registration process
     # Where ruby objects register themselves with the plugin
@@ -40,6 +51,7 @@ module Jenkins
       @start = @stop = proc {}
       @descriptors = {}
       @proxies = Proxies.new(self)
+      @on = Lifecycle.new
     end
 
     # Initialize the singleton instance that will run for a
@@ -118,14 +130,14 @@ module Jenkins
     # currently does nothing, but plugin startup hooks would
     # go here.
     def start
-      @start.call()
+      @on.fire(:start, self)
     end
 
     # Called one by Jenkins (via RubyPlugin) when this plugin
     # is shut down. Currently this does nothing, but plugin
     # shutdown hooks would go here.
     def stop
-      @stop.call()
+      @on.fire(:stop, self)
     end
 
     # Reflect an Java object coming from Jenkins into the context of this plugin
@@ -159,6 +171,12 @@ module Jenkins
       @proxies.linkout internal, external
     end
 
+    # Load all of the Ruby code associated with this plugin. For
+    # historical purposes this is called "models", but really
+    # it should be something like extensions ext/ or maybe it's
+    # just one file associated with the plugin itself. Who knows?
+    # The jury is definitely still out on the best way to discover
+    # and load extension points.
     def load_models
       path = @java.getModelsPath().getPath()
       # TODO: can we access to Jenkins console logger?
@@ -189,6 +207,34 @@ module Jenkins
       end
       dirs.each do |dir|
         load_file_in_dir(dir)
+      end
+    end
+
+    class Lifecycle
+      def initialize
+        @start = []
+        @stop = []
+      end
+
+      def start(&block)
+        @start << block if block
+      end
+
+      def stop(&block)
+        @stop << block if block
+      end
+
+      def fire(event, *args)
+        if listeners = instance_variable_get("@#{event}")
+          listeners.each do |l|
+            callback(l, *args)
+          end
+        end
+      end
+      def callback(listener, *args)
+        listener.call(*args)
+      rescue Exception => e
+        $stderr.warn "#{e.class}: #{e.message}\n#{e.backtrace.join("\n")}"
       end
     end
   end

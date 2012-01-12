@@ -3,6 +3,26 @@ require 'tmpdir'
 
 describe Jenkins::Plugin do
 
+  describe Jenkins::Plugin::Lifecycle do
+    before do |variable|
+      @plugin = Jenkins::Plugin.new mock(:name => 'org.jenkinsci.ruby.RubyPlugin')
+      @plugin.on.start do |plugin|
+        @start = plugin
+      end
+      @plugin.on.stop do |plugin|
+        @stop = plugin
+      end
+      @plugin.start
+      @plugin.stop
+    end
+    it "gets a callback on start" do
+      @start.should be @plugin
+    end
+    it "gets a callback on stop" do
+      @stop.should be @plugin
+    end
+  end
+
   describe "when plugin loads models" do
     include SpecHelper
 
