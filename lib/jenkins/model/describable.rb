@@ -62,8 +62,8 @@ module Jenkins
             @describe_as_type = describe_as_type
             @descriptor_is = descriptor_is
           end
-          if Jenkins::Plugin.instance
-            Jenkins::Plugin.instance.register_describable(cls, describe_as_type, descriptor_is)
+          if Jenkins.plugin
+            Jenkins.plugin.register_describable(cls, describe_as_type, descriptor_is)
           end
         end
       end
