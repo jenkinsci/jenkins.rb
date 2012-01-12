@@ -4,7 +4,7 @@ describe Jenkins::Model::Describable do
 
   before do
     @plugin = mock(Jenkins::Plugin)
-    Jenkins::Plugin.stub(:instance).and_return(@plugin)
+    Jenkins.stub(:plugin).and_return(@plugin)
   end
 
   describe "when mixed into a class" do
