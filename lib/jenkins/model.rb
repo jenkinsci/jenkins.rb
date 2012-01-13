@@ -13,7 +13,6 @@ module Jenkins
           cls.extend(Transience)
           cls.send(:include, InstanceDisplayName)
         end
-        Model.descendant(cls)
       end
     end
     extend Included
@@ -21,7 +20,6 @@ module Jenkins
     module Inherited
       def inherited(cls)
         super(cls)
-        Model.descendant(cls)
         cls.extend(Inherited)
       end
     end
@@ -66,26 +64,7 @@ module Jenkins
       def transients
         @transients ||= {}
       end
+
     end
-
-    module Descendants
-      def descendant(mod)
-        @descendants ||= clear
-        @descendants[mod] = true
-      end
-
-      def descendants
-        @descendants.keys
-      end
-
-      def clear
-        @descendants = {}
-      end
-
-      def descendant?(cls)
-        @descendants[cls]
-      end
-    end
-    extend Descendants
   end
 end

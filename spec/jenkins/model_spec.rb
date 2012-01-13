@@ -61,34 +61,6 @@ describe Jenkins::Model do
     child.should be_transient(:bar)
   end
 
-  describe "tracking descendants" do
-    before do
-      Model.clear
-    end
-
-    it "captures including classes" do
-      cls = Class.new
-      cls.send(:include, Model)
-      Model.should be_descendant cls
-    end
-
-    it "captures classes that extend including classes" do
-      cls = Class.new
-      cls.send(:include, Model)
-      Model.should be_descendant(Class.new(cls))
-    end
-
-    it "captures classes that include including modules" do
-      m1 = Module.new
-      m1.send(:include, Model)
-      m2 = Module.new
-      m2.send(:include, m1)
-      cls = Class.new
-      cls.send(:include, m2)
-      Model.should be_descendant(Class.new(cls))
-    end
-  end
-
   private
 
   def new_model(&block)
