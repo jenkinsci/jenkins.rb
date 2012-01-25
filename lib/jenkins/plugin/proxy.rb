@@ -10,12 +10,7 @@ module Jenkins
     #
     # This module provides common functionality for all proxies.
     module Proxy
-      def self.included(mod)
-        super
-        mod.extend(Marshal)
-        mod.send(:include, Unmarshal)
-        mod.send(:include, Customs)
-      end
+      extend Plugin::Behavior
 
       # Every Proxy object has a reference to the plugin to which it belongs, as well as the
       # native Ruby object which it represents.
@@ -77,6 +72,15 @@ module Jenkins
         def export(object)
           @plugin.export(object)
         end
+      end
+
+      module ClassMethods
+        include Marshal
+      end
+
+      module InstanceMethods
+        include Unmarshal
+        include Customs
       end
     end
   end
