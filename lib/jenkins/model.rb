@@ -1,28 +1,7 @@
 
 module Jenkins
   module Model
-
-    module Included
-      def included(cls)
-        super(cls)
-        if cls.class == Module
-          cls.extend(Included)
-        else
-          cls.extend(Inherited)
-          cls.extend(ClassDisplayName)
-          cls.extend(Transience)
-          cls.send(:include, InstanceDisplayName)
-        end
-      end
-    end
-    extend Included
-
-    module Inherited
-      def inherited(cls)
-        super(cls)
-        cls.extend(Inherited)
-      end
-    end
+    extend Plugin::Behavior
 
     module InstanceDisplayName
       # Get the display name of this Model. This value will be used as a default
@@ -65,6 +44,15 @@ module Jenkins
         @transients ||= {}
       end
 
+    end
+
+    module ClassMethods
+      include ClassDisplayName
+      include Transience
+    end
+
+    module InstanceMethods
+      include InstanceDisplayName
     end
   end
 end
