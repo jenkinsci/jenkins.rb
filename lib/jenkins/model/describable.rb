@@ -29,17 +29,29 @@ module Jenkins
     # This class should generally not be needed by plugin authors since it is part of the
     # glue layer and not the public runtime API.
     module Describable
+      extend Plugin::Behavior
       DescribableError = Class.new(StandardError)
 
+      implemented do |cls|
+        Jenkins.plugin.register_describable cls if Jenkins.plugin
+      end
+
       module DescribeAs
+
         # Java class that represents the extension point, which gets eventually set to Descriptor.clazz
         # :with will use this java class as the type of descriptor.
         def describe_as cls, options = {}
           @describe_as_type = verify_java_class(cls).java_class
           @descriptor_is = verify_java_class(options[:with]).java_class if options[:with]
         end
-        attr_reader :describe_as_type
-        attr_reader :descriptor_is
+
+        def describe_as_type
+          @describe_as_type ? @describe_as_type : (superclass.describe_as_type if superclass.respond_to?(:describe_as_type))
+        end
+
+        def descriptor_is
+          @descriptor_is ? @descriptor_is : (superclass.descriptor_is if superclass.respond_to?(:descriptor_is))
+        end
 
         private
 
@@ -51,35 +63,9 @@ module Jenkins
         end
       end
 
-      # When a Describable class is subclassed, make it also Describable
-      module Inherited
-        def inherited(cls)
-          super(cls)
-          cls.extend Inherited
-          describe_as_type = @describe_as_type
-          descriptor_is = @descriptor_is
-          cls.class_eval do
-            @describe_as_type = describe_as_type
-            @descriptor_is = descriptor_is
-          end
-          if Jenkins.plugin
-            Jenkins.plugin.register_describable(cls, describe_as_type, descriptor_is)
-          end
-        end
+      module ClassMethods
+        include DescribeAs
       end
-
-      module Included
-        def included(mod)
-          super
-          if mod.is_a? Class
-            mod.extend DescribeAs
-            mod.extend Inherited
-          else
-            warn "tried to include Describable into a Module. Are you sure?"
-          end
-        end
-      end
-      self.extend Included
     end
   end
 end

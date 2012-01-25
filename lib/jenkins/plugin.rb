@@ -110,15 +110,18 @@ module Jenkins
     # This method is invoked automatically as part of the auto-registration
     # process, and should not need to be invoked by plugin code.
     #
-    # @param [Class] ruby_class the class implementing the extension point
-    # @param [java.lang.Class] describable_class that Jenkins will see this extention point as
-    # @param [Class] descriptor_class that we use to instantiate Descriptor.
-    #                          nil to use the plain-vanilla Descriptor class for those extension points that don't define its own Descriptor type
-    def register_describable(ruby_class, describable_class, descriptor_class = nil)
-      descriptor_class ||= Jenkins::Model::Descriptor
-      descriptor = descriptor_class.new(ruby_class, self, describable_class)
-      @descriptors[ruby_class] = descriptor
-      register_extension(descriptor)
+    # Classes including `Describabble` will be autoregistered in this way.
+    #
+    # @param [Class] describable_class the class implementing the extension point
+    # @see [Model::Describable]
+    def register_describable(describable_class)
+      fail "#{describable_class} is not an instance of Describable" unless describable_class.is_a? Model::Describable
+      on.start do
+        descriptor_class = descriptor_class.descriptor_is || Jenkins::Model::Descriptor
+        descriptor = descriptor_class.new(ruby_class, self, describable_class.describe_as_type)
+        @descriptors[ruby_class] = descriptor
+        register_extension(descriptor)
+      end
     end
 
     # unique identifier for this plugin in the Jenkins server
