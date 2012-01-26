@@ -43,6 +43,19 @@ module Jenkins::CLI
       def run(&run_block)
         @run_block = run_block
       end
+
+      def command_name
+        command = name
+
+        # Replace any 'CLICommand' or 'Command' suffix on class name.
+        command = command.sub(/(CLI)?Command$/, '')
+
+        # Then convert "FooBarZot" into "Foo-Bar-Zot"
+        command = command.gsub(/([a-z0-9])([A-Z])/, '\1-\2')
+
+        # Then lower-case it.
+        command.downcase
+      end
     end
 
     module InstanceMethods

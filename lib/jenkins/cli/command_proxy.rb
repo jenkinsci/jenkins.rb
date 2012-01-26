@@ -7,7 +7,7 @@ module Jenkins::CLI
     AbortException = Java.hudson.AbortException
 
     def getShortDescription
-      @object.description
+      @object.class.description
     end
 
     def createClone
@@ -16,16 +16,23 @@ module Jenkins::CLI
       end
     end
 
+    # This mirrors what Java.hudson.cli.CLICommand#getName does, but with the
+    # @object's class instead.
+    def getName
+      @object.class.command_name
+    end
+
     def run
-      #we don't call run from within our main, but needs to be here to satisfy the Java Interface
+      # We don't call run from within our main, but needs to be here to satisfy the Java Interface
+      raise RuntimeError, "This method should never be called."
     end
 
     # main(List<String> args, Locale locale, InputStream stdin, PrintStream stdout, PrintStream stderr)
     def main(args, locale, stdin, stdout, stderr)
       old_in, old_out, old_err = $stdin, $stdout, $stderr
       begin
-        $stdin, $stdout, $stderr = stdin, stdout, stderr
-        if @object.parse(args)
+        $stdin, $stdout, $stderr = stdin.to_io, stdout.to_io, stderr.to_io
+        if @object.parse(args.to_a)
           @object.run
           return 0
         else
