@@ -12,6 +12,10 @@ module Jenkins
     module Proxy
       extend Plugin::Behavior
 
+      implemented do |cls|
+        include Java.org.kohsuke.stapler.StaplerProxy
+      end
+
       # Every Proxy object has a reference to the plugin to which it belongs, as well as the
       # native Ruby object which it represents.
       #
@@ -25,7 +29,7 @@ module Jenkins
       end
 
       # tell Stapler to go look for views from the wrapped object
-      include Java.org.kohsuke.stapler.StaplerProxy
+
       def getTarget
         @object
       end

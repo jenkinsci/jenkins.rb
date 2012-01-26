@@ -41,13 +41,13 @@ module Jenkins
     # need to be implemented, they are.
     module Behavior
       def included(mod)
-        super(mod)
         if mod.is_a? Class
           mod.extend Implementation unless mod.is_a? Implementation
         else
           mod.extend Behavior unless mod.is_a? Behavior
         end
         mod.behaves_as *@_behaviors
+        super(mod)
       end
 
       def implemented(cls = nil, &implemented_block)
@@ -59,6 +59,7 @@ module Jenkins
       end
 
       def self.extended(mod)
+        super(mod)
         mod.instance_eval do
           @_behaviors = Set.new([self])
         end
@@ -84,9 +85,10 @@ module Jenkins
         include BehavesAs
 
         def inherited(cls)
-          super(cls)
-          cls.extend Implementation unless cls.is_a? Implementation
-          cls.behaves_as *@_behaviors
+          super.tap do
+            cls.extend Implementation unless cls.is_a? Implementation
+            cls.behaves_as *@_behaviors
+          end
         end
       end
     end

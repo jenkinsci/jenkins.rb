@@ -2,6 +2,7 @@ module Jenkins
   class Plugin
     class Proxies
       module BuildStep
+        include Describable
         def prebuild(build, listener)
           boolean_result(listener) do
             @object.prebuild(import(build), import(listener))

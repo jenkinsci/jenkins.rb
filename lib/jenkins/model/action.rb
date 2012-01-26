@@ -2,11 +2,7 @@ require 'jenkins/model'
 
 module Jenkins
   module Model
-
-    # TODO: I turned Action into Class from Module but it should be a bad idea.
-    # The change may be reverted. I used class Action for implementing a model
-    # as a describable but I really should do is implementing describable.
-    class Action
+    module Action
       include Model
 
       module InstanceMethods
@@ -28,9 +24,6 @@ module Jenkins
           path.nil? ? @url_path : @url_path = path.to_s
         end
       end
-
-      include InstanceMethods
-      extend ClassMethods
     end
   end
 end

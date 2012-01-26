@@ -2,8 +2,8 @@ require 'jenkins/model/action'
 
 module Jenkins
   module Model
-    class RootAction < Action
-      include Model
+    class RootAction
+      include Action
     end
   end
 end
