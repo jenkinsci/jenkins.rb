@@ -22,7 +22,7 @@ module Jenkins::CLI
 
     implemented do |cls|
       cls.instance_eval do
-        @slop = Slop.new
+        @slop_block = Proc.new {}
         @run_block = Proc.new {}
         @description = 'No description'
       end
@@ -30,14 +30,14 @@ module Jenkins::CLI
     end
 
     module ClassMethods
-      attr_reader :slop, :run_block
+      attr_reader :slop_block, :run_block
 
       def description(desc = nil)
         desc ? @description = desc : @description
       end
 
-      def arguments(&block)
-        @slop = Slop.new(&block)
+      def arguments(&slop_block)
+        @slop_block = slop_block
       end
 
       def run(&run_block)
@@ -62,11 +62,13 @@ module Jenkins::CLI
       attr_reader :options
 
       def parse(args)
-        @options = self.class.slop.parse(args)
-      rescue InvalidOptionError, MissingOptionError
-        $stderr.puts $!.message
-        $stderr.puts self.class.description
-        $stderr.puts self.class.slop.help
+        default_banner = "#{self.class.command_name} [options] - #{self.class.description}"
+        @options = Slop.new(:help => true, :strict => true,
+                            :banner => default_banner, &self.class.slop_block)
+        @options.parse(args)
+      rescue Slop::Error => e
+        $stderr.puts e.message
+        $stderr.puts @options.help
       end
 
       def run
