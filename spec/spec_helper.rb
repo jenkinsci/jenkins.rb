@@ -11,6 +11,11 @@ $:.unshift Pathname(__FILE__).dirname.join('../lib')
 require 'jenkins/plugin/runtime'
 require 'jenkins/plugin/proxies/proxy_helper'
 
+def puts(msg = nil)
+  require 'erb'
+  super ERB::Util.h(msg) + "<br/>"
+end
+
 module SpecHelper
   # Java does not support opening directory as a File: File.open(".")
   # So Dir.mktmpdir {} does not work on JRuby because it tries to delete directory
