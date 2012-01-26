@@ -13,7 +13,9 @@ module Jenkins
       extend Plugin::Behavior
 
       implemented do |cls|
-        include Java.org.kohsuke.stapler.StaplerProxy
+        cls.class_eval do
+          include Java.org.kohsuke.stapler.StaplerProxy
+        end
       end
 
       # Every Proxy object has a reference to the plugin to which it belongs, as well as the
