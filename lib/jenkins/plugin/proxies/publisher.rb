@@ -6,9 +6,8 @@ module Jenkins
     class Proxies
       class Publisher < Java.hudson.tasks.Publisher
         include BuildStep
+        proxy_for Jenkins::Tasks::Publisher
       end
-
-      register Jenkins::Tasks::Publisher, Publisher
     end
   end
 end

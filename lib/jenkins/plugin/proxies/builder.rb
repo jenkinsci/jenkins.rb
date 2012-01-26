@@ -6,9 +6,8 @@ module Jenkins
     class Proxies
       class Builder < Java.hudson.tasks.Builder
         include BuildStep
+        proxy_for Jenkins::Tasks::Builder
       end
-
-      register Jenkins::Tasks::Builder, Builder
     end
   end
 end

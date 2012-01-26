@@ -4,11 +4,17 @@ require 'jenkins/plugin/proxies/describable'
 module Jenkins
   class Plugin
     class Proxies
-      class Action
-        include Java.hudson.model.Action
-        include Java.jenkins.ruby.Get
+      module Action
         include Jenkins::Plugin::Proxy
-        include Jenkins::Plugin::Proxies::Describable
+        implemented do |cls|
+          cls.class_eval do
+            include Java.hudson.model.Action
+          end
+        end
+
+        def getDisplayName
+          @object.display_name
+        end
 
         def getIconFileName
           @object.icon
@@ -18,8 +24,6 @@ module Jenkins
           @object.url_path
         end
       end
-
-      register Jenkins::Model::Action, Action
     end
   end
 end

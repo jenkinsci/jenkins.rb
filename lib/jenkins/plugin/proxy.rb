@@ -29,9 +29,19 @@ module Jenkins
       end
 
       # tell Stapler to go look for views from the wrapped object
-
       def getTarget
         @object
+      end
+
+      # Used to specify which Ruby class this will act as a proxy
+      module ProxyFor
+        # register this class as a proxy for `internal_class`. Jenkins
+        # will auto-create instances of this class when passing to
+        # ruby and vice-versa
+        def proxy_for(internal_class)
+          fail "not a ruby class" unless internal_class.is_a? Class
+          Jenkins::Plugin::Proxies.register internal_class, self
+        end
       end
 
       # Make sure that proxy classes do not try to persist the plugin parameter.
@@ -80,6 +90,7 @@ module Jenkins
 
       module ClassMethods
         include Marshal
+        include ProxyFor
       end
 
       module InstanceMethods

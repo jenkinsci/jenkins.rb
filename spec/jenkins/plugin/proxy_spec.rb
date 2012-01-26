@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'rspec-spies'
 
 describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
 
@@ -40,4 +41,17 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
     end
   end
 
+  describe "specifiying which ruby class it proxies" do
+    before do
+      @proxies = Jenkins::Plugin::Proxies
+      @proxies.stub(:register)
+      @class.class_eval do
+        proxy_for String
+      end
+    end
+
+    it 'registers it with the global proxy registry' do
+      @proxies.should have_received(:register).with(String, @class)
+    end
+  end
 end
