@@ -1,3 +1,21 @@
+require 'slop'
+
+class Slop
+  # Temporary 1.8.x compatibility override, until
+  # https://github.com/injekt/slop/pull/50 is in a release.
+  def to_s
+    heads  = options.reject(&:tail?)
+    tails  = (options - heads)
+    opts = (heads + tails).select(&:help).map(&:to_s)
+    optstr = opts.each_with_index.map { |o, i|
+      (str = @separators[i + 1]) ? [o, str].join("\n") : o
+    }.join("\n")
+    config[:banner] ? config[:banner] + "\n" + optstr : optstr
+  end
+
+  alias help to_s
+end
+
 module Jenkins::CLI
   module Command
     extend Jenkins::Plugin::Behavior

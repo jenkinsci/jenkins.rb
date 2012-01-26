@@ -1,3 +1,5 @@
+require 'core_ext/exception'
+
 module Jenkins::CLI
   class CommandProxy < Java.hudson.cli.CLICommand
     include Jenkins::Plugin::Proxy
@@ -27,8 +29,7 @@ module Jenkins::CLI
           return -1
         end
       rescue => e
-        #TODO: use utilrb.full_message?
-        $stderr.puts "#{e.class}: #{e.message}\n#{e.backtrace.join("\n")}"
+        $stderr.puts e.full_message
         return -1
       ensure
         $stdin, $stdout, $stderr = old_in, old_out, old_err
