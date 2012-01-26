@@ -4,6 +4,8 @@ module Jenkins::CLI
   class CommandProxy < Java.hudson.cli.CLICommand
     include Jenkins::Plugin::Proxy
 
+    AbortException = Java.hudson.AbortException
+
     def getShortDescription
       @object.description
     end
@@ -24,10 +26,13 @@ module Jenkins::CLI
       begin
         $stdin, $stdout, $stderr = stdin, stdout, stderr
         if @object.parse(args)
-          @object.run ? 0 : -1
+          @object.run
+          return 0
         else
           return -1
         end
+      rescue AbortException
+        return -1
       rescue => e
         $stderr.puts e.full_message
         return -1

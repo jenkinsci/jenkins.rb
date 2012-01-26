@@ -23,7 +23,8 @@ module Jenkins::CLI
     implemented do |cls|
       cls.instance_eval do
         @slop = Slop.new
-        @run_block = Proc.new
+        @run_block = Proc.new {}
+        @description = 'No description'
       end
       Jenkins.plugin.register_extension CommandProxy.new(Jenkins.plugin, cls.new)
     end
@@ -35,7 +36,7 @@ module Jenkins::CLI
         desc ? @description = desc : @description
       end
 
-      def parse(&block)
+      def arguments(&block)
         @slop = Slop.new(&block)
       end
 
@@ -45,10 +46,10 @@ module Jenkins::CLI
     end
 
     module InstanceMethods
-      attr_reader :opts
+      attr_reader :options
 
       def parse(args)
-        @opts = self.class.slop.parse(args)
+        @options = self.class.slop.parse(args)
       rescue InvalidOptionError, MissingOptionError
         $stderr.puts $!.message
         $stderr.puts self.class.description
@@ -56,7 +57,7 @@ module Jenkins::CLI
       end
 
       def run
-        self.instance_eval(&self.class.run_block) if self.class.run_block
+        self.instance_eval(&self.class.run_block)
       end
     end
   end
