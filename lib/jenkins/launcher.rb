@@ -2,12 +2,11 @@ module Jenkins
 
   # Launch processes on build slaves. No functionality is currently exposed
   class Launcher
-    class Proc
-      attr_reader :native
+    include Jenkins::Plugin::Wrapper
+    wrapper_for Java.hudson.Launcher
 
-      def initialize(native)
-        @native = native
-      end
+    class Proc
+      include Jenkins::Plugin::Wrapper
 
       def alive?
         @native.isAlive()
@@ -33,13 +32,6 @@ module Jenkins
       def stderr
         @native.getStderr().to_io
       end
-    end
-
-    # the native hudson.Launcher object
-    attr_reader :native
-
-    def initialize(native = nil)
-      @native = native
     end
 
     # execute([env,] command... [,options]) -> fixnum
@@ -113,7 +105,5 @@ module Jenkins
       end
       [env || {}, cmd, opt || {}]
     end
-
-    Plugin::Proxies.register self, Java.hudson.Launcher
   end
 end

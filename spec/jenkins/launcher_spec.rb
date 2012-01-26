@@ -10,10 +10,6 @@ describe Jenkins::Launcher do
     @launcher = Jenkins::Launcher.new(@native)
   end
 
-  it "can be instantiated" do
-    Jenkins::Launcher.new
-  end
-
   describe "execute" do
     it "passes a simple command to a native launcher" do
       @starter.should_receive(:envs).with({})

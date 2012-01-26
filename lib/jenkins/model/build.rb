@@ -7,14 +7,13 @@ module Jenkins
     # all build steps, and can be used to configure, halt, message
     # the current running build.
     class Build
+      include Jenkins::Plugin::Wrapper
+
+      wrapper_for Java.hudson.model.AbstractBuild
 
       # Raised to indicate that a build wrapper halted a build.
       # Raising this does *not* set the build result to error.
       class Halt < Exception; end
-
-
-      # the Hudson::Model::AbstractBuild represented by this build
-      attr_reader :native
 
       # Hash of environment variables that will be added to each process
       # started as part of this build. E.g.
@@ -30,7 +29,7 @@ module Jenkins
       attr_reader :env
 
       def initialize(native)
-        @native = native
+        super(native)
         @variables = {}
         @env = {}
         @native.buildEnvironments.add(EnvironmentVariables.new(@env))

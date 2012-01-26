@@ -2,13 +2,8 @@ require 'pathname'
 
 module Jenkins
   class FilePath
+    include Jenkins::Plugin::Wrapper
     Stat = Struct.new(:size, :mode, :mtime)
-
-    attr_reader :native
-
-    def initialize(native)
-      @native = native
-    end
 
     # Ruby's Pathname internace
 
