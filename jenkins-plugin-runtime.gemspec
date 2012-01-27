@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "json"
-  s.add_dependency "slop", "~> 3.0.0"
+  s.add_dependency "slop", "~> 3.0.2"
 
   s.add_development_dependency "rake", "0.8.7"
   s.add_development_dependency "rspec", "~> 2.7.0" # something in rspec 2.8 breaks rspec-spies
