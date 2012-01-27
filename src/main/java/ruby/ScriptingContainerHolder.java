@@ -6,6 +6,7 @@ import hudson.util.XStream2;
 import jenkins.model.Jenkins;
 import org.jenkinsci.jruby.JRubyMapper;
 import org.jenkinsci.jruby.JRubyXStream;
+import org.jruby.CompatVersion;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 
@@ -35,6 +36,7 @@ public class ScriptingContainerHolder {
      */
     public ScriptingContainerHolder() {
         this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
+        this.ruby.setCompatVersion(CompatVersion.RUBY1_9);
         this.ruby.setClassLoader(Jenkins.getInstance().pluginManager.uberClassLoader);
     }
 
