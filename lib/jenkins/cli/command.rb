@@ -30,6 +30,7 @@ module Jenkins::CLI
         @slop_block = Proc.new {}
         @run_block = Proc.new {}
         @description = 'No description'
+        command_name default_command_name
       end
       Jenkins.plugin.register_extension CommandProxy.new(Jenkins.plugin, cls.new)
     end
@@ -62,10 +63,19 @@ module Jenkins::CLI
         @run_block = run_block
       end
 
-      # This is what the user has to call the command as - the default
-      # implementation takes the class name, strips 'Command' from the end of
-      # it, and separates the CamelCase words with hypen, into camel-case.
-      def command_name
+      # This is what the user has to call the command as. The default value is
+      # the class name, with any 'Command' suffix removed, and the 'CamelCase'
+      # words separated using hypen, into 'camel-case'. This turns
+      # HelloWorldCommand into hello-world.
+      #
+      # Example: command_name "my-cooler-name"
+      def command_name(command_name = nil)
+        command_name ? @command_name = command_name : @command_name
+      end
+
+      # We use this to initialize the default value of @command_name. You can
+      # override this using the above `command_name`.
+      def default_command_name
         command = name
 
         # Replace any 'CLICommand' or 'Command' suffix on class name.
