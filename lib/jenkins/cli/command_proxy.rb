@@ -6,7 +6,7 @@ module Jenkins::CLI
   # Jenkins instance. This disgusting hack detects if we're in
   # RSpec mode and just creates the proxy class without descending
   # from the Java class.
-  if Jenkins.rspec_ewwww_gross_hack?
+  if Jenkins.respond_to?(:rspec_ewwww_gross_hack?)
     class CommandProxy; end
   else
     class CommandProxy < Java.hudson.cli.CLICommand; end
