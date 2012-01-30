@@ -1,7 +1,18 @@
 require 'core_ext/exception'
 
 module Jenkins::CLI
-  class CommandProxy < Java.hudson.cli.CLICommand
+  # The native Java CLICommand class has a static initializer
+  # that prevents the class from being loaded without a running
+  # Jenkins instance. This disgusting hack detects if we're in
+  # RSpec mode and just creates the proxy class without descending
+  # from the Java class.
+  if Jenkins.rspec_ewwww_gross_hack?
+    class CommandProxy; end
+  else
+    class CommandProxy < Java.hudson.cli.CLICommand; end
+  end
+
+  class CommandProxy
     include Jenkins::Plugin::Proxy
 
     AbortException = Java.hudson.AbortException

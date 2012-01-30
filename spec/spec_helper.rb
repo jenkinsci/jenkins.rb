@@ -1,6 +1,12 @@
 require 'java'
 require 'tmpdir'
 
+module Jenkins
+  def self.rspec_ewwww_gross_hack?
+    true
+  end
+end
+
 require 'jenkins/war'
 for path in Dir[File.join(ENV['HOME'], '.jenkins', 'wars', Jenkins::War::VERSION, "**/*.jar")]
   $CLASSPATH << path
