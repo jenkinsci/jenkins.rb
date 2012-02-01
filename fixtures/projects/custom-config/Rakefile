@@ -1,0 +1,4 @@
+desc "Default task runs tests"
+task :default do
+  puts "Tests ran successfully!"
+end

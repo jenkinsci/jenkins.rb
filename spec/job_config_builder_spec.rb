@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe Jenkins::JobConfigBuilder do
+describe Jenkins::Job::ConfigBuilder do
   include ConfigFixtureLoaders
   
   describe "explicit steps to match a ruby job" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.steps = [
           [:build_shell_step, "step 1"],
@@ -21,7 +21,7 @@ describe Jenkins::JobConfigBuilder do
   
   describe "rails job; single axis" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
       end
     end
@@ -32,7 +32,7 @@ describe Jenkins::JobConfigBuilder do
   
   describe "many rubies" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:ruby) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:ruby) do |c|
         c.scm = "http://github.com/drnic/picasa_plucker.git"
         c.rubies = %w[1.8.7 1.9.2 rbx-head jruby]
       end
@@ -49,7 +49,7 @@ describe Jenkins::JobConfigBuilder do
   
   describe "assigned slave nodes for slave usage" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.assigned_node = "my-slave"
       end
     end
@@ -62,7 +62,7 @@ describe Jenkins::JobConfigBuilder do
   
   describe "no specific slave nodes" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
       end
     end
     it "builds config.xml" do
@@ -73,7 +73,7 @@ describe Jenkins::JobConfigBuilder do
   describe "SCM behaviour" do
     describe "#public_scm = true => convert git@ into git:// until we have deploy keys" do
       before do
-        @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
           c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
           c.public_scm = true
         end
@@ -93,7 +93,7 @@ describe Jenkins::JobConfigBuilder do
     # </branches>
     describe "#scm-branches - set branches" do
       before do
-        @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+        @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
           c.scm = "git@codebasehq.com:mocra/misc/mocra-web.git"
         end
       end
@@ -114,7 +114,7 @@ describe Jenkins::JobConfigBuilder do
 
   describe "setup ENV variables via envfile plugin" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.scm      = "git://codebasehq.com/mocra/misc/mocra-web.git"
         c.steps    = []
         c.envfile  = "/path/to/env/file"
@@ -134,7 +134,7 @@ describe Jenkins::JobConfigBuilder do
 
   describe "setup log rotator" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.log_rotate = { :days_to_keep => 14 }
       end
     end
@@ -154,7 +154,7 @@ describe Jenkins::JobConfigBuilder do
 
   describe "setup build triggers" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:rails) do |c|
         c.triggers = [{:class => :timer, :spec => "5 * * * *"}]
       end
     end
@@ -173,7 +173,7 @@ describe Jenkins::JobConfigBuilder do
 
   describe "setup publishers for a build" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:none) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:none) do |c|
         c.publishers = [
           { :chuck_norris => true },
           { :job_triggers => { :projects => ["Dependent Job", "Even more dependent job"], :on => "FAILURE" } },
@@ -209,7 +209,7 @@ describe Jenkins::JobConfigBuilder do
 
   describe "erlang job; single axis" do
     before do
-      @config = Jenkins::JobConfigBuilder.new(:erlang) do |c|
+      @config = Jenkins::Job::ConfigBuilder.new(:erlang) do |c|
         c.scm = "git://codebasehq.com/mocra/misc/mocra-web.git"
       end
     end

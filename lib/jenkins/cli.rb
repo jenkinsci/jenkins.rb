@@ -45,38 +45,38 @@ module Jenkins
     method_option :"scm", :desc           => "specific SCM URI", :type => :string
     method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
     method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
-    method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
+    method_option :template, :desc        => "template of job steps (available: #{Job::ConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     method_option :"no-template", :desc   => "do not use a template of default steps; avoids Gemfile requirement", :type => :boolean, :default => false
     def create(project_path)
       select_jenkins_server(options)
-      FileUtils.chdir(project_path) do
-        scm = discover_scm(options)
-        ruby_or_rails_project_without_gemfile?(options)
-        begin
-          template = options[:"no-template"] ? 'none' : options[:template]
-          job_config = build_job_config(scm, template, options)
-
-          if Jenkins::Api.create_job(project_name, job_config, options)
-            build_url = "#{@uri}/job/#{project_name.gsub(/\s/,'%20')}/build"
-            shell.say "Added#{' ' + template unless template == 'none'} project '#{project_name}' to Jenkins.", :green
-            unless options[:"no-build"]
-              shell.say "Triggering initial build..."
-              Jenkins::Api.build_job(project_name)
-              shell.say "Trigger additional builds via:"
-            else
-              shell.say "Trigger builds via:"
-            end
-            shell.say "  URL: "; shell.say "#{build_url}", :yellow
-            shell.say "  CLI: "; shell.say "#{cmd} build #{project_name}", :yellow
+      Project.new(:path => project_path, :scm => options.scm).dir do |project|
+        job      = Job.new(options.merge(:scm => project.scm))
+        template = job.template
+        
+        if Jenkins::Api.create_job(project.name, job.config, options)
+          build_url = "#{@uri}/job/#{project.name.gsub(/\s/,'%20')}/build"
+          shell.say "Added#{' ' + template unless template == 'none'} project '#{project.name}' to Jenkins.", :green
+          unless options[:"no-build"]
+            shell.say "Triggering initial build..."
+            Jenkins::Api.build_job(project.name)
+            shell.say "Trigger additional builds via:"
           else
-            error "Failed to create project '#{project_name}'"
+            shell.say "Trigger builds via:"
           end
-        rescue Jenkins::JobConfigBuilder::InvalidTemplate
-          error "Invalid job template '#{template}'."
-        rescue Jenkins::Api::JobAlreadyExistsError
-          error "Job '#{project_name}' already exists."
+          shell.say "  URL: "; shell.say "#{build_url}", :yellow
+          shell.say "  CLI: "; shell.say "#{cmd} build #{project.name}", :yellow
+        else
+          error "Failed to create project '#{project.name}'"
         end
       end
+    rescue Jenkins::Job::ConfigBuilder::InvalidTemplate
+      error "Invalid job template '#{template}'."
+    rescue Jenkins::Job::ConfigBuilder::MissingGemfile
+      error "Ruby/Rails projects without a Gemfile are currently unsupported."
+    rescue Jenkins::Api::JobAlreadyExistsError
+      error "Job '#{project.name}' already exists."
+    rescue Jenkins::Project::Scm::UnsupportedScmError
+      error "Cannot determine project SCM. Currently supported: #{Jenkins::Project::Scm.supported}"
     end
 
     desc "update project_path [options]", "update the configuration for your project"
@@ -88,38 +88,37 @@ module Jenkins
     method_option :"scm", :desc           => "specific SCM URI", :type => :string
     method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
     method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
-    method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
+    method_option :template, :desc        => "template of job steps (available: #{Job::ConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
     method_option :"no-template", :desc   => "do not use a template of default steps; avoids Gemfile requirement", :type => :boolean, :default => false
     def update(project_path)
       select_jenkins_server(options)
-      FileUtils.chdir(project_path) do
-        scm = discover_scm(options)
-        ruby_or_rails_project_without_gemfile?(options)
-        begin
-          template = options[:"no-template"] ? 'none' : options[:template]
-          job_config = build_job_config(scm, template, options)
+      Project.new(:path => project_path, :scm => options.scm).dir do |project|
+        job      = Job.new(options.merge(:scm => project.scm))
+        template = job.template
 
-          if Jenkins::Api.update_job(project_name, job_config)
-            shell.say "Updated#{' ' + template unless template == 'none'} project '#{project_name}'.", :green
-          else
-            error "Failed to update project '#{project_name}'"
-          end
-        rescue Jenkins::JobConfigBuilder::InvalidTemplate
-          error "Invalid job template '#{template}'."
+        if Jenkins::Api.update_job(project.name, job.config)
+          shell.say "Updated#{' ' + template unless template == 'none'} project '#{project.name}'.", :green
+        else
+          error "Failed to update project '#{project.name}'"
         end
       end
+    rescue Jenkins::Job::ConfigBuilder::InvalidTemplate
+      error "Invalid job template '#{template}'."
+    rescue Jenkins::Project::Scm::UnsupportedScmError
+      error "Cannot determine project SCM. Currently supported: #{Jenkins::Project::Scm.supported}"
+    rescue Jenkins::Job::ConfigBuilder::MissingGemfile
+      error "Ruby/Rails projects without a Gemfile are currently unsupported."
     end
 
     desc "build [PROJECT_PATH]", "trigger build of this project's build job"
     common_options
     def build(project_path = ".")
       select_jenkins_server(options)
-      FileUtils.chdir(project_path) do
-        if Jenkins::Api.build_job(project_name)
-          shell.say "Build for '#{project_name}' running now..."
-        else
-          error "No job '#{project_name}' on server."
-        end
+      project = Project.new(:path => project_path)
+      if Jenkins::Api.build_job(project.name)
+        shell.say "Build for '#{project.name}' running now..."
+      else
+        error "No job '#{project.name}' on server."
       end
     end
 
@@ -127,12 +126,11 @@ module Jenkins
     common_options
     def remove(project_path)
       select_jenkins_server(options)
-      FileUtils.chdir(project_path) do
-        if Jenkins::Api.delete_job(project_name)
-          shell.say "Removed project '#{project_name}' from Jenkins."
-        else
-          error "Failed to delete project '#{project_name}'."
-        end
+      project = Project.new(:path => project_path)
+      if Jenkins::Api.delete_job(project.name)
+        shell.say "Removed project '#{project.name}' from Jenkins."
+      else
+        error "Failed to delete project '#{project.name}'."
       end
     end
 
@@ -292,9 +290,9 @@ USEAGE
 
     private
 
-    def method_missing(name, *args)
-      console(name, *args)
-    end
+    # def method_missing(name, *args)
+    #   console(name, *args)
+    # end
 
     def select_jenkins_server(options)
       unless @uri = Jenkins::Api.setup_base_url(options)
@@ -315,34 +313,6 @@ USEAGE
 
     def cmd
       ENV['CUCUMBER_RUNNING'] ? 'jenkins' : $0
-    end
-
-    def project_name
-      @project_name ||= File.basename(FileUtils.pwd)
-    end
-
-    def build_job_config(scm, template, options)
-      Jenkins::JobConfigBuilder.new(template) do |c|
-        c.rubies        = options[:rubies].split(/\s*,\s*/) if options[:rubies]
-        c.node_labels   = options[:"node-labels"].split(/\s*,\s*/) if options[:"node-labels"]
-        c.scm           = scm.url
-        c.scm_branches  = options[:"scm-branches"].split(/\s*,\s*/)
-        c.assigned_node = options[:"assigned-node"] if options[:"assigned-node"]
-        c.public_scm    = options[:"public-scm"]
-      end
-    end
-
-    def ruby_or_rails_project_without_gemfile?(options)
-      unless (options[:template] == "none" || options[:template] == "erlang" || options[:"no-template"]) || File.exists?("Gemfile")
-        error "Ruby/Rails projects without a Gemfile are currently unsupported."
-      end
-    end
-
-    def discover_scm(options)
-      unless scm = Jenkins::ProjectScm.discover(options[:scm])
-        error "Cannot determine project SCM. Currently supported: #{Jenkins::ProjectScm.supported}"
-      end
-      scm
     end
   end
 end
