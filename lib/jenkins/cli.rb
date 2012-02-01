@@ -73,7 +73,6 @@ module Jenkins
       error "Invalid job template '#{template}'."
     rescue Jenkins::Job::ConfigBuilder::MissingGemfile
       error "Ruby/Rails projects without a Gemfile are currently unsupported."
-
     rescue Jenkins::Api::JobAlreadyExistsError
       error "Job '#{project.name}' already exists."
     rescue Jenkins::Project::Scm::UnsupportedScmError

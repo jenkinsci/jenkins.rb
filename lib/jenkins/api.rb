@@ -67,9 +67,10 @@ module Jenkins
     def self.create_job(name, job_config, options = {})
       options = options.with_clean_keys
       delete_job(name) if options[:override]
+      body = job_config.respond_to?(:to_xml) ? job_config.to_xml : job_config
       begin
         res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
-          :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+          :body => body, :format => :xml, :headers => { 'content-type' => 'application/xml' }
         }
         if res.code.to_i == 200
           cache_configuration!
@@ -91,8 +92,9 @@ module Jenkins
     #
     # TODO Exceptions?
     def self.update_job(name, job_config)
+      body = job_config.respond_to?(:to_xml) ? job_config.to_xml : job_config
       res = post "#{job_url name}/config.xml", {
-        :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
+        :body => body, :format => :xml, :headers => { 'content-type' => 'application/xml' }
       }
       if res.code.to_i == 200
         cache_configuration!

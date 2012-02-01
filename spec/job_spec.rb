@@ -23,19 +23,34 @@ module Jenkins
     end
 
     describe "#config" do
-      context "when template is a URI" do
+      before do
+        job.stub(:template => template)
+        Job::ConfigBuilder::VALID_JOB_TEMPLATES.stub(:include? => true)
+        Kernel.stub(:open => StringIO.new)
       end
-
-      context "when template is a file" do
+          
+      it "checks whether the template is a valid config builder template" do
+        Job::ConfigBuilder::VALID_JOB_TEMPLATES.should_receive(:include?).with(template).and_return(false)
+        job.config
       end
-
-      context "when template is not a file or URI" do
-        before do
-          job.stub(:template => template)
-        end
-        
+      
+      context "when the template is a valid config builder template" do
         it "returns a new ConfigBuilder initialized with the template" do
           Jenkins::Job::ConfigBuilder.should_receive(:new).with(template).and_return(config)
+          job.config.should eq config
+        end
+      end
+
+      context "when the template is not a valid config builder template" do
+        let(:content) { double "content" }
+            
+        before do
+          Job::ConfigBuilder::VALID_JOB_TEMPLATES.stub(:include? => false)
+        end
+        
+        it "returns the content of the file or page given by the template" do
+          Kernel.should_receive(:open).with(template).and_return(content)
+          content.should_receive(:read).and_return(config)
           job.config.should eq config
         end
       end

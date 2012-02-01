@@ -1,3 +1,5 @@
+require 'open-uri'
+
 module Jenkins
   class Job
     def initialize(options = {})
@@ -9,6 +11,16 @@ module Jenkins
     end
 
     def config
+      if ConfigBuilder::VALID_JOB_TEMPLATES.include?(template)
+        config_builder
+      else
+        Kernel.open(template).read
+      end
+    end
+
+    private
+
+    def config_builder
       Jenkins::Job::ConfigBuilder.new(template) do |c|
         c.rubies        = @options[:rubies].split(/\s*,\s*/) if @options[:rubies]
         c.node_labels   = @options[:"node-labels"].split(/\s*,\s*/) if @options[:"node-labels"]
