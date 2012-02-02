@@ -115,8 +115,8 @@ module Jenkins
     # @param [Class] describable_class the class implementing the extension point
     # @see [Model::Describable]
     def register_describable(describable_class)
-      fail "#{describable_class} is not an instance of Describable" unless describable_class.is_a? Model::Describable
       on.start do
+        fail "#{describable_class} is not an instance of Describable" unless describable_class.is_a? Model::Describable
         descriptor_class = descriptor_class.descriptor_is || Jenkins::Model::Descriptor
         descriptor = descriptor_class.new(ruby_class, self, describable_class.describe_as_type)
         @descriptors[ruby_class] = descriptor
