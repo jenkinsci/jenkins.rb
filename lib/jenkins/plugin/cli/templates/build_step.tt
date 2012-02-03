@@ -1,7 +1,13 @@
 
 class <%= name.capitalize %><%= @step_class %> < Jenkins::Tasks::<%= @step_class %>
 
-    display_name "<%= name.capitalize %> <%= @step_class.downcase %>"
+    display_name "<%= @name.capitalize %> <%= @step_class.downcase %>"
+
+    # Invoked with the form parameters when this extension point
+    # is created from a configuration screen.
+    def initialize(attrs = {})
+
+    end
 
     ##
     # Runs before the build begins
