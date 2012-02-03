@@ -1,15 +1,15 @@
 
 require 'spec_helper'
 
-describe Jenkins::Plugin::Proxies::BuildWrapper do
+describe Jenkins::Tasks::BuildWrapperProxy do
   include ProxyHelper
 
-  subject {Jenkins::Plugin::Proxies::BuildWrapper}
+  subject {Jenkins::Tasks::BuildWrapperProxy}
   it {should be_transient(:plugin)}
 
   before do
     @object = mock(Jenkins::Tasks::BuildWrapper)
-    @wrapper = Jenkins::Plugin::Proxies::BuildWrapper.new(@plugin, @object)
+    @wrapper = Jenkins::Tasks::BuildWrapperProxy.new(@plugin, @object)
   end
 
   it "passes in an env file which will be called to " do

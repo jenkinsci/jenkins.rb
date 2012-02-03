@@ -116,10 +116,10 @@ module Jenkins
     # @see [Model::Describable]
     def register_describable(describable_class)
       on.start do
-        fail "#{describable_class} is not an instance of Describable" unless describable_class.is_a? Model::Describable
-        descriptor_class = descriptor_class.descriptor_is || Jenkins::Model::Descriptor
-        descriptor = descriptor_class.new(ruby_class, self, describable_class.describe_as_type)
-        @descriptors[ruby_class] = descriptor
+        fail "#{describable_class} is not an instance of Describable" unless describable_class < Model::Describable
+        descriptor_class = describable_class.descriptor_is || Jenkins::Model::Descriptor
+        descriptor = descriptor_class.new(describable_class, self, describable_class.describe_as_type.java_class)
+        @descriptors[describable_class] = descriptor
         register_extension(descriptor)
       end
     end
@@ -237,7 +237,7 @@ module Jenkins
       def callback(listener, *args)
         listener.call(*args)
       rescue Exception => e
-        $stderr.warn "#{e.class}: #{e.message}\n#{e.backtrace.join("\n")}"
+        warn "#{e.class}: #{e.message}\n#{e.backtrace.join("\n")}"
       end
     end
   end

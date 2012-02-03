@@ -41,8 +41,8 @@ module Jenkins
         # Java class that represents the extension point, which gets eventually set to Descriptor.clazz
         # :with will use this java class as the type of descriptor.
         def describe_as cls, options = {}
-          @describe_as_type = verify_java_class(cls).java_class
-          @descriptor_is = verify_java_class(options[:with]).java_class if options[:with]
+          @describe_as_type = verify_java_class(cls)
+          @descriptor_is = verify_java_class(options[:with]) if options[:with]
         end
 
         def describe_as_type

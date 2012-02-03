@@ -40,7 +40,7 @@ describe Jenkins::Model::Describable do
       end
 
       it "has the same java type as its superclass" do
-        @subclass.describe_as_type.should eql java.lang.Object.java_class
+        @subclass.describe_as_type.should eql java.lang.Object
       end
 
       describe ". a sub-subclass" do
@@ -51,9 +51,9 @@ describe Jenkins::Model::Describable do
         it "is also registered as an extension of the original java type" do
           @plugin.should have_received(:register_describable).with(@subsubclass)
         end
-        
+
         it 'inherits its describe_as_type' do
-          @subsubclass.describe_as_type.should eql java.lang.Object.java_class
+          @subsubclass.describe_as_type.should eql java.lang.Object
         end
       end
     end
@@ -70,7 +70,7 @@ describe Jenkins::Model::Describable do
         lambda {@class.describe_as java.lang.Object, :with => Object}.should raise_error(Jenkins::Model::Describable::DescribableError)
       end
       it "inherits the descriptor type" do
-        @subclass.descriptor_is.should eql java.lang.String.java_class
+        @subclass.descriptor_is.should eql java.lang.String
       end
     end
   end
