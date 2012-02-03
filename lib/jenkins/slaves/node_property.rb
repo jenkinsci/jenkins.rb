@@ -1,16 +1,8 @@
 module Jenkins::Slaves
   class NodeProperty
     include Jenkins::Model
+    include Jenkins::Model::Environment
     include Jenkins::Model::Describable
-
-    def can_take?(buildable)
-    end
-
-    def setup(build, launcher, listener)
-    end
-
-    def teardown(build, listener)
-    end
 
     class NodePropertyDescriptor < Java.hudson.slaves.NodePropertyDescriptor
       include Jenkins::Model::RubyDescriptor
