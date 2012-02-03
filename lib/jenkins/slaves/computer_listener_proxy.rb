@@ -14,8 +14,8 @@ module Jenkins::Slaves
       @object.preonline(import(computer), import(channel), Jenkins::FilePath.new(rootFilePath), import(taskListener))
     end
 
-    def onOnline(computer)
-      @object.online(import(computer))
+    def onOnline(computer, listener)
+      @object.online(import(computer), import(listener))
     end
 
     def onOffline(computer)
