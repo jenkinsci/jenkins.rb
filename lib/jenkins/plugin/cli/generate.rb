@@ -48,6 +48,12 @@ module Jenkins
           @name = name
           template('templates/run_listener.tt', "models/#{name.downcase}_listener.rb")
         end
+
+        desc "computer_listener", "computer_listener NAME", :desc => "create a new computer listener"
+        def computer_listener(name)
+          @name = name
+          template('templates/computer_listener.tt', "models/#{name.downcase}_listener.rb")
+        end
       end
     end
   end
