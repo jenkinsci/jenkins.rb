@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>ruby-runtime</artifactId>
-	<version>0.9</version>
+	<version>0.10-SNAPSHOT</version>
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
 	<packaging>hpi</packaging>
 
