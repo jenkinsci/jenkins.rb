@@ -1,4 +1,3 @@
-hudson-*.gem
 tmp
 var
 *.rbc
@@ -7,3 +6,7 @@ pkg/
 *.swp
 .rvmrc
 Gemfile.lock
+*.gem
+.idea
+target/
+
