@@ -9,3 +9,8 @@ Gemfile.lock
 *.gem
 .idea
 target/
+*.iml
+*.ipr
+*.iws
+work
+target
