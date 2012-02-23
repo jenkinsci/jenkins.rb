@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("term-ansicolor", [">= 1.0.4"])
   s.add_dependency("httparty", ["~> 0.6.1"])
-  s.add_dependency("builder", ["~> 2.1.2"])
+  s.add_dependency("builder", [">= 2.1.2"])
   s.add_dependency("thor", ["~> 0.14.2"])
   s.add_dependency("hpricot")
   s.add_dependency("json_pure", ">= 1.5.1")

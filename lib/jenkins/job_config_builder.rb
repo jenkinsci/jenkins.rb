@@ -19,6 +19,7 @@ module Jenkins
     attr_accessor :publish_dupe_code_results
     attr_accessor :publish_testing_tools_results
     attr_accessor :schedule_failed_builds
+    attr_accessor :block_downstream, :block_upstream
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -54,7 +55,8 @@ module Jenkins
         b.assignedNode assigned_node if assigned_node
         b.canRoam !assigned_node
         b.disabled false
-        b.blockBuildWhenUpstreamBuilding false
+        build_block_downstream b
+        build_block_upstream b
         #b.triggers :class => "vector"
         build_triggers b
         b.concurrentBuild false
@@ -323,6 +325,26 @@ module Jenkins
         end
       else
         b.buildWrappers
+      end
+    end
+    
+    # If :build_block_downstream is set to true, this sets it to true for the job,
+    # otherwise it will be set to false.
+    def build_block_downstream(b)
+      if block_downstream
+        b.blockBuildWhenDownstreamBuilding true
+      else
+        b.blockBuildWhenDownstreamBuilding false
+      end
+    end
+    
+    # If :build_block_downstream is set to true, this sets it to true for the job,
+    # otherwise it will be set to false.
+    def build_block_upstream(b)
+      if block_upstream
+        b.blockBuildWhenUpstreamBuilding true
+      else
+        b.blockBuildWhenUpstreamBuilding false
       end
     end
     
