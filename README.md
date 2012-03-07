@@ -1,0 +1,14 @@
+# Jenkins.rb - Ruby tools and SDK for Jenkins
+
+This is the Jenkins Ruby toolkit. You can use it to build, test and release Jenkins
+plugins written in Ruby.
+
+It also contains a `jenkins` [command line tool][1] which you can use
+to interact with a Jenkins server from the terminal.
+
+## Developing Ruby Plugins
+
+Documentation for Ruby plugin development is [on the wiki][2]
+
+[1]: ./ruby-tools/cli/README.md
+[2]: https://github.com/cowboyd/jenkins.rb/wiki
