@@ -1,0 +1,11 @@
+<%
+    l = taglib("/lib/layout")
+    l.layout(:title => "Hello from ERB") do
+        l.main_panel do
+%>
+<div>I am <%= it.class %></div>
+<div>1+1=<%= 1+1 %></div>
+<%
+        end
+    end
+%>

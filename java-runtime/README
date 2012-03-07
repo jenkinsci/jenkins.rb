@@ -1,0 +1,9 @@
+See https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+plugin+development+in+Ruby for other dependencies
+
+1. switch to JRuby
+    $ rvm jruby
+2. build the plugin with maven
+    $ mvn install
+
+If ./src/main/resources/ruby/vendor directory doesn't exist, Maven will run "bundle install".
+But otherwise it'll skip it for efficiency.
