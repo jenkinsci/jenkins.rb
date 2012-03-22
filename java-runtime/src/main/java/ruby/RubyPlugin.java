@@ -98,19 +98,26 @@ public class RubyPlugin extends PluginImpl {
 		return ruby.callMethod(object, methodName, args);
 	}
 
-	/**
-	 * Registers an extension with this Ruby plugin so that it will be found later on
-	 * <p/>
-	 * This method is generally called from inside Ruby, as objects that implement
-	 * extension points register themselves.
-	 *
-	 * @param extension
-	 */
+    /**
+     * Registers an extension with the default ordiinal.
+     */
 	public void addExtension(Object extension) {
-		extensions.add(new ExtensionComponent(extension));
+        addExtension(extension,0);
 	}
 
-	/**
+    /**
+     * Registers an extension with this Ruby plugin so that it will be found later on
+     * <p/>
+     * This method is generally called from inside Ruby, as objects that implement
+     * extension points register themselves.
+     *
+     * @param extension
+     */
+    public void addExtension(Object extension, double ordinal) {
+        extensions.add(new ExtensionComponent(extension, ordinal));
+    }
+
+    /**
 	 * @return the list of extensions registered with this Plugin. this is used by
 	 *         the {@link RubyExtensionFinder} to present extension points to Jenkins
 	 */
