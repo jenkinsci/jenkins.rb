@@ -15,11 +15,11 @@ module Jenkins
 
       #   ...
       # end
-      def ordinal(n=nil)
+      def order(n=nil)
         if n.nil?
-          @ordinal || 0
+          @order || 0
         else
-          @ordinal = n
+          @order = n
         end
       end
     end

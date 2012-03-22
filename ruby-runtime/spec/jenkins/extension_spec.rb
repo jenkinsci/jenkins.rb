@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'jenkins/extension'
 
 describe Jenkins::Extension do
   include SpecHelper
@@ -8,15 +7,15 @@ describe Jenkins::Extension do
     class Foo
       class Foo
         include Jenkins::Extension
-        ordinal 3
+        order 3
       end
 
       class Bar < Foo
-        ordinal 5
+        order 5
       end
 
-      Foo.ordinal.should == 3
-      Bar.ordinal.should == 5
+      Foo.order.should == 3
+      Bar.order.should == 5
     end
   end
 end
