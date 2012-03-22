@@ -170,12 +170,3 @@ module Jenkins
     end
   end
 end
-
-require 'jenkins/model/describable'
-["action", "builder", "publisher", "root_action"].each do |proxy|
-  require "jenkins/plugin/proxies/#{proxy}"
-end
-
-["cli/command"].each do |proxy|
-  require "jenkins/#{proxy}_proxy"
-end
