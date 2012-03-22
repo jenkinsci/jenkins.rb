@@ -17,6 +17,7 @@ module Jenkins::Listeners
   #
   module RunListener
     extend Jenkins::Plugin::Behavior
+    include Jenkins::Extension
 
     implemented do |cls|
       Jenkins.plugin.register_extension RunListenerProxy.new(Jenkins.plugin, cls.new)

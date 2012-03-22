@@ -36,9 +36,28 @@ module Jenkins
     #     end
     #   end
     # end
+    #
     # And of course, there is the case of proxies where we need to make sure that
     # certain behaviors are always included into the proxy, and that if java classes
     # need to be implemented, they are.
+    #
+    # If the module (=X) that extend Behavior defines a module named ClassMethods in it,
+    # then every subtype of X automatically extends this ClassMethods.n
+    #
+    # module Foo
+    #  extend Behavior
+    #  module ClassMethod
+    #    def look_ma
+    #      puts "I'm here'"
+    #    end
+    #  end
+    # end
+    # class Bar
+    #   include Foo
+    # end
+    #
+    # Bar.look_ma
+    #
     module Behavior
       def included(mod)
         if mod.is_a? Class

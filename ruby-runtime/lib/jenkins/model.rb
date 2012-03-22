@@ -2,6 +2,7 @@
 module Jenkins
   module Model
     extend Plugin::Behavior
+    include Jenkins::Extension
 
     module InstanceDisplayName
       # Get the display name of this Model. This value will be used as a default

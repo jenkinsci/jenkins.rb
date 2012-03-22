@@ -1,6 +1,7 @@
 module Jenkins::Model
   module EnvironmentProxy
     extend Jenkins::Plugin::Behavior
+    include Jenkins::Extension
 
     module InstanceMethods
       def setUp(build, launcher, listener)
