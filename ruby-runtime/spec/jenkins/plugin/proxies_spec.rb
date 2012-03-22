@@ -4,8 +4,10 @@ describe Jenkins::Plugin::Proxies do
   Proxies = Jenkins::Plugin::Proxies
   before  do
     Proxies.clear
-    @plugin = mock(Jenkins::Plugin)
+    @plugin = mock(Jenkins::Plugin, :name => 'mock-plugin')
+    @plugin.stub(:linkout) {|*args| @proxies.linkout(*args)}
     @proxies = Jenkins::Plugin::Proxies.new(@plugin)
+    Jenkins.stub(:plugin) {@plugin}
   end
 
   describe "exporting a native ruby object" do
@@ -163,15 +165,33 @@ describe Jenkins::Plugin::Proxies do
     end
   end
 
+  describe 'importing a java proxy object which was manually created' do
+    before do
+      @impl = Object.new
+      @proxy = proxy_class.new(@plugin, @impl)
+    end
+
+    it 'returns the proxied ruby object' do
+      @proxies.import(@proxy).should be @impl
+    end
+
+    it 'exports the proxy in lieu of the ruby implementation' do
+      @proxies.export(@impl).should be @proxy
+    end
+  end
+
   private
 
   def proxy_class
-    cls = Class.new
+    cls = Class.new(java.lang.Object)
     cls.class_eval do
+      include Jenkins::Plugin::Proxy
       attr_reader :plugin, :object
+
       def initialize(plugin = nil, object = nil)
-        @plugin, @object = plugin, object
+        super(plugin || Jenkins.plugin, object)
       end
+
     end
     return cls
   end

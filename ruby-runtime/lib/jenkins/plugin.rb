@@ -108,14 +108,11 @@ module Jenkins
       if extension.class.respond_to? :order
         ordinal = extension.class.order
       else
-        if extension.is_a? Proxy
-          t = import(extension)
-          if t.class.respond_to? :order
-            ordinal = t.class.order
-          end
+        t = import(extension)
+        if t.class.respond_to? :order
+          ordinal = t.class.order
         end
       end
-
       @peer.addExtension(export(extension), ordinal)
     end
 

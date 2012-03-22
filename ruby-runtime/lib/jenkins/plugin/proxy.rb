@@ -28,6 +28,7 @@ module Jenkins
         super(*super_args) if defined? super
         @plugin, @object = plugin, object
         @pluginid = @plugin.name
+        @plugin.linkout object, self
       end
 
       # tell Stapler to go look for views from the wrapped object
