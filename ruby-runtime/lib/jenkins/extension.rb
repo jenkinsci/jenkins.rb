@@ -16,11 +16,7 @@ module Jenkins
       #   ...
       # end
       def order(n=nil)
-        if n.nil?
-          @order || 0
-        else
-          @order = n
-        end
+        n ? @order = n : @order or 0
       end
     end
   end
