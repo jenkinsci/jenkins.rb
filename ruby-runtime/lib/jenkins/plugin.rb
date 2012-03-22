@@ -101,7 +101,22 @@ module Jenkins
 
     def register_extension(class_or_instance, *args)
       extension = class_or_instance.is_a?(Class) ? class_or_instance.new(*args) : class_or_instance
-      @peer.addExtension(export(extension))
+
+      # look everywhere for possible ordinal value.
+      # extension can be a Java object, or a Proxy to a Ruby object
+      ordinal = 0
+      if extension.class.respond_to? :order
+        ordinal = extension.class.order
+      else
+        if extension.is_a? Proxy
+          t = import(extension)
+          if t.class.respond_to? :order
+            ordinal = t.class.order
+          end
+        end
+      end
+
+      @peer.addExtension(export(extension), ordinal)
     end
 
     # Register a ruby class as a Jenkins extension point of
