@@ -1,5 +1,6 @@
 require 'jenkins/plugin'
 require 'jenkins/plugin/behavior'
+require 'jenkins/extension'
 require 'jenkins/plugin/wrapper'
 require 'jenkins/plugin/specification'
 require 'jenkins/plugin/runtime/version'
