@@ -30,6 +30,7 @@ module Jenkins
     # glue layer and not the public runtime API.
     module Describable
       extend Plugin::Behavior
+      include Jenkins::Extension
       DescribableError = Class.new(StandardError)
 
       implemented do |cls|

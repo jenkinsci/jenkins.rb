@@ -17,6 +17,7 @@ module Jenkins::Slaves
   #
   module ComputerListener
     extend Jenkins::Plugin::Behavior
+    include Jenkins::Extension
 
     implemented do |cls|
       Jenkins.plugin.register_extension ComputerListenerProxy.new(Jenkins.plugin, cls.new)
