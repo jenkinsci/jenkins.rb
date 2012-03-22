@@ -44,6 +44,7 @@ module Jenkins::CLI
   # @see {https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+CLI Running Jenkins CLI}
   module Command
     extend Jenkins::Plugin::Behavior
+    include Jenkins::Extension
 
     implemented do |cls|
       cls.instance_eval do
