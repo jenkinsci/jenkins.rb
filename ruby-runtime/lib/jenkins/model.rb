@@ -1,14 +1,3 @@
-require 'jenkins/model/descriptor'
-require 'jenkins/model/describable'
-require 'jenkins/model/describable_proxy'
-require 'jenkins/model/environment'
-require 'jenkins/model/environment_proxy'
-require 'jenkins/model/action'
-require 'jenkins/model/root_action'
-require 'jenkins/model/build'
-require 'jenkins/model/listener'
-
-
 module Jenkins
   module Model
     extend Plugin::Behavior
@@ -66,3 +55,15 @@ module Jenkins
     end
   end
 end
+
+require 'jenkins/model/descriptor'
+require 'jenkins/model/describable'
+require 'jenkins/model/describable_proxy'
+require 'jenkins/model/environment'
+require 'jenkins/model/environment_proxy'
+require 'jenkins/model/action'
+require 'jenkins/model/action_proxy'
+require 'jenkins/model/root_action'
+require 'jenkins/model/root_action_proxy'
+require 'jenkins/model/build'
+require 'jenkins/model/listener'

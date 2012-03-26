@@ -1,5 +1,3 @@
-require 'jenkins/tasks/build_step'
-
 module Jenkins
   module Tasks
     ##

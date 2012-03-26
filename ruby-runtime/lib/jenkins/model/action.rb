@@ -2,7 +2,7 @@
 module Jenkins
   module Model
     module Action
-      include Model
+      include ::Jenkins::Model
 
       module InstanceMethods
         def icon
