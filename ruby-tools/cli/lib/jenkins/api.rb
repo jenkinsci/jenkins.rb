@@ -71,6 +71,7 @@ module Jenkins
         res = post "/createItem/api/xml?name=#{CGI.escape(name)}", {
           :body => job_config.to_xml, :format => :xml, :headers => { 'content-type' => 'application/xml' }
         }
+        puts res.body
         if res.code.to_i == 200
           cache_configuration!
           true
@@ -79,6 +80,8 @@ module Jenkins
           false
         end
       rescue REXML::ParseException => e
+        p e
+        puts res.body
         # For some reason, if the job exists we get back half a page of HTML
         raise JobAlreadyExistsError.new(name)
       end

@@ -70,6 +70,7 @@ module Jenkins
   
     protected
     
+    
     # <scm class="hudson.plugins.git.GitSCM"> ... </scm>
     def build_scm(b)
       if scm && scm =~ /git/
@@ -295,7 +296,25 @@ module Jenkins
     
     def default_steps(job_type)
       steps = case job_type.to_sym
-      when :rails, :rails3
+      when :rails3
+        [
+          :build_shell_step, <<-SHELL.gsub(/^\s{10}/, '')
+          if [ ! -d './.git' ]; then
+            git init
+            git remote add origin git://github.com/drnic/testapp_for_testing.git
+          fi
+          git fetch origin
+          # git reset -q --hard $COMMIT_SHA
+          git reset --hard origin/master
+          if [ -f script/cibuild ]; then
+            script/cibuild
+          else
+            bundle install --path vendor/gems --binstubs
+            bundle exec rake
+          fi
+          SHELL
+        ]
+      when :rails
         [
           [:build_shell_step, "bundle install"],
           [:build_ruby_step, <<-RUBY.gsub(/^            /, '')],
