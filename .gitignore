@@ -14,3 +14,4 @@ target/
 *.iws
 work
 target
+**/.gradle
