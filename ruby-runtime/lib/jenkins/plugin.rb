@@ -129,7 +129,7 @@ module Jenkins
     def register_describable(describable_class)
       on.start do
         fail "#{describable_class} is not an instance of Describable" unless describable_class < Model::Describable
-        descriptor_class = describable_class.descriptor_is || Jenkins::Model::Descriptor
+        descriptor_class = describable_class.descriptor_is
         descriptor = descriptor_class.new(describable_class, self, describable_class.describe_as_type.java_class)
         @descriptors[describable_class] = descriptor
         register_extension(descriptor)

@@ -5,7 +5,7 @@ module ProxyHelper
     super
     mod.class_eval do
       before do
-        @plugin = mock(Jenkins::Plugin, :name => "test-plugin")
+        @plugin = mock(Jenkins::Plugin, :name => "test-plugin", :linkout => true)
 
         @jBuild = mock(Java.hudson.model.AbstractBuild)
         @jLauncher = mock(Java.hudson.Launcher)

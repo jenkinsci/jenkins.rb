@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Jenkins::Plugin::Proxies::RootAction do
+describe Jenkins::Model::RootActionProxy do
   include ProxyHelper
 
   before do
-    @object = mock(Jenkins::Model::RootAction)
-    @root_action = Jenkins::Plugin::Proxies::RootAction.new(@plugin, @object)
+    @object = mock(Jenkins::Model::RootActionProxy)
+    @root_action = Jenkins::Model::RootActionProxy.new(@plugin, @object)
   end
 
   describe "getDisplayName" do

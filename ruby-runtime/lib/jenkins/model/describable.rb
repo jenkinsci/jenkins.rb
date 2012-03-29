@@ -47,11 +47,11 @@ module Jenkins
         end
 
         def describe_as_type
-          @describe_as_type ? @describe_as_type : (superclass.describe_as_type if superclass.respond_to?(:describe_as_type))
+          @describe_as_type ? @describe_as_type : (superclass.describe_as_type if superclass.respond_to?(:describe_as_type)) || verify_java_class(self)
         end
 
         def descriptor_is
-          @descriptor_is ? @descriptor_is : (superclass.descriptor_is if superclass.respond_to?(:descriptor_is))
+          @descriptor_is ? @descriptor_is : (superclass.descriptor_is if superclass.respond_to?(:descriptor_is)) || DefaultDescriptor
         end
 
         private

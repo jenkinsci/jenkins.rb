@@ -9,11 +9,10 @@ describe Jenkins::Model::Describable do
 
   describe "when mixed into a class" do
     before do
-      @class = Class.new
+      @class = Class.new(java.lang.Object)
       @plugin.stub(:register_describable)
       @class.send(:include, Jenkins::Model::Describable)
     end
-
 
     it "can't be described as plain old object" do
       lambda {@class.describe_as Object}.should raise_error(Jenkins::Model::Describable::DescribableError)
@@ -25,6 +24,12 @@ describe Jenkins::Model::Describable do
 
     it "must be described as a java.lang.Class" do
       lambda {@class.describe_as java.lang.Object}.should_not raise_error
+    end
+    
+    describe "and no further specification is provided" do
+      subject {@class}
+      its(:describe_as_type) {should be @class}
+      its(:descriptor_is) {should be Jenkins::Model::DefaultDescriptor}
     end
 
     describe "a subclass of that class" do

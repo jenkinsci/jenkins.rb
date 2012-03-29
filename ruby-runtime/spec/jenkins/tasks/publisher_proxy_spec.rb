@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Jenkins::Plugin::Proxies::Publisher do
+describe Jenkins::Tasks::PublisherProxy do
   include ProxyHelper
 
   before do
     @object = mock(Jenkins::Tasks::Publisher)
-    @builder = Jenkins::Plugin::Proxies::Publisher.new(@plugin, @object)
+    @builder = Jenkins::Tasks::PublisherProxy.new(@plugin, @object)
   end
 
   describe "prebuild" do

@@ -2,10 +2,9 @@ require 'spec_helper'
 require 'rspec-spies'
 
 describe Jenkins::Listeners::RunListenerProxy do
+  include ProxyHelper
   before do
-    @listener = mock(Jenkins::Listeners::RunListener)
-    @proxy = Jenkins::Listeners::RunListenerProxy.new(mock(Jenkins::Plugin, :name => 'test-plugin'), @listener)
-    @build = mock(Jenkins::Model::Build)
+    @proxy = Jenkins::Listeners::RunListenerProxy.new(@plugin, @listener)
     @console = mock(Jenkins::Model::Listener)
   end
 
