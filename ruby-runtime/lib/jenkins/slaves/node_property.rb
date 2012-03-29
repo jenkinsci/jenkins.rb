@@ -5,7 +5,7 @@ module Jenkins::Slaves
     include Jenkins::Model::Describable
 
     class NodePropertyDescriptor < Java.hudson.slaves.NodePropertyDescriptor
-      include Jenkins::Model::RubyDescriptor
+      include Jenkins::Model::Descriptor
 
       def isApplicable(targetType)
         true

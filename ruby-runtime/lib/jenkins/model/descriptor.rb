@@ -9,14 +9,20 @@ module Jenkins
     #
     # This class captures commonality of such "Ruby-specific behaviours" across different Descriptors
     # so it can be mixed into the Descriptor subtypes
-    module RubyDescriptor
+    module Descriptor
       def initialize(impl, plugin, java_type)
         super(java_type)
         @impl, @plugin, @java_type = impl, plugin, java_type
       end
 
       def getDisplayName
-        @impl.display_name
+        if @impl.respond_to?(:display_name)
+          @impl.display_name
+        elsif @impl.respond_to?(:getDisplayName)
+          @impl.getDisplayName()
+        else
+          @impl.name
+        end
       end
 
       def getId()
@@ -78,8 +84,8 @@ module Jenkins
       end
     end
 
-    class Descriptor < Java.hudson.model.Descriptor
-      include RubyDescriptor
+    class DefaultDescriptor < Java.hudson.model.Descriptor
+      include Descriptor
     end
   end
 end

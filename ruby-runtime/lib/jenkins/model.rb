@@ -58,6 +58,7 @@ end
 
 require 'jenkins/model/descriptor'
 require 'jenkins/model/describable'
+require 'jenkins/model/describable_native'
 require 'jenkins/model/describable_proxy'
 require 'jenkins/model/environment'
 require 'jenkins/model/environment_proxy'
