@@ -1,5 +1,10 @@
 require 'bundler'
-Bundler::GemHelper.install_tasks
+class Bundler::GemHelper
+  def version_tag
+    "runtime-v#{version}"
+  end
+  install_tasks
+end
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
