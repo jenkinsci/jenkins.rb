@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Charles Lowell", "Nic Williams"]
   s.email       = ["cowboyd@thefrontside.net", "drnicwilliams@gmail.com"]
-  s.homepage    = "https://github.com/cowboyd/jenkins.rb/tree/master/ruby-tools/cli"
+  s.homepage    = "https://github.com/jenkinsci/jenkins.rb/tree/master/ruby-tools/cli"
   s.summary     = %q{Painless Continuous Integration with Jenkins Server}
   s.description = %q{A suite of utilities for bringing continous integration to your projects (not the other way around) with jenkins CI}
 

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Charles Lowell"]
   s.email       = ["cowboyd@thefrontside.net"]
-  s.homepage    = "http://github.com/cowboyd/jenkins-plugin-runtime"
+  s.homepage    = "https://github.com/jenkinsci/jenkins.rb/tree/master/ruby-runtime"
   s.summary     = %q{Runtime support libraries for Jenkins Ruby plugins}
   s.description = %q{I'll think of a better description later, but if you're reading this, then I haven't}
 
