@@ -5,6 +5,18 @@ require 'jenkins/plugin/cli/formatting'
 require 'jenkins/plugin/cli/new'
 require 'jenkins/plugin/cli/generate'
 
+# Until a new version (>= 0.14.6 & 0.15.0rc2) is released, this backports a fix
+# for JRuby argument handling:
+# https://github.com/wycats/thor/commit/33490a59ed297eb798381f1c86cbaa3608413eaf
+class Thor
+  class Task
+    def sans_backtrace(backtrace, caller) #:nodoc:
+      saned  = backtrace.reject { |frame| frame =~ FILE_REGEXP || (frame =~ /\.java:/ && RUBY_PLATFORM =~ /java/) }
+      saned -= caller
+    end
+  end
+end
+
 
 module Jenkins
   class Plugin
