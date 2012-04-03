@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Charles Lowell", "Jørgen P. Tjernø", "Kohsuke Kawaguchi"]
   s.email       = ["cowboyd@thefrontside.net"]
-  s.homepage    = "https://github.com/cowboyd/jenkins.rb/tree/master/ruby-tools/jpi"
+  s.homepage    = "https://github.com/jenkinsci/jenkins.rb/tree/master/ruby-tools/jpi"
   s.summary     = %q{Tools for creating and building Jenkins Ruby plugins}
   s.description = %q{Allows you to generate a new Ruby plugin project, build it, test it in Jenkins and release it to the Jenkins Update Center.}
 
