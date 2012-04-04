@@ -1,5 +1,5 @@
-
 require 'thor/group'
+require 'jenkins/plugin/version'
 
 module Jenkins
   class Plugin
@@ -11,8 +11,16 @@ module Jenkins
 
         argument :name
 
+        def name
+          @name.gsub(/\s+/, '-').sub(/[_-]plugin$/, '')
+        end
+
+        def repository_name
+          name + '-plugin'
+        end
+
         def create_gemfile
-          template('templates/Gemfile.tt', "#{name}/Gemfile")
+          template('templates/Gemfile.tt', "#{repository_name}/Gemfile")
         end
 
         def create_pluginspec
@@ -25,12 +33,15 @@ module Jenkins
           git_name = 'TODO: Put your realname here' if git_name.empty?
           git_email = 'email@example.com' if git_email.empty?
 
+          display_name_components = repository_name.split(/[-_]/).collect { |w| w.capitalize }
+
           opts = {
             :developer_id => developer_id.empty? ? 'TODO: Put your jenkins-ci.org username here.' : developer_id,
-            :developer_name => "#{git_name} <#{git_email}>"
+            :developer_name => "#{git_name} <#{git_email}>",
+            :display_name => display_name_components.join(' ')
           }
 
-          template('templates/pluginspec.tt', "#{name}/#{name}.pluginspec", opts)
+          template('templates/pluginspec.tt', "#{repository_name}/#{name}.pluginspec", opts)
         end
 
       end
