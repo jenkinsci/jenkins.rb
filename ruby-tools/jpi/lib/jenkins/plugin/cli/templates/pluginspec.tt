@@ -1,28 +1,27 @@
-
 Jenkins::Plugin::Specification.new do |plugin|
   plugin.name = <%= name.inspect %>
-  plugin.display_name = <%= (name.capitalize + " Plugin").inspect %>
+  plugin.display_name = <%= config[:display_name].inspect %>
   plugin.version = '0.0.1'
-  plugin.description = 'enter description here'
+  plugin.description = 'TODO: enter description here'
 
   # You should create a wiki-page for your plugin when you publish it, see
   # https://wiki.jenkins-ci.org/display/JENKINS/Hosting+Plugins#HostingPlugins-AddingaWikipage
   # This line makes sure it's listed in your POM.
-  plugin.url = 'https://wiki.jenkins-ci.org/display/JENKINS/My+Plugin'
+  plugin.url = 'https://wiki.jenkins-ci.org/display/JENKINS/<%= config[:display_name].gsub(' ', '+') %>'
 
   # The first argument is your user name for jenkins-ci.org.
   plugin.developed_by <%= config[:developer_id].inspect %>, <%= config[:developer_name].inspect %>
 
   # This specifies where your code is hosted.
   # Alternatives include:
-  #  :github => 'myuser/my-plugin' (without myuser it defaults to jenkinsci)
-  #  :git => 'git://repo.or.cz/my-plugin.git'
-  #  :svn => 'https://svn.jenkins-ci.org/trunk/hudson/plugins/my-plugin'
-  plugin.uses_repository :github => 'my-plugin'
+  #  :github => 'myuser/<%= repository_name %>' (without myuser it defaults to jenkinsci)
+  #  :git => 'git://repo.or.cz/<%= repository_name %>.git'
+  #  :svn => 'https://svn.jenkins-ci.org/trunk/hudson/plugins/<%= repository_name %>'
+  plugin.uses_repository :github => <%= repository_name.inspect %>
 
   # This is a required dependency for every ruby plugin.
-  plugin.depends_on 'ruby-runtime', '0.4'
+  plugin.depends_on 'ruby-runtime', '0.10'
 
   # This is a sample dependency for a Jenkins plugin, 'git'.
-  plugin.depends_on 'git', '1.1.11'
+  #plugin.depends_on 'git', '1.1.11'
 end
