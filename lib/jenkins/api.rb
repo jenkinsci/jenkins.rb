@@ -147,7 +147,7 @@ module Jenkins
 
     # Attempts to delete a job +name+
     def self.delete_job(name)
-      res = post_plain "#{job_url name}/doDelete"
+      res = post_plain "#{base_uri}/job/#{CGI::escape(name).gsub('+', '%20')}/doDelete"
       res.code.to_i == 302
     end
 
@@ -292,12 +292,17 @@ module Jenkins
     # Helper for POST that don't barf at Jenkins's crappy API responses
     def self.post_plain(path, data = "", options = {})
       options = options.with_clean_keys
-      uri = URI.parse base_uri
-      res = Net::HTTP.start(uri.host, uri.port) do |http|
-        if RUBY_VERSION =~ /1.8/
-          http.post(path, options)
-        else
-          http.post(path, data, options)
+      if @username && @password && @options
+        conn = Jenkins::Connection.new(@username, @password, @options)
+        res = conn.post(path)
+      else
+        uri = URI.parse base_uri
+        res = Net::HTTP.start(uri.host, uri.port) do |http|
+          if RUBY_VERSION =~ /1.8/
+            http.post(path, options)
+          else
+            http.post(path, data, options)
+          end
         end
       end
     end
