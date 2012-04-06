@@ -472,11 +472,18 @@ module Jenkins
     end
     
     # <hudson.tasks.Ant>
-    #   <comman
     def build_ant_step(b, targets)
       b.tag! "hudson.tasks.Ant" do
         b.targets targets
         b.buildFile "../build.xml"
+      end
+    end
+    
+    # <hudson.tasks.XShell>
+    def build_xshell_step(b, command)
+      b.tag! "hudson.plugins.xshell.XShellBuilder" do
+        b.commandLine command
+        b.executeFromWorkingDir false
       end
     end
 
