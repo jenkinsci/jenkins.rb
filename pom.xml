@@ -31,8 +31,8 @@
 
 
   <scm>
-    <connection>scm:git:git://github.com/cowboyd/jenkins.rb.git</connection>
-    <developerConnection>scm:git:git@github.com:cowboyd/jenkins.rb.git</developerConnection>
-    <url>http://github.com/cowboyd/jenkins.rb</url>
+    <connection>scm:git:git://github.com/jenkinsci/jenkins.rb.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.rb.git</developerConnection>
+    <url>http://github.com/jenkinsci/jenkins.rb</url>
   </scm>
 </project>
