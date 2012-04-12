@@ -89,9 +89,9 @@ module Jenkins
           @_behaviors ||= Set.new
           behaviors.each do |b|
             unless @_behaviors.include? b
-              b.implemented self if self.is_a? Class
               self.extend b::ClassMethods if b.const_defined? :ClassMethods
               self.send(:include, b::InstanceMethods) if b.const_defined? :InstanceMethods
+              b.implemented self if self.is_a? Class
               @_behaviors << b
             end
           end
