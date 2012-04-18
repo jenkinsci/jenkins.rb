@@ -20,6 +20,7 @@ module Jenkins
     attr_accessor :publish_testing_tools_results
     attr_accessor :schedule_failed_builds
     attr_accessor :block_downstream, :block_upstream
+    attr_accessor :artifact_archiver
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -212,6 +213,16 @@ module Jenkins
             b.pattern publish_dupe_code_results[:pattern]
             b.highThreshold publish_dupe_code_results[:high_threshold]
             b.normalThreshold publish_dupe_code_results[:normal_threshold]
+          end
+        end
+        if artifact_archiver
+          b.tag! "hudson.tasks.ArtifactArchiver" do
+            b.artifacts artifact_archiver[:artifacts]
+            if artifact_archiver[:latest_only]
+              b.latestOnly artifact_archiver[:latest_only]
+            else
+              b.latestOnly false
+            end
           end
         end
         if child_projects
