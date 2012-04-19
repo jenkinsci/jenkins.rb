@@ -47,7 +47,7 @@ module Jenkins
 #          args << "-Djruby.debug.loadService.timing=true"
           args << "-jar"
           args << @war
-          exec *args
+          exec args.join(' ')
         end
       end
     end

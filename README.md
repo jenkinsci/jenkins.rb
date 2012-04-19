@@ -10,5 +10,5 @@ to interact with a Jenkins server from the terminal.
 
 Documentation for Ruby plugin development is [on the wiki][2]
 
-[1]: https://github.com/cowboyd/jenkins.rb/tree/master/ruby-tools/cli
-[2]: https://github.com/cowboyd/jenkins.rb/wiki
+[1]: https://github.com/jenkinsci/jenkins.rb/tree/master/ruby-tools/cli
+[2]: https://github.com/jenkinsci/jenkins.rb/wiki
