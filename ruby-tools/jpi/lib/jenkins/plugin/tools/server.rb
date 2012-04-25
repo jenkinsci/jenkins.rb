@@ -45,8 +45,10 @@ module Jenkins
           args << "-Ddebug.YUI=true"
 #          args << "-Djruby.debug.loadService=true"
 #          args << "-Djruby.debug.loadService.timing=true"
+          args << ENV['JAVA_OPTS'] if ENV.key? 'JAVA_OPTS'
           args << "-jar"
           args << @war
+          args << ENV['JENKINS_OPTS'] if ENV.key? 'JENKINS_OPTS'
           exec args.join(' ')
         end
       end
