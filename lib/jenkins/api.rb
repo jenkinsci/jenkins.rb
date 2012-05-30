@@ -286,7 +286,35 @@ module Jenkins
     end
 
     def self.delete_node(name)
-      post_plain("#{base_uri}/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
+      if @username && @password && @options
+        conn = Jenkins::Connection.new(@username, @password, @options)
+        response = conn.post("/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
+      else
+        url = URI.parse("#{base_uri}/computer/#{CGI::escape(name).gsub('+', '%20')}/doDelete/api/json")
+
+        req = Net::HTTP::Post.new(url.path)
+        req.set_form_data(fields)
+
+        http = Net::HTTP.new(url.host, url.port)
+
+        response = http.request(req)
+      end
+      if response.code.to_i == 200
+        cache_configuration!
+        true
+      else
+        # error message looks like:
+        # <td id="main-panel">
+        # <h1>Error</h1><p>Slave called 'localhost' already exists</p>
+        require "hpricot"
+        error = Hpricot(response.body).search("td#main-panel p").text
+        unless error.blank?
+          puts error
+        else
+          puts response.body # so we can find other errors
+        end
+        false
+      end
     end
 
     # Helper for POST that don't barf at Jenkins's crappy API responses
