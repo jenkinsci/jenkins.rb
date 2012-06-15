@@ -1,4 +1,3 @@
-
 module Jenkins
   module Model
     class RootAction
