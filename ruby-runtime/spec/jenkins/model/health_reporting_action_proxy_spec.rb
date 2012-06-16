@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '../../../spec_helper')
+require 'spec_helper'
 require 'jenkins/model/health_reporting_action'
 
 describe Jenkins::Model::HealthReportingActionProxy do
