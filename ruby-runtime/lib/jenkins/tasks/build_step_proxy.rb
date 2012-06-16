@@ -15,6 +15,14 @@ module Jenkins
         end
       end
 
+      #def getProjectActions(project)
+      #  @object.project_actions(import(project))
+      #end
+
+      def getProjectAction(project)
+        @object.project_action(import(project))
+      end
+
     private
 
     def boolean_result(listener, &block)
