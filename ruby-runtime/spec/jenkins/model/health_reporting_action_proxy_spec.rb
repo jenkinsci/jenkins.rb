@@ -32,4 +32,11 @@ describe Jenkins::Model::HealthReportingActionProxy do
       subject.getUrlName
     end
   end
+
+  describe "#getBuildHealth" do
+    it "calls through to its implementation" do
+      @object.should_receive(:build_health)
+      subject.getBuildHealth
+    end
+  end
 end
