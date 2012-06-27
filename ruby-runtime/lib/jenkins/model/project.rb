@@ -13,6 +13,14 @@ module Jenkins
         @native.getActions()
       end
 
+      def icon_file_name
+        @native.getIconFileName()
+      end
+
+      def search_url
+        @native.getSearchUrl()
+      end
+
       Jenkins::Plugin::Proxies.register self, Java.hudson.model.AbstractProject
     end
   end
