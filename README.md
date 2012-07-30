@@ -1,5 +1,7 @@
 # Jenkins.rb - Ruby tools and SDK for Jenkins
 
+[![Build Status](https://buildhive.cloudbees.com/job/jenkinsci/job/jenkins.rb/badge/icon)](https://buildhive.cloudbees.com/job/jenkinsci/job/jenkins.rb/)
+
 This is the Jenkins Ruby toolkit. You can use it to build, test and release Jenkins
 plugins written in Ruby.
 

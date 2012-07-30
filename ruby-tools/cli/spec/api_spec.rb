@@ -23,6 +23,16 @@ describe Jenkins::Api do
       uri.path.should == ''
     end
 
+    it "should accept basic auth parameters in the :host argument" do
+      uri = Jenkins::Api.setup_base_url :host => 'http://foo:bar@string.example.com:2'
+      uri.host.should == 'string.example.com'
+      uri.port.should == 2
+      uri.path.should == ''
+      auth = Jenkins::Api.default_options[:basic_auth]
+      auth[:username].should == 'foo'
+      auth[:password].should == 'bar'
+    end
+
     context "with environment variables" do
       after :each do
         ENV.delete 'JENKINS_HOST'

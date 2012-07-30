@@ -26,6 +26,8 @@ module Jenkins
       # Thor's HashWithIndifferentAccess is based on string keys which URI::HTTP.build ignores
       options = options.inject({}) { |mem, (key, val)| mem[key.to_sym] = val; mem }
 
+      options = setup_authentication(options)
+
       # Handle URL style hosts by parsing the URL
       if options.keys.length == 1 && options.key?(:host)
         parsed_uri = URI::parse(options[:host])
@@ -35,9 +37,11 @@ module Jenkins
             :path => parsed_uri.path,
             :ssl => parsed_uri.scheme == 'https'
             }
+        if parsed_uri.user && parsed_uri.password
+          basic_auth parsed_uri.user, parsed_uri.password
+        end
       end
 
-      options = setup_authentication(options)
       options[:host] ||= ENV['JENKINS_HOST']
       options[:port] ||= ENV['JENKINS_PORT']
       options[:port] &&= options[:port].to_i
