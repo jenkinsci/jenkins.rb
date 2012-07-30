@@ -166,7 +166,7 @@ module Jenkins
           require "yaml"
           puts job.parsed_response.to_yaml
         else
-          error "Select an output format: --json, --xml, --yaml, --hash"
+          error "Select an output format: --json, --yaml, --hash"
         end
       else
         error "Cannot find project '#{name}'."
