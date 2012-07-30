@@ -1,3 +1,4 @@
+@jenkins-server
 Feature: Create and manage jobs
   In order to reduce cost of getting a new project up onto Jenkins
   As a project developer

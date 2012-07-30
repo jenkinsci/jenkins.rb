@@ -7,7 +7,8 @@ Feature: Listing jobs
       """
       No connection available to the server.
       """
-  
+
+  @jenkins-server
   Scenario: List jobs on a server with no jobs (jenkins list)
     Given I have a Jenkins server running
     And the Jenkins server has no current jobs
@@ -16,7 +17,8 @@ Feature: Listing jobs
       """
       http://localhost:3010: no jobs
       """
-  
+
+  @jenkins-server
   Scenario: List jobs on a server with jobs (jenkins list)
     Given I have a Jenkins server running
     And the Jenkins server has no current jobs
@@ -30,5 +32,3 @@ Feature: Listing jobs
       * ruby
 
       """
-  
-  
