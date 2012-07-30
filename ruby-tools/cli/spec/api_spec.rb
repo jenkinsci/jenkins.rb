@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
 describe Jenkins::Api do
-  context "#setup_base_url" do
-
+  describe "#setup_base_url" do
     it "should accept a hash with a host and port as an argument" do
       uri = Jenkins::Api.setup_base_url :host => 'hash.example.com', :port => '123'
       uri.host.should == 'hash.example.com'
