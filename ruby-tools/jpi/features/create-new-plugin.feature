@@ -6,13 +6,13 @@ that will generate a project skeleton. This skeleton will come complete with git
 the goodies that you need to do your plugin develompent.
 
 Scenario: The directory skeleton is generated
-  When I run "jpi new newplugin"
-  # Then I should see this structure
-  # """
-  # [-] newplugin
-  #  | [+] .git
-  #  | .gitignore
-  #  | Gemfile
-  #  | Rakefile
-  #  | newplugin.pluginspec
-  # """
+    When I run `jpi new cuke-plugin`
+  Then I should see this structure
+  """
+  [-] cuke-plugin
+   | [+] .git
+   | .gitignore
+   | Gemfile
+   | Rakefile
+   | cuke-plugin.pluginspec
+  """
