@@ -1,3 +1,4 @@
+@jenkins-server
 Feature: Adding slave nodes
   In order to have different environments for different projects
   As a developer
