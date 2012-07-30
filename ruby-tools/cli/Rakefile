@@ -10,7 +10,10 @@ namespace :cucumber do
     t.cucumber_opts = "--tags @wip"
   end
   Cucumber::Rake::Task.new(:ok, 'Run features that should be working') do |t|
-    t.cucumber_opts = "--tags ~@wip"
+    t.cucumber_opts = "--tags ~@wip --tags ~@jenkins-server"
+  end
+  Cucumber::Rake::Task.new(:server, 'Run features that require a running server') do |t|
+    t.cucumber_opts = "--tags ~@wip --tags @jenkins-server"
   end
   task :all => [:ok, :wip]
 end

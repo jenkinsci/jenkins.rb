@@ -7,7 +7,8 @@ Feature: Show build details
       """
       No connection available to the server.
       """
-  
+
+  @jenkins-server
   Scenario: Show build details for a non-existent job (jenkins build_details)
     Given I have a Jenkins server running
     And the Jenkins server has no current jobs
@@ -16,7 +17,8 @@ Feature: Show build details
       """
       ERROR: Cannot find project 'ruby'.
       """
-  
+
+  @jenkins-server
   Scenario: Show build details for a job (jenkins build_details)
     Given I have a Jenkins server running
     And the Jenkins server has no current jobs
@@ -38,5 +40,5 @@ Feature: Show build details
       """
       "changeSet":{
       """
-  
-  
+
+
