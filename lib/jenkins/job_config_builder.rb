@@ -21,6 +21,8 @@ module Jenkins
     attr_accessor :schedule_failed_builds
     attr_accessor :block_downstream, :block_upstream
     attr_accessor :artifact_archiver
+    attr_accessor :fingerprint
+    attr_accessor :mail_upstream_committers
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -308,6 +310,11 @@ module Jenkins
             b.sendToIndividuals mail_build_breakers ? true : false
           end
         end
+        if mail_upstream_committers
+          b.tag! "hudson.plugins.blame__upstream__commiters.BlameUpstreamCommitersPublisher" do
+            b.sendToIndividuals false
+          end
+        end
         if schedule_failed_builds
           interval, retries = schedule_failed_builds
           b.tag! "com.progress.hudson.ScheduleFailedBuildsPublisher" do
@@ -414,6 +421,13 @@ module Jenkins
             method, cmd = step
             send(method.to_sym, b, cmd) # e.g. build_shell_step(b, "bundle install")
           end
+          if fingerprint
+            b.tag! "hudson.plugins.createfingerprint.CreateFingerprint" do
+              b.targets do
+                b << fingerprint
+              end
+            end
+          end
         end
       end
     end
@@ -469,7 +483,7 @@ module Jenkins
     # </hudson.tasks.Shell>
     def build_shell_step(b, command)
       b.tag! "hudson.tasks.Shell" do
-        b.command command.to_xs.gsub("&amp;", '&') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+        b.command command.to_xs.gsub("&amp;", '&').gsub("&gt;", '>') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
       end
     end
     
@@ -478,7 +492,7 @@ module Jenkins
     # </hudson.tasks.BatchFile>
     def build_bat_step(b, command)
       b.tag! "hudson.tasks.BatchFile" do
-        b.command command.to_xs.gsub("&amp;", '&')
+        b.command command.to_xs.gsub("&amp;", '&').gsub("&gt;", '>')
       end
     end
     
