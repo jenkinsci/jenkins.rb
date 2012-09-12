@@ -46,6 +46,17 @@ describe Jenkins::JobConfigBuilder do
       config_xml("ruby", "multi-ruby-multi-labels").should == @config.to_xml
     end
   end
+
+  describe "user-defined axes" do
+
+    it "have user-defined axes" do
+      @config = Jenkins::JobConfigBuilder.new(:ruby) do |c|
+        c.scm = "http://github.com/drnic/picasa_plucker.git"
+        c.user_axes =[ { :name => 'user_defined_axis', :values => ["custom_value_1", "custom_value_2"] } ]
+      end
+      config_xml("ruby", "user-defined-axis").should == @config.to_xml
+    end
+  end
   
   describe "assigned slave nodes for slave usage" do
     before do
