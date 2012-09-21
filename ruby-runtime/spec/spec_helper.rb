@@ -11,8 +11,8 @@ require 'jenkins/war'
 for path in Dir[File.join(ENV['HOME'], '.jenkins', 'wars', Jenkins::War::VERSION, "**/*.jar")]
   $CLASSPATH << path
 end
-$CLASSPATH << Pathname(__FILE__).dirname.join('../target/')
-$:.unshift Pathname(__FILE__).dirname.join('../lib')
+$CLASSPATH << Pathname(__FILE__).dirname.join('../target/').to_s
+$:.unshift Pathname(__FILE__).dirname.join('../lib').to_s
 
 require 'jenkins/plugin/runtime'
 require 'jenkins/plugin/proxies/proxy_helper'

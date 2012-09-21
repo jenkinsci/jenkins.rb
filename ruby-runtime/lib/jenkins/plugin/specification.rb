@@ -106,7 +106,8 @@ module Jenkins
       #
       # @return [Jenkins::Plugin::Specification] the loaded specification
       def self.load(path)
-        eval(File.read(path), binding, path, 1)
+        _path = path.to_s
+        eval(File.read(_path), binding, _path, 1)
       end
 
       # Looks inside `dir` for a file ending in .pluginspec, and if found,
@@ -116,7 +117,7 @@ module Jenkins
       def self.find(dir = Dir.pwd)
         dir = Pathname(dir)
         if spec_path = Pathname(dir).entries.find {|e| e.to_s =~ /\.pluginspec$/}
-          load(dir.join(spec_path))
+          load(dir.join(spec_path).to_s)
         end
       rescue Errno::ENOENT => e
         fail SpecificationNotFound, "#{dir} does not appear to be a directory"

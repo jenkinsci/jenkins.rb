@@ -20,7 +20,7 @@ describe Jenkins::Plugin::Specification do
   end
 
   describe "a spec loaded from a file" do
-    subject {Specification.load(Pathname(__FILE__).dirname.join('example.pluginspec'))}
+    subject {Specification.load(Pathname(__FILE__).dirname.join('example.pluginspec').to_s)}
     its(:name) {should eql "the-name"}
     its(:version) {should eql "1.0.0"}
     its(:description) {should eql "one great plugin"}
