@@ -11,4 +11,3 @@ Before do
   FileUtils.mkdir_p work_dir
   @dirs = [work_dir]
 end
-

@@ -1,24 +1,25 @@
 
 class DirectoryStructure
   def initialize(structure)
-
-    @root = context = DirChild.new('.')
+    context = DirChild.new('.')
 
     structure.each_line do |line|
-      if line =~ /(\[[-+]\]|\|)?\s+(\.?\w+)$/
+      if line =~ /^(\[\-+\]|\ \|\ )\s+(.+)$/
         op, name = $1, $2
-        case op
-        when "[+]"
-          context.add(DirChild.new name)
-        when "[-]"
-          new_context = DirChild.new name
-          context.add(new_context)
-          context = new_context
-        when "|"
-          context.add(FileChild.new name)
-        end
+        child = case op
+                when "[+]"
+                  DirChild.new name
+                when "[-]"
+                  # TODO: make to tree structure
+                  DirChild.new name
+                when " | "
+                  FileChild.new name
+                end
+        context.add child
       end
     end
+
+    @root = context
   end
 
   def matches?(dir)
@@ -28,22 +29,23 @@ class DirectoryStructure
   Entry = Struct.new(:name)
 
   class DirChild < Entry
+    attr_accessor :entries
+
     def initialize(name)
       super(name)
       @entries = []
     end
 
     def add(entry)
-      @entries << entries
+      @entries << entry
     end
 
     def matches?(realdir)
-      entries = Dir.new(realdir).entries
-      !@entries.detect {|e| !entries.map{|e| File.basename(e)}.member?(e)}
+      real_entries = Dir.glob(realdir + '/**/*').map{|e| File.basename(e) }
+      (@entries.map(&:name) <=> real_entries) < 1
     end
   end
 
   class FileChild < Entry
-
   end
 end
