@@ -106,7 +106,8 @@ module Jenkins
       #
       # @return [Jenkins::Plugin::Specification] the loaded specification
       def self.load(path)
-        eval(File.read(path.to_s), binding, path, 1)
+        _path = path.to_s
+        eval(File.read(_path), binding, _path, 1)
       end
 
       # Looks inside `dir` for a file ending in .pluginspec, and if found,
