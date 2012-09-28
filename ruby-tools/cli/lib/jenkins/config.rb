@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Jenkins
   module Config
     extend self
