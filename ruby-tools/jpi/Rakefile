@@ -1,6 +1,5 @@
 require 'bundler'
 require 'cucumber/rake/task'
-require 'rspec/core/rake_task'
 
 class Bundler::GemHelper
   def version_tag
@@ -8,9 +7,6 @@ class Bundler::GemHelper
   end
   install_tasks
 end
-
-RSpec::Core::RakeTask.new(:spec)
-
 
 namespace :cucumber do
   Cucumber::Rake::Task.new(:ok, 'Run features that are being worked on') do |t|
