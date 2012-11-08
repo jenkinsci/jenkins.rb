@@ -15,3 +15,4 @@ target/
 work
 target
 **/.gradle
+.rbenv-version
