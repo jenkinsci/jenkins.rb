@@ -29,7 +29,7 @@ module Jenkins
       def unknown(msg = nil, &block); add(Logger::UNKNOWN, msg, &block); end
 
       def <<(msg)
-        logger.write(msg.to_s)
+        logger.println(msg.to_s)
       end
 
     private
@@ -39,15 +39,15 @@ module Jenkins
         if msg.nil? && block_given?
           msg = yield
         end
-        str = msg2str(msg) + "\n"
+        str = msg2str(msg)
         return true if severity < @level
         case severity
         when Logger::DEBUG, Logger::INFO
-          logger.write(str)
+          logger.println(str)
         when Logger::WARN, Logger::ERROR
-          @native.error(str)
+          @native.error(str + "\n")
         else
-          @native.fatalError(str)
+          @native.fatalError(str + "\n")
         end
       end
 
