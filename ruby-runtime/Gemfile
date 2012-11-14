@@ -2,5 +2,3 @@ source "http://rubygems.org"
 
 # Specify your gem's dependencies in jenkins-plugins.gemspec
 gemspec
-
-gem "rspec-spies", github: 'hsbt/rspec-spies', branch: 'fix-circular-dependency'
