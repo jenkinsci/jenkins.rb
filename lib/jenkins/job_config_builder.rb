@@ -18,6 +18,7 @@ module Jenkins
     attr_accessor :publish_documents
     attr_accessor :publish_dupe_code_results
     attr_accessor :publish_testing_tools_results
+    attr_accessor :junit_test_result_report
     attr_accessor :schedule_failed_builds
     attr_accessor :block_downstream, :block_upstream
     attr_accessor :artifact_archiver
@@ -256,6 +257,13 @@ module Jenkins
                 end
               end
             end
+          end
+        end
+        if junit_test_result_report
+          b.tag! "hudson.tasks.junit.JUnitResultArchiver" do
+            b.testResults junit_test_result_report[:test_report_xmls]
+            b.keepLongStdio junit_test_result_report[:retain_stdio] ? true : false
+            b.testDataPublishers
           end
         end
         if publish_documents
