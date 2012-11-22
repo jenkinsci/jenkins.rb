@@ -24,6 +24,7 @@ module Jenkins
     attr_accessor :artifact_archiver
     attr_accessor :fingerprint
     attr_accessor :mail_upstream_committers
+    attr_accessor :checkstyle_results
     
     InvalidTemplate = Class.new(StandardError)
     
@@ -200,6 +201,22 @@ module Jenkins
     
     def build_publishers(b)
       b.publishers do
+        if checkstyle_results
+          b.tag! "hudson.plugins.checkstyle.CheckStylePublisher" do
+            b.threshold
+            b.newThreshold
+            b.failureThreshold
+            b.newFailureThreshold
+            b.healthy
+            b.unHealthy
+            b.pluginName "[CHECKSTYLE]"
+            b.thresholdLimit "low"
+            b.defaultEncoding
+            b.useDeltaValues false
+            b.canRunOnFailed false
+            b.pattern checkstyle_results
+          end
+        end
         if publish_dupe_code_results
           b.tag! "hudson.plugins.dry.DryPublisher" do
             b.threshold
