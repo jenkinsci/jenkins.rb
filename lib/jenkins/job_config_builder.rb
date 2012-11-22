@@ -374,19 +374,19 @@ module Jenkins
       end
     end
     
-    # Pass in an array of arrays of the trigger type, and the poll interval.
-    # e.g. triggers = [ [:build_periodically, "0 18 * * *"], [:poll_scm, "0 0 * * *"] ]
-    # this would set the job to periodically build at 6PM everyday, and poll scm for build at Midnight, everyday
+    # Pass in a hash with key as the method, and value as its value.
+    # e.g. triggers = {:build_periodically => "00 18 * * *", :poll_scm => "*/5 * * * *"}
+    # this would set the job to periodically build at 6PM everyday, and poll scm every 5 minutes, everyday
     def build_triggers(b)
       b.triggers :class => "vector" do
-        if schedule_failed_builds # putting it in build triggers if we're scheduling failed builds
-          triggers = [] if !triggers #declaring triggers to be an array if it doesn't exist
-          triggers << ["schedule_failed_builds_trigger", "* * * * *"]
-        end
+        # got rid of schedule failed builds as it was causing problems and not doing ANYTHING!!
+        #if schedule_failed_builds # putting it in build triggers if we're scheduling failed builds
+        #  triggers = {} if !triggers #declaring triggers to be an array if it doesn't exist
+        #  triggers[:schedule_failed_builds_trigger] = "* * * * *"
+        #end
         if triggers
-          triggers.each do |trigger|
-            method, cmd = trigger
-            send(method.to_sym, b, cmd) # e.g. poll_scm(b, "0 18 * * *")
+          triggers.each do |trigger, cmd|
+            send(trigger.to_sym, b, cmd)
           end
         end
       end
@@ -394,24 +394,20 @@ module Jenkins
     
     def poll_scm(b, command)
       b.tag! "hudson.triggers.SCMTrigger" do
-        b.spec do
-          b << command.to_xs
-        end
+        b.spec command
       end
     end
     
     def build_periodically(b, command)
       b.tag! "hudson.triggers.TimerTrigger" do
-        b.spec do
-          b << command.to_xs
-        end
+        b.spec command
       end
     end
     
     def schedule_failed_builds_trigger(b, command)
       b.tag! "com.progress.hudson.ScheduleFailedBuildsTrigger" do
         b.spec do
-          b << command.to_xs
+          b << command
         end
       end
     end
