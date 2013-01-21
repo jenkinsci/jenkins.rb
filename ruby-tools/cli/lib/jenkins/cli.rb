@@ -50,24 +50,33 @@ module Jenkins
 
     desc "create project_path [options]", "create a build for your project"
     common_options
-    method_option :rubies, :desc          => "run tests against multiple explicit rubies via RVM", :type => :string
-    method_option :"node-labels", :desc   => "run tests against multiple slave nodes by their label (comma separated)"
-    method_option :"assigned-node", :desc => "only use slave nodes with this label (similar to --node-labels)"
-    method_option :"no-build", :desc      => "create job without initial build", :type => :boolean, :default => false
-    method_option :override, :desc        => "override if job exists", :type => :boolean, :default => false
-    method_option :"scm", :desc           => "specific SCM URI", :type => :string
-    method_option :"scm-branches", :desc  => "list of branches to build from (comma separated)", :type => :string, :default => "master"
-    method_option :"public-scm", :desc    => "use public scm URL", :type => :boolean, :default => false
-    method_option :template, :desc        => "template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
-    method_option :"no-template", :desc   => "do not use a template of default steps; avoids Gemfile requirement", :type => :boolean, :default => false
+    method_option :rubies, :desc            => "run tests against multiple explicit rubies via RVM", :type => :string
+    method_option :"node-labels", :desc     => "run tests against multiple slave nodes by their label (comma separated)"
+    method_option :"assigned-node", :desc   => "only use slave nodes with this label (similar to --node-labels)"
+    method_option :"no-build", :desc        => "create job without initial build", :type => :boolean, :default => false
+    method_option :override, :desc          => "override if job exists", :type => :boolean, :default => false
+    method_option :"scm", :desc             => "specific SCM URI", :type => :string
+    method_option :"scm-branches", :desc    => "list of branches to build from (comma separated)", :type => :string, :default => "master"
+    method_option :"public-scm", :desc      => "use public scm URL", :type => :boolean, :default => false
+    method_option :template, :desc          => "builtin template of job steps (available: #{JobConfigBuilder::VALID_JOB_TEMPLATES.join ','})", :default => 'ruby'
+    method_option :"no-template", :desc     => "do not use a builtin template of default steps; avoids Gemfile requirement", :type => :boolean, :default => false
+    method_option :"custom-template", :desc => "use custom file or URI as job config", :default => false
     def create(project_path)
       select_jenkins_server(options)
       FileUtils.chdir(project_path) do
         scm = discover_scm(options)
         ruby_or_rails_project_without_gemfile?(options)
         begin
-          template = options[:"no-template"] ? 'none' : options[:template]
-          job_config = build_job_config(scm, template, options)
+          template = if custom_template = options["custom-template"]
+                       "custom"
+                     else
+                       options[:"no-template"] ? 'none' : options[:template]
+                     end
+          job_config = if template == "custom"
+                         open(custom_template).read
+                       else
+                         build_job_config(scm, template, options)
+                       end
 
           if Jenkins::Api.create_job(project_name, job_config, options)
             build_url = "#{@uri}/job/#{project_name.gsub(/\s/,'%20')}/build"
@@ -335,6 +344,7 @@ USEAGE
     end
 
     def build_job_config(scm, template, options)
+      
       Jenkins::JobConfigBuilder.new(template) do |c|
         c.rubies        = options[:rubies].split(/\s*,\s*/) if options[:rubies]
         c.node_labels   = options[:"node-labels"].split(/\s*,\s*/) if options[:"node-labels"]
