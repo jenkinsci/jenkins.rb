@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.447</version>
+		<version>1.505</version>
 	</parent>
 
 	<artifactId>ruby-runtime</artifactId>
@@ -15,7 +15,7 @@
       <dependency>
         <groupId>org.kohsuke.stapler</groupId>
         <artifactId>stapler-jruby</artifactId>
-        <version>1.177</version>
+        <version>1.208-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>org.kohsuke.stapler</groupId>
@@ -26,12 +26,12 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>1.6.5</version>
+      <version>1.7.3</version>
     </dependency>
     <dependency>
       <groupId>org.jruby.rack</groupId>
       <artifactId>jruby-rack</artifactId>
-      <version>1.0.10</version>
+      <version>1.1.13.1</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci</groupId>
@@ -59,31 +59,26 @@
     </plugins>
   </build>
 
-	<!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
-      <id>m.g.o-public</id>
-      <url>http://maven.glassfish.org/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
-    <repository>
-      <id>maven.jenkins-ci.org</id>
-      <url>http://maven.jenkins-ci.org/content/repositories/snapshots/</url>
-      <snapshots>
+      <id>maven.jenkins-ci.org-releases</id>
+      <url>http://maven.jenkins-ci.org/content/repositories/releases</url>
+      <releases>
         <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
     </repository>
   </repositories>
 
   <pluginRepositories>
-		<pluginRepository>
-			<id>m.g.o-public</id>
-			<url>http://maven.glassfish.org/content/groups/public/</url>
-		</pluginRepository>
+    <pluginRepository>
+      <id>maven.jenkins-ci.org-releases</id>
+      <url>http://maven.jenkins-ci.org/content/repositories/releases</url>
+    </pluginRepository>
   </pluginRepositories>
+
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>

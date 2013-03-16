@@ -8,15 +8,12 @@ import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyModule;
 import org.jruby.embed.ScriptingContainer;
-import org.jruby.javasupport.Java;
 import org.jruby.rack.DefaultRackApplication;
-import org.jruby.rack.servlet.ServletRackConfig;
-import org.jruby.rack.servlet.ServletRackContext;
-import org.jruby.rack.servlet.ServletRackEnvironment;
-import org.jruby.rack.servlet.ServletRackResponseEnvironment;
+import org.jruby.rack.servlet.*;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.jelly.jruby.RubyKlassNavigator;
 import org.kohsuke.stapler.lang.Klass;
 
@@ -161,7 +158,7 @@ public class RubyPlugin extends PluginImpl {
         initRubyLoadPaths();
         initRubyNativePlugin();
 
-        rackContext = new ServletRackContext(new ServletRackConfig(Jenkins.getInstance().servletContext));
+        rackContext = new DefaultServletRackContext(new ServletRackConfig(Jenkins.getInstance().servletContext));
 	}
 
     /**
@@ -298,9 +295,10 @@ public class RubyPlugin extends PluginImpl {
      */
     public void rack(IRubyObject servletHandler) {
         final StaplerRequest req = Stapler.getCurrentRequest();
+        final StaplerResponse res = Stapler.getCurrentResponse();
         // we don't want the Rack app to consider the portion of the URL that was already consumed
         // to reach to the Rack app, so for PATH_INFO we use getRestOfPath(), not getPathInfo()
-        ServletRackEnvironment env = new ServletRackEnvironment(req, rackContext) {
+        ServletRackEnvironment env = new ServletRackEnvironment(req, res, rackContext) {
             @Override
             public String getPathInfo() {
                 return req.getRestOfPath();
@@ -309,6 +307,6 @@ public class RubyPlugin extends PluginImpl {
         DefaultRackApplication dra = new DefaultRackApplication();
         dra.setApplication(servletHandler);
         dra.call(env)
-                .respond(new ServletRackResponseEnvironment(Stapler.getCurrentResponse()));
+                .respond(new ServletRackResponseEnvironment(res));
     }
 }
