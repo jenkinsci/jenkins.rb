@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "jenkins/version"
 
 Gem::Specification.new do |s|
-  s.name        = "jenkins"
+  s.name        = "jenkins-maestrodev"
   s.version     = Jenkins::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Charles Lowell", "Nic Williams"]
