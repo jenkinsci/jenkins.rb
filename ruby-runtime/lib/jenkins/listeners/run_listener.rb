@@ -1,6 +1,9 @@
 module Jenkins::Listeners
   # Receive notification of build events.
   #
+  # RunListener is always Jenkins-wide, so once registered it gets notifications for every build
+  # that happens in this Hudson.
+  #
   # Include this module in your class in order to receive callbacks
   # when builds are started, completed, deleted, etc...
   #

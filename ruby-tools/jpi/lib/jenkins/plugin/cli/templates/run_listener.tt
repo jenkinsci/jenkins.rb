@@ -1,5 +1,8 @@
 # Receive notification of build events
 #
+# <%= name.capitalize %>Listener is always Jenkins-wide, so once registered 
+# it gets notifications for every build that happens in this Hudson.
+#
 # This class will receive callbacks
 # when builds are started, completed, deleted, etc...
 #
