@@ -219,6 +219,20 @@ Feature: Create and manage jobs
           </hudson.tasks.Shell>
         </builders>
       """
+  
+  Scenario: Create job with config from file (jenkins create --template /path/to/config.xml)
+    Given I am in the "custom-config" project folder
+    And the project uses "git" scm
+    When I run local executable "jenkins" with arguments "create . --custom-template custom-config.xml --host localhost --port 3010"
+    Then I should see "Added custom project 'custom-config' to Jenkins."
+    And the job "custom-config" config "builders" should be:
+      """
+      <builders>
+          <hudson.tasks.Shell>
+            <command>echo &quot;THERE ARE NO STEPS! Except this custom step from a file...&quot;</command>
+          </hudson.tasks.Shell>
+        </builders>
+      """
 
   Scenario: Reject projects that don't use bundler (jenkins create)
     Given I am in the "non-bundler" project folder
