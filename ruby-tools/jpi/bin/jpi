@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+$:.unshift(File.expand_path("../../lib", __FILE__))
 require 'jenkins/plugin/cli'
 
-Jenkins::Plugin::CLI.start ARGV
+Jenkins::Plugin::CLI.start(ARGV)
+
+
