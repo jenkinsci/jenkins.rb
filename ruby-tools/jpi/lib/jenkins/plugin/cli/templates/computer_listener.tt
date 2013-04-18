@@ -1,3 +1,19 @@
+# Receive notification of what computers in a build array are doing
+#
+# This class will receive callbacks
+# when nodes come online, offline, etc.., etc...
+#
+# To receive a callback, override the method with the same name as
+# the event. E.g.
+#
+#     class MyComputerListener
+#       include Jenkins::Slaves::ComputerListener
+#
+#       def online(computer, listener)
+#         puts "#{computer} is now online!"
+#       end
+#     end
+#
 class <%= name.capitalize %>Listener
   include Jenkins::Slaves::ComputerListener
 

@@ -1,3 +1,4 @@
+# Decorate a build with pre and post hooks.
 class <%= name.capitalize %>Wrapper < Jenkins::Tasks::BuildWrapper
   display_name "<%= name.capitalize %> build wrapper"
 

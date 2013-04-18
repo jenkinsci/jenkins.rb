@@ -1,3 +1,19 @@
+# Receive notification of build events
+#
+# This class will receive callbacks
+# when builds are started, completed, deleted, etc...
+#
+# To receive a callback, override the method with the same name as
+# the event. E.g.
+#
+#     class MyRunListener
+#       include Jenkins::Listeners::RunListener
+#
+#       def started(build, listener)
+#         puts "build.inspect started!"
+#       end
+#     end
+#
 class <%= name.capitalize %>Listener
   include Jenkins::Listeners::RunListener
 
