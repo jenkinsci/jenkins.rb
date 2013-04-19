@@ -11,12 +11,8 @@ module Jenkins
 
         argument :name
 
-        def name
-          @name.gsub(/\s+/, '-').sub(/[_-]plugin$/, '')
-        end
-
-        def repository_name
-          name + '-plugin'
+        def readme
+          template('templates/README.md.tt', "#{repository_name}/README.md")
         end
 
         def create_gemfile
@@ -44,6 +40,15 @@ module Jenkins
           template('templates/pluginspec.tt', "#{repository_name}/#{name}.pluginspec", opts)
         end
 
+        protected
+
+        def name
+          @name.gsub(/\s+/, '-').sub(/[_-]plugin$/, '')
+        end
+
+        def repository_name
+          name + '-plugin'
+        end
       end
     end
   end
