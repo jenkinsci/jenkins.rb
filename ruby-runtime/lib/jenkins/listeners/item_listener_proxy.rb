@@ -12,7 +12,7 @@ module Jenkins::Listeners
     # This is useful for changing the default initial configuration of newly created jobs.
     # For example, you can enable/add builders, etc.
     def onCreated(item)
-      @object.created(item)
+      @object.created(import(item))
     end
 
     # Called after a new job is created by copying from an existing job.
@@ -25,7 +25,7 @@ module Jenkins::Listeners
     # @param  item
     #      The newly created item. Never null.
     def onCopied(src_item, item)
-      @object.copied(src_item, item);
+      @object.copied(import(src_item), import(item));
     end
 
     # Called after all the jobs are loaded from disk into jenkins.model.Jenkins
@@ -38,7 +38,7 @@ module Jenkins::Listeners
     #
     # At this point the data files of the job is already gone.
     def onDeleted(item)
-      @object.deleted(item)
+      @object.deleted(import(item))
     end
 
     # Called after a job is renamed.
@@ -50,14 +50,14 @@ module Jenkins::Listeners
     # @param newName
     #      The new name of the job. Same as Item#getName().
     def onRenamed(item, oldName, newName)
-      @object.renamed(item, oldName, newName)
+      @object.renamed(import(item), import(oldName), import(newName))
     end
 
     # Called after a job has its configuration updated.
     #
     # @since 1.460
     def onUpdated(item)
-      @object.updated(item)
+      @object.updated(import(item))
     end
 
     # Called at the begenning of the orderly shutdown sequence to

@@ -11,10 +11,13 @@ module Jenkins::Listeners
   #       include Jenkins::Listeners::ItemListener
   #
   #       def updated(item)
-  #         puts "#{item.inspect} updated!"
+  #         puts "#{item.native.inspect} updated!"
   #       end
   #     end
   #
+  # Note: currently the +item+ objects being passed in are OpaqueJavaObject proxies
+  # around Java objects. You must invoke `.native` on them to access the underlying
+  # Java object that you want to interact with.
   module ItemListener
     extend Jenkins::Plugin::Behavior
     include Jenkins::Extension
