@@ -16,7 +16,6 @@ module Jenkins
       def run
       end
 
-
       # Called before a Trigger is removed.
       # Under some circumstances, this may be invoked more than once for
       # a given Trigger, so be prepared for that.
