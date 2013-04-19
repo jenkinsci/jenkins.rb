@@ -7,7 +7,7 @@ module Jenkins
     class Trigger
       include Jenkins::Model
       include Jenkins::Model::Describable
-      describe_as Java.hudson.triggers.Trigger
+      describe_as Java.hudson.triggers.Trigger, :with => Jenkins::Triggers::TriggerDescriptor
 
       # Executes the triggered task.
       #
