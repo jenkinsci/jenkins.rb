@@ -49,6 +49,12 @@ module Jenkins
           template('templates/run_listener.tt', "models/#{name.downcase}_listener.rb")
         end
 
+        desc "item_listener", "item_listener NAME", :desc => "receive notification of job change events"
+        def item_listener(name)
+          @name = name
+          template('templates/item_listener.tt', "models/#{name.downcase}_listener.rb")
+        end
+
         desc "computer_listener", "computer_listener NAME", :desc => "receive notification of computers events"
         def computer_listener(name)
           @name = name
