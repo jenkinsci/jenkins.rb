@@ -60,6 +60,13 @@ module Jenkins
           @name = name
           template('templates/computer_listener.tt', "models/#{name.downcase}_listener.rb")
         end
+
+        desc "trigger", "trigger NAME", :desc => "receive notification of computers events"
+        def trigger(name)
+          @name = name
+          template('templates/trigger.tt', "models/#{name.downcase}_trigger.rb")
+          template('templates/project_config.erb.tt', "views/#{name.downcase}/config.erb")
+        end
       end
     end
   end

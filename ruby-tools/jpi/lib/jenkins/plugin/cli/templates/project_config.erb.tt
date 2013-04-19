@@ -1,0 +1,6 @@
+<%%
+f = taglib("/lib/form")
+f.entry(:title => 'Some field', :field => 'some_field', :description => "An excellent field for this project/job") do
+  f.textbox
+end
+%>
