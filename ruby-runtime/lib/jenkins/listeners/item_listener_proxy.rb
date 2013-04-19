@@ -3,7 +3,7 @@ module Jenkins::Listeners
     include Jenkins::Plugin::Proxy
 
     def initialize(plugin, object)
-      super(plugin, object, Java.hudson.model.AbstractBuild.java_class)
+      super(plugin, object)
     end
 
     # Called after a new job is created and added to@link jenkins.model.Jenkinsend,
