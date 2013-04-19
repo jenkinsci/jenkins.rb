@@ -6,7 +6,7 @@ module Jenkins::Listeners
       super(plugin, object)
     end
 
-    # Called after a new job is created and added to@link jenkins.model.Jenkinsend,
+    # Called after a new job is created and added to jenkins.model.Jenkins,
     # before the initial configuration page is provided.
     # 
     # This is useful for changing the default initial configuration of newly created jobs.
@@ -17,7 +17,7 @@ module Jenkins::Listeners
 
     # Called after a new job is created by copying from an existing job.
     #
-    # For backward compatibility, the default implementation of this method calls@link #onCreated(Item)end.
+    # For backward compatibility, the default implementation of this method calls onCreated.
     # If you choose to handle this method, think about whether you want to call super.onCopied or not.
     #
     # @param src_item
@@ -28,7 +28,7 @@ module Jenkins::Listeners
       @object.copied(src_item, item);
     end
 
-    # Called after all the jobs are loaded from disk into@link jenkins.model.Jenkinsend
+    # Called after all the jobs are loaded from disk into jenkins.model.Jenkins
     # object.
     def onLoaded()
       @object.loaded
@@ -48,7 +48,7 @@ module Jenkins::Listeners
     # @param oldName
     #      The old name of the job.
     # @param newName
-    #      The new name of the job. Same as@link Item#getName()end.
+    #      The new name of the job. Same as Item#getName().
     def onRenamed(item, oldName, newName)
       @object.renamed(item, oldName, newName)
     end
