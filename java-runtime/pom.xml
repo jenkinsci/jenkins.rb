@@ -15,7 +15,7 @@
       <dependency>
         <groupId>org.kohsuke.stapler</groupId>
         <artifactId>stapler-jruby</artifactId>
-        <version>1.208-SNAPSHOT</version>
+        <version>1.209</version>
         <exclusions>
           <exclusion>
             <groupId>org.kohsuke.stapler</groupId>
