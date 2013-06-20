@@ -79,6 +79,13 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <developers>
+    <developer>
+      <id>hsbt</id>
+      <name>SHIBATA Hiroshi</name>
+      <email>hsbt@ruby-lang.org</email>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
