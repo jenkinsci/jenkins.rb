@@ -40,7 +40,16 @@ module Jenkins
             raise Exception.new("no credential available to connect to jenkins-ci.org. Please create ~/.jenkins-ci.org. See https://wiki.jenkins-ci.org/display/JENKINS/Dot+Jenkins+Ci+Dot+Org")
           end
 
-          http = Net::HTTP.new("maven.jenkins-ci.org",8081)
+          proxy = if ENV['HTTP_PROXY'] || ENV['http_proxy']
+                    proxy_uri = URI.parse(ENV['HTTP_PROXY'] || ENV['http_proxy'])
+                    Net::HTTP::Proxy(proxy_uri.host,
+                                     proxy_uri.port,
+                                     proxy_uri.user,
+                                     proxy_uri.password)
+                  else
+                    Net::HTTP
+                  end
+          http = proxy.new("maven.jenkins-ci.org",8081)
 
           puts @snapshot ? "deploying as a snapshot. Run with the --release option to release it for real when you are ready" : "deploying as a release"
           puts "Generating POM"
