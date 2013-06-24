@@ -9,11 +9,12 @@ module Jenkins
     module Tools
       class Server
 
-        def initialize(spec, workdir, war)
+        def initialize(spec, workdir, war, port)
           @spec = spec
           @workdir = workdir
           @plugindir = "#{workdir}/plugins"
           @war = war || Jenkins::War::LOCATION
+          @port = port
         end
 
         def run!
@@ -49,6 +50,9 @@ module Jenkins
           args << "-jar"
           args << @war
           args << ENV['JENKINS_OPTS'] if ENV.key? 'JENKINS_OPTS'
+          unless ENV.key?('JENKINS_OPTS') && !ENV['JENKINS_OPTS'].index("--httpPort=").nil?
+            args << "--httpPort=#{@port}"
+          end
           exec args.join(' ')
         end
       end
