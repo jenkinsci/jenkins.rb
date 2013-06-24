@@ -47,7 +47,17 @@ module Jenkins
           # You should choose better exception.
           raise ArgumentError, 'HTTP redirect too deep' if limit == 0
 
-          response = Net::HTTP.get_response(URI.parse(uri))
+          http = if ENV['HTTP_PROXY'] || ENV['http_proxy']
+                   proxy_uri = URI.parse(ENV['HTTP_PROXY'] || ENV['http_proxy'])
+                   Net::HTTP::Proxy(proxy_uri.host, 
+                                    proxy_uri.port, 
+                                    proxy_uri.user,
+                                    proxy_uri.password)
+                 else
+                   Net::HTTP
+                 end
+
+          response = http.get_response(URI.parse(uri))
           case response
           when Net::HTTPSuccess     then response
           when Net::HTTPRedirection then fetch(response['location'], limit - 1)
