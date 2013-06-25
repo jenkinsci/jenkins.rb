@@ -2,5 +2,4 @@ rvm:
   - jruby-18mode
   - jruby-19mode
 
-script:
-  - "echo 'A-OK'"
+script: "rake test"
