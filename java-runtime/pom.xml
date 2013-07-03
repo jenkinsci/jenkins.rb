@@ -1,17 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.jenkins-ci.plugins</groupId>
-		<artifactId>plugin</artifactId>
-		<version>1.505</version>
-	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>ruby-runtime-parent</artifactId>
+    <version>0.12-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>ruby-runtime</artifactId>
-	<version>0.12-SNAPSHOT</version>
+  <artifactId>ruby-runtime</artifactId>
+  <version>0.12-SNAPSHOT</version>
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
-	<packaging>hpi</packaging>
+  <packaging>hpi</packaging>
 
-	<dependencies>
+  <dependencies>
       <dependency>
         <groupId>org.kohsuke.stapler</groupId>
         <artifactId>stapler-jruby</artifactId>
@@ -43,9 +43,29 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>5</source>
+          <target>5</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.1</version>
         <configuration>
           <releaseProfiles>release,bundle</releaseProfiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
       <plugin>
@@ -70,6 +90,16 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>maven.jenkins-ci.org-snapshots</id>
+      <url>http://maven.jenkins-ci.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -85,11 +115,16 @@
       <name>SHIBATA Hiroshi</name>
       <email>hsbt@ruby-lang.org</email>
     </developer>
+    <developer>
+      <id>yyuu</id>
+      <name>YAMASHITA Yuu</name>
+      <email>yamashita@geishatokyo.com</email>
+    </developer>
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/jenkinsci/jenkins.rb.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.rb.git</developerConnection>
+    <url>http://github.com/jenkinsci/jenkins.rb</url>
   </scm>
 </project>
