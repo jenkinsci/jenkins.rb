@@ -1,4 +1,10 @@
+language:
+  - java
+  - ruby
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
 rvm:
   - jruby-19mode
-
 script: "rake test"
