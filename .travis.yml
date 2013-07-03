@@ -1,5 +1,4 @@
 rvm:
-  - jruby-18mode
   - jruby-19mode
 
 script: "rake test"
