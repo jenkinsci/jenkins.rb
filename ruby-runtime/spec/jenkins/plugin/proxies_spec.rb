@@ -44,7 +44,7 @@ describe Jenkins::Plugin::Proxies do
 
       describe "and there is not an appropriate proxy class registered for it" do
         it "raises an exception on export" do
-          expect {@proxies.export(@object)}.should raise_error
+          expect {@proxies.export(@object)}.to raise_error
         end
       end
     end
@@ -93,7 +93,7 @@ describe Jenkins::Plugin::Proxies do
           end
 
           it "will fail to create a proxy for the superclass" do
-            expect {@proxies.export @A.new}.should raise_error(Jenkins::Plugin::ExportError)
+            expect {@proxies.export @A.new}.to raise_error(Jenkins::Plugin::ExportError)
           end
         end
 

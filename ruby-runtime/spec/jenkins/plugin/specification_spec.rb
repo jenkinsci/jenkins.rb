@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Jenkins::Plugin::Specification do
   Specification = Jenkins::Plugin::Specification
   it "is invalid by default" do
-    expect {subject.validate!}.should raise_error Jenkins::Plugin::SpecificationError
+    expect {subject.validate!}.to raise_error Jenkins::Plugin::SpecificationError
   end
 
   describe "when name, version and desc are set" do
@@ -32,7 +32,7 @@ describe Jenkins::Plugin::Specification do
       Specification.find!(Pathname(__FILE__).dirname.to_s).name.should eql "the-name"
     end
     it "raises an exception if one cannot be found" do
-      expect {Specification.find!('..')}.should raise_error Jenkins::Plugin::SpecificationNotFound
+      expect {Specification.find!('..')}.to raise_error Jenkins::Plugin::SpecificationNotFound
     end
   end
 end
