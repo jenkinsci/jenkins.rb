@@ -12,17 +12,17 @@
   <packaging>hpi</packaging>
 
   <dependencies>
-      <dependency>
-        <groupId>org.kohsuke.stapler</groupId>
-        <artifactId>stapler-jruby</artifactId>
-        <version>1.209</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.kohsuke.stapler</groupId>
-            <artifactId>stapler-jelly</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
+    <dependency>
+      <groupId>org.kohsuke.stapler</groupId>
+      <artifactId>stapler-jruby</artifactId>
+      <version>1.209</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kohsuke.stapler</groupId>
+          <artifactId>stapler-jelly</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.jenkins-ci.tools</groupId>
         <artifactId>maven-hpi-plugin</artifactId>
-        <version>1.78</version>
+        <version>1.96</version>
         <configuration>
           <maskClasses>org.jruby.</maskClasses>
         </configuration>
