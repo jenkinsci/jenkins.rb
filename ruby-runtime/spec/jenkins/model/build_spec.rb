@@ -18,11 +18,11 @@ describe Jenkins::Model::Build do
   end
 
   it "can halt" do
-    expect {@build.halt "stopping"}.should raise_error(Jenkins::Model::Build::Halt, "stopping")
+    expect {@build.halt "stopping"}.to raise_error(Jenkins::Model::Build::Halt, "stopping")
   end
 
   it "can abort" do
-    expect {@build.abort "aborting"}.should raise_error(Java.hudson.AbortException, "aborting")
+    expect {@build.abort "aborting"}.to raise_error(Java.hudson.AbortException, "aborting")
   end
 
   describe "hash-y interface" do

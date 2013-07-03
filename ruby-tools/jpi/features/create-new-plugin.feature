@@ -10,5 +10,6 @@ Scenario: The directory skeleton is generated
   """
   [-] cuke-plugin
    |  Gemfile
+   |  README.md
    |  cuke.pluginspec
   """

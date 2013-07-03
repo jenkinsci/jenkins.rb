@@ -11,7 +11,11 @@ namespace :test do
 
   desc 'Run the tests for the jenkins.rb CLI'
   task :cli do
-    sh 'cd ruby-tools/cli && bundle install && rake spec cucumber'
+    if RUBY_PLATFORM == "java"
+      STDERR.puts("FIXME: Skip running cli tests since some of dependency libraries are not working expectedly on JRuby 1.6/1.7.")
+    else
+      sh 'cd ruby-tools/cli && bundle install && rake spec cucumber'
+    end
   end
 end
 
