@@ -87,8 +87,8 @@
 
   <repositories>
     <repository>
-      <id>maven.jenkins-ci.org-releases</id>
-      <url>http://maven.jenkins-ci.org/content/repositories/releases</url>
+      <id>jenkins-releases</id>
+      <url>http://repo.jenkins-ci.org/releases/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -97,8 +97,8 @@
       </snapshots>
     </repository>
     <repository>
-      <id>maven.jenkins-ci.org-snapshots</id>
-      <url>http://maven.jenkins-ci.org/content/repositories/snapshots</url>
+      <id>jenkins-snapshots</id>
+      <url>http://repo.jenkins-ci.org/snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -110,8 +110,8 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>maven.jenkins-ci.org-releases</id>
-      <url>http://maven.jenkins-ci.org/content/repositories/releases</url>
+      <id>jenkins-releases</id>
+      <url>http://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
 
