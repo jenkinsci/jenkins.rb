@@ -179,6 +179,10 @@ public class RubyPlugin extends PluginImpl {
     }
 
 	private void initRubyNativePlugin() {
+		// Add an alias of PrintStream#write for backward compatibility
+		// https://github.com/jenkinsci/jenkins.rb/issues/86
+		require("core_ext/print_stream");
+
 		require("jenkins/plugin/runtime");
 		Object pluginClass = eval("Jenkins::Plugin");
 		this.plugin = callMethod(pluginClass, "initialize", this);
