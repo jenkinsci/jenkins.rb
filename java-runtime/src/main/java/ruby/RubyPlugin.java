@@ -194,12 +194,14 @@ public class RubyPlugin extends PluginImpl {
 
         File classesJar = new File(new File(url.getPath()), "WEB-INF/lib/classes.jar");
 
-        Expand e = new Expand();
-        e.setProject(new Project());
-        e.setTaskType("unzip");
-        e.setSrc(classesJar);
-        e.setDest(getScriptDir());
-        e.execute();
+        if (!getScriptDir().exists() && classesJar.exists()) {
+            Expand e = new Expand();
+            e.setProject(new Project());
+            e.setTaskType("unzip");
+            e.setSrc(classesJar);
+            e.setDest(getScriptDir());
+            e.execute();
+        }
     }
 
 	private void initRubyLoadPaths() throws Exception {
@@ -288,7 +290,7 @@ public class RubyPlugin extends PluginImpl {
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
-        return new File(new File(url.getPath()),"WEB-INF/lib/classes");
+        return new File(new File(url.getPath()),"WEB-INF/classes");
     }
 
     public File getLibPath() {
