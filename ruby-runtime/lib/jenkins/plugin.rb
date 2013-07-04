@@ -193,16 +193,28 @@ module Jenkins
     # The jury is definitely still out on the best way to discover
     # and load extension points.
     def load_models
-      path = @java.getModelsPath().getPath()
-      # TODO: can we access to Jenkins console logger?
-      puts "Trying to load models from #{path}"
-      load_file_in_dir(path)
+      # ruby-runtime (>= 0.12) responds to RubyPlugin#loadModelScript
+      # It tries to load scripts from both plugin class loader and directories.
+      if @java.respond_to?(:loadModelScript)
+        @java.loadModelScript()
+      else
+        # Load model script from directories if available.
+        # Backward compatibility for jenkins (< 1.519) && ruby-runtime (< 0.12)
+        path = @java.getModelsPath()
+        if path.exists()
+          # TODO: can we access to Jenkins console logger?
+          puts "Trying to load models from #{path}"
+          load_file_in_dir(path)
+        else
+          raise "Failed to load models from #{path}. Please update ruby-runtime (>= 0.12)."
+        end
+      end
     end
 
     private
 
     # Loads files in the specified directory.
-    # It seaches directories in depth first with loading files for each directory.
+    # It searches directories in depth first with loading files for each directory.
     def load_file_in_dir(dirpath)
       dirs = []
       Dir.new(dirpath).each do |entry|
