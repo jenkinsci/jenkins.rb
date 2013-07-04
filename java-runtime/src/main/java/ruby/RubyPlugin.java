@@ -4,6 +4,9 @@ import hudson.ExtensionComponent;
 import hudson.Util;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Expand;
+import org.apache.tools.ant.taskdefs.Zip;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyModule;
@@ -155,6 +158,7 @@ public class RubyPlugin extends PluginImpl {
         ruby = new ScriptingContainerHolder().ruby;
         navigator = new RubyKlassNavigator(ruby.getProvider().getRuntime(),getWrapper().classLoader);
 
+        unzipRubyClasses();
         initRubyLoadPaths();
         initRubyNativePlugin();
 
@@ -180,6 +184,23 @@ public class RubyPlugin extends PluginImpl {
 		this.plugin = callMethod(pluginClass, "initialize", this);
 		callMethod(plugin, "start");
 	}
+
+    private void unzipRubyClasses() throws Exception {
+        URL url = getWrapper().baseResourceURL;
+        // we assume url to be file:// path because we later need to be able to enumerate them
+        // to lift this limitation, we need build-time processing to enumerate all the rb files.
+        if (!url.getProtocol().equals("file"))
+            throw new IllegalStateException("Unexpected base resource URL: "+url);
+
+        File classesJar = new File(new File(url.getPath()), "WEB-INF/lib/classes.jar");
+
+        Expand e = new Expand();
+        e.setProject(new Project());
+        e.setTaskType("unzip");
+        e.setSrc(classesJar);
+        e.setDest(getScriptDir());
+        e.execute();
+    }
 
 	private void initRubyLoadPaths() throws Exception {
 		this.loadPath = (RubyArray)eval("$:");
@@ -267,7 +288,7 @@ public class RubyPlugin extends PluginImpl {
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
-        return new File(new File(url.getPath()),"WEB-INF/classes");
+        return new File(new File(url.getPath()),"WEB-INF/lib/classes");
     }
 
     public File getLibPath() {
