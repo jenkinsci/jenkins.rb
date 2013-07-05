@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>ruby-runtime-parent</artifactId>
-  <version>0.12</version>
+  <version>0.13-SNAPSHOT</version>
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
   <packaging>pom</packaging>
 
