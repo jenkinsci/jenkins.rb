@@ -7,7 +7,6 @@
   </parent>
 
   <artifactId>ruby-runtime</artifactId>
-  <version>0.12-SNAPSHOT</version>
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
   <packaging>hpi</packaging>
 
@@ -84,53 +83,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <repositories>
-    <repository>
-      <id>jenkins-releases</id>
-      <url>http://repo.jenkins-ci.org/releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>jenkins-snapshots</id>
-      <url>http://repo.jenkins-ci.org/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jenkins-releases</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <developers>
-    <developer>
-      <id>hsbt</id>
-      <name>SHIBATA Hiroshi</name>
-      <email>hsbt@ruby-lang.org</email>
-    </developer>
-    <developer>
-      <id>yyuu</id>
-      <name>YAMASHITA Yuu</name>
-      <email>yamashita@geishatokyo.com</email>
-    </developer>
-  </developers>
-
-  <scm>
-    <connection>scm:git:git://github.com/jenkinsci/jenkins.rb.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.rb.git</developerConnection>
-    <url>http://github.com/jenkinsci/jenkins.rb</url>
-  </scm>
 </project>
