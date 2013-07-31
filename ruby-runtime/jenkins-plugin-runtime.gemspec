@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency "slop", "~> 3.0.2"
 
   s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "rspec-spies", ">= 2.1.3"
+  s.add_development_dependency "rspec", "~> 2.14.1"
   s.add_development_dependency "jenkins-war", "> 1.445"
 end

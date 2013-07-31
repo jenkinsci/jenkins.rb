@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'rspec-spies'
 require 'tmpdir'
 
 describe Jenkins::Plugin do

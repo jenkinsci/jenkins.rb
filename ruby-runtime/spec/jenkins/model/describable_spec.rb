@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'rspec-spies'
 describe Jenkins::Model::Describable do
 
   before do
