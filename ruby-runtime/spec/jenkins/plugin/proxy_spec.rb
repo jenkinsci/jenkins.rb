@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'rspec-spies'
 
 describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
 
