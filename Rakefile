@@ -1,5 +1,5 @@
 namespace :test do
-  desc 'Run the tests for the jpi tool'
+  desc 'Run the tests for Jenkins Plugin Runtime'
   task :ruby_runtime do
     sh 'cd ruby-runtime && bundle install && rake spec'
   end
