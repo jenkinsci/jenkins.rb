@@ -1,4 +1,4 @@
-require 'zip/zip'
+require 'zip'
 require 'net/http'
 require 'uri'
 require 'fileutils'
@@ -15,7 +15,7 @@ module Jenkins
           @file = file
 
           # load and parse manifests
-          Zip::ZipFile.open(@file) do |zip|
+          Zip::File.open(@file) do |zip|
             zip.get_input_stream("META-INF/MANIFEST.MF") do |m|
               # main section of the manifest
               @manifest = parse_manifest(m.read)[0]
