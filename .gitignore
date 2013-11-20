@@ -17,4 +17,5 @@ target
 **/.gradle
 .rbenv-version
 .ruby-version
+.ruby-gemset
 .DS_Store
