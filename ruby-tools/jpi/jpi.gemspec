@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "bundler"
   s.add_dependency "thor"
-  s.add_dependency "rubyzip"
+  s.add_dependency "rubyzip", "~> 1.1.0"
   s.add_dependency "jenkins-war", "> 1.427"
   s.add_dependency "jenkins-plugin-runtime", "~> #{Jenkins::Plugin::RUNTIME_VERSION_DEPENDENCY}"
 

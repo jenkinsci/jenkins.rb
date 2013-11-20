@@ -2,7 +2,6 @@ require 'jenkins/plugin/version'
 require 'jenkins/plugin/specification'
 require 'jenkins/plugin/tools/hpi'
 require 'jenkins/plugin/tools/loadpath'
-require 'zip/zip'
 
 module Jenkins
   # given the IO handle, produce the basic manifest entries that are common between hpi and hpl formats

@@ -1,6 +1,6 @@
 require 'jenkins/plugin/tools/bundle'
 require 'jenkins/plugin/tools/manifest'
-require 'zip/zip'
+require 'zip'
 
 module Jenkins
   class Plugin
@@ -26,7 +26,7 @@ module Jenkins
 
           File.delete file_name if File.exists?(file_name)
 
-          Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zipfile|
+          Zip::File.open(file_name, Zip::File::CREATE) do |zipfile|
             zipfile.get_output_stream("META-INF/MANIFEST.MF") do |f|
               manifest.write_hpi(f)
               f.puts "Bundle-Path: vendor/gems"
