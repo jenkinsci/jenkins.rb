@@ -32,7 +32,7 @@ module Jenkins
             aliases = option.aliases.empty? ? "" : option.aliases.join(" ") + ","
             [aliases, "--#{option.name}#{prototype}", "\t",option.description]
           end
-          shell.print_table(table, :ident => 2)
+          shell.print_table(table, :indent => 2)
           shell.say
         end
       end

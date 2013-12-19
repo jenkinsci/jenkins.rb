@@ -307,7 +307,7 @@ Usage: jenkins command [arguments] [options]
 USEAGE
 
       shell.say "Commands:"
-      shell.print_table(list, :ident => 2, :truncate => true)
+      shell.print_table(list, :indent => 2, :truncate => true)
       shell.say
       class_options_help(shell)
     end
