@@ -29,7 +29,7 @@ module Jenkins
             aliases = option.aliases.empty? ? "" : option.aliases.join(" ") + ","
             [aliases, "--#{option.name}#{prototype}", "\t",option.description]
           end
-          shell.print_table(table, :ident => 2)
+          shell.print_table(table, :indent => 2)
           shell.say
         end
 
@@ -44,7 +44,7 @@ Usage: jpi command [arguments] [options]
 USEAGE
 
           shell.say "Commands:"
-          shell.print_table(list, :ident => 2, :truncate => true)
+          shell.print_table(list, :indent => 2, :truncate => true)
           shell.say
           class_options_help(shell)
         end
