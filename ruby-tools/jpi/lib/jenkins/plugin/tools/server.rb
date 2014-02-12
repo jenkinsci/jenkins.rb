@@ -9,7 +9,7 @@ module Jenkins
     module Tools
       class Server
 
-        def initialize(spec, workdir, war, port)
+        def initialize(spec, workdir, war = nil, port)
           @spec = spec
           @workdir = workdir
           @plugindir = "#{workdir}/plugins"
