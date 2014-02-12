@@ -24,8 +24,8 @@ module Jenkins
           resolver = Jenkins::Plugin::Tools::Resolver.new(@spec, @plugindir)
 
           resolver.resolve!
-          # generate the plugin manifest
 
+          # generate the plugin manifest
           File.open("#{@plugindir}/#{@spec.name}.hpl",mode="w+") do |f|
             manifest.write_hpl(f, loadpath)
           end
@@ -44,8 +44,6 @@ module Jenkins
           args << "-Dstapler.trace=true"
           args << "-Djenkins.development-mode=true"
           args << "-Ddebug.YUI=true"
-#          args << "-Djruby.debug.loadService=true"
-#          args << "-Djruby.debug.loadService.timing=true"
           args << ENV['JAVA_OPTS'] if ENV.key? 'JAVA_OPTS'
           args << "-jar"
           args << @war
