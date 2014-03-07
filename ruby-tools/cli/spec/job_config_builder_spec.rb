@@ -15,7 +15,7 @@ describe Jenkins::JobConfigBuilder do
     end
     it "builds config.xml" do
       steps = Hpricot.XML(@config.to_xml).search("command")
-      steps.map(&:inner_text).should == ["step 1", "step 2"]
+      expect(steps.map(&:inner_text)).to eq(["step 1", "step 2"])
     end
   end
   
@@ -26,7 +26,7 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      config_xml("rails", "single").should == @config.to_xml
+      expect(config_xml("rails", "single")).to eq(@config.to_xml)
     end
   end
   
@@ -38,12 +38,12 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "have have explicit rubies" do
-      config_xml("ruby", "multi").should == @config.to_xml
+      expect(config_xml("ruby", "multi")).to eq(@config.to_xml)
     end
     
     it "and many labels/assigned_nodes" do
       @config.node_labels = %w[1.8.7 ubuntu]
-      config_xml("ruby", "multi-ruby-multi-labels").should == @config.to_xml
+      expect(config_xml("ruby", "multi-ruby-multi-labels")).to eq(@config.to_xml)
     end
   end
   
@@ -54,9 +54,9 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      Hpricot.XML(@config.to_xml).search("assignedNode").size.should == 1
-      Hpricot.XML(@config.to_xml).search("assignedNode").text.should == "my-slave"
-      Hpricot.XML(@config.to_xml).search("canRoam").text.should == "false"
+      expect(Hpricot.XML(@config.to_xml).search("assignedNode").size).to eq(1)
+      expect(Hpricot.XML(@config.to_xml).search("assignedNode").text).to eq("my-slave")
+      expect(Hpricot.XML(@config.to_xml).search("canRoam").text).to eq("false")
     end
   end
   
@@ -66,7 +66,7 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      Hpricot.XML(@config.to_xml).search("assignedNode").size.should == 0
+      expect(Hpricot.XML(@config.to_xml).search("assignedNode").size).to eq(0)
     end
   end
   
@@ -79,7 +79,7 @@ describe Jenkins::JobConfigBuilder do
         end
       end
       it "builds config.xml" do
-        config_xml("rails", "single").should == @config.to_xml
+        expect(config_xml("rails", "single")).to eq(@config.to_xml)
       end
     end
     
@@ -99,15 +99,15 @@ describe Jenkins::JobConfigBuilder do
       end
       it "defaults to 'master'" do
         branch_names = Hpricot.XML(@config.to_xml).search("branches name")
-        branch_names.size.should == 1
-        branch_names.text.should == "master"
-        branch_names.first.parent.name.should == "hudson.plugins.git.BranchSpec"
+        expect(branch_names.size).to eq(1)
+        expect(branch_names.text).to eq("master")
+        expect(branch_names.first.parent.name).to eq("hudson.plugins.git.BranchSpec")
       end
       it "can have specific branches" do
         branches = @config.scm_branches = %w[master other branches]
         branch_names = Hpricot.XML(@config.to_xml).search("branches name")
-        branch_names.size.should == 3
-        branch_names.map(&:inner_text).should == branches
+        expect(branch_names.size).to eq(3)
+        expect(branch_names.map(&:inner_text)).to eq(branches)
       end
     end
   end
@@ -128,7 +128,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.plugins.envfile.EnvFileBuildWrapper>
         </buildWrappers>
       XML
-      Hpricot.XML(@config.to_xml).search("buildWrappers").to_s.should == xml_bite.strip
+      expect(Hpricot.XML(@config.to_xml).search("buildWrappers").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -148,7 +148,7 @@ describe Jenkins::JobConfigBuilder do
           <artifactNumToKeep>-1</artifactNumToKeep>
         </logRotator>
       XML
-      Hpricot.XML(@config.to_xml).search("logRotator").to_s.should == xml_bite.strip
+      expect(Hpricot.XML(@config.to_xml).search("logRotator").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -167,7 +167,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.triggers.TimerTrigger>
         </triggers>
       XML
-      Hpricot.XML(@config.to_xml).search("triggers").to_s.should == xml_bite.strip
+      expect(Hpricot.XML(@config.to_xml).search("triggers").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -203,7 +203,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.tasks.Mailer>
         </publishers>
       XML
-      Hpricot.XML(@config.to_xml).search("publishers").to_s.should == xml_bite.strip
+      expect(Hpricot.XML(@config.to_xml).search("publishers").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -214,7 +214,7 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      config_xml("erlang", "single").should == @config.to_xml
+      expect(config_xml("erlang", "single")).to eq(@config.to_xml)
     end
   end
   

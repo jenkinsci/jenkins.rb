@@ -14,12 +14,12 @@ describe Hash do
   end
   
   it do
-    subject.with_clean_keys.should == {
+    expect(subject.with_clean_keys).to eq({
       :simple => "simple",
       :under_score => "under_score",
       :hyp_hen => "hyphen",
       :str_under_score => "str_under_score",
       :str_hyp_hen => "str-hyp-hen"
-    }
+    })
   end
 end
