@@ -41,29 +41,20 @@ describe Jenkins::Plugin::Behavior do
       @class.send(:include, OhBehave)
     end
 
-    describe '#methods in ClassMethods are available to the implementing class' do
-      subject { super().methods in ClassMethods are available to the implementing class }
-      it do
+    its "methods in ClassMethods are available to the implementing class" do
       @class.baz.should eql 'baz'
       @class.qux.should eql 'qux'
     end
-    end
 
-    describe '#methods in the InstanceMethods module are available to instances' do
-      subject { super().methods in the InstanceMethods module are available to instances }
-      it do
+    its "methods in the InstanceMethods module are available to instances" do
       @class.new.tap do |i|
         i.foo.should eql 'foo'
         i.bar.should eql 'bar'
       end
     end
-    end
 
-    describe '#implementation block is invoked' do
-      subject { super().implementation block is invoked }
-      it do
+    its "implementation block is invoked" do
       OhBehave.implementations.should be_member @class
-    end
     end
 
     describe "and then that class is subclassed" do
@@ -72,27 +63,18 @@ describe Jenkins::Plugin::Behavior do
         def @subclass.to_s; 'BehavingSubclass' end
       end
 
-      describe '#methods in ClassMethods are available to the subclass' do
-        subject { super().methods in ClassMethods are available to the subclass }
-        it do
+      its "methods in ClassMethods are available to the subclass" do
         @subclass.baz.should eql 'baz'
         @subclass.qux.should eql 'qux'
       end
-      end
 
-      describe '#methods in InstanceMethods are available to subclass instances' do
-        subject { super().methods in InstanceMethods are available to subclass instances }
-        it do
+      its 'methods in InstanceMethods are available to subclass instances' do
         @subclass.new.foo.should eql 'foo'
         @subclass.new.bar.should eql 'bar'
       end
-      end
 
-      describe '#implementation block is invoked with the subclass' do
-        subject { super().implementation block is invoked with the subclass }
-        it do
+      its 'implementation block is invoked with the subclass' do
         OhBehave.implementations.should be_member @subclass
-      end
       end
 
       describe ". If it is subclassed yet again" do
@@ -100,12 +82,8 @@ describe Jenkins::Plugin::Behavior do
           @subsubclass = Class.new(@subclass)
           def @subsubclass.to_s; "BehavingSubSubClass" end
         end
-
-        describe '#implementatin block is invoked with the sub-sub-class' do
-          subject { super().implementatin block is invoked with the sub-sub-class }
-          it do
+        its 'implementatin block is invoked with the sub-sub-class' do
           OhBehave.implementations.should be_member @subsubclass
-        end
         end
       end
     end
@@ -118,22 +96,14 @@ describe Jenkins::Plugin::Behavior do
       @class.send(:include, @module)
     end
     it 'reaches classes the module includes' do
-      expect(@class.baz).to eql 'baz'
-      expect(@class.new.foo).to eql 'foo'
+      @class.baz.should eql 'baz'
+      @class.new.foo.should eql 'foo'
     end
-
-    describe '#implementation callback is invoked for classes including that module' do
-      subject { super().implementation callback is invoked for classes including that module }
-      it do
+    its 'implementation callback is invoked for classes including that module' do
       OhBehave.implementations.should be_member @class
     end
-    end
-
-    describe '#implementation callback is NOT invoked for any intervening modules' do
-      subject { super().implementation callback is NOT invoked for any intervening modules }
-      it do
+    its 'implementation callback is NOT invoked for any intervening modules' do
       OhBehave.implementations.should_not be_member @module
-    end
     end
   end
 end

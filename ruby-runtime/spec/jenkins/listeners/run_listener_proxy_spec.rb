@@ -4,46 +4,46 @@ describe Jenkins::Listeners::RunListenerProxy do
   include ProxyHelper
   before do
     @proxy = Jenkins::Listeners::RunListenerProxy.new(@plugin, @listener)
-    @console = double(Jenkins::Model::Listener)
+    @console = mock(Jenkins::Model::Listener)
   end
 
   describe "when started" do
     before do
-      allow(@listener).to receive(:started)
+      @listener.stub(:started)
       @proxy.onStarted(@build, @console)
     end
     it 'invokes the started callback' do
-      expect(@listener).to have_received(:started).with(@build, @console)
+      @listener.should have_received(:started).with(@build, @console)
     end
   end
 
   describe 'when completed' do
     before do
-      allow(@listener).to receive(:completed)
+      @listener.stub(:completed)
       @proxy.onCompleted(@build, @console)
     end
     it 'invokes the completed callback' do
-      expect(@listener).to have_received(:completed).with(@build, @console)
+      @listener.should have_received(:completed).with(@build, @console)
     end
   end
 
   describe 'when finalized' do
     before do
-      allow(@listener).to receive(:finalized)
+      @listener.stub(:finalized)
       @proxy.onFinalized(@build)
     end
     it 'invokes the finalized callback' do
-      expect(@listener).to have_received(:finalized).with(@build)
+      @listener.should have_received(:finalized).with(@build)
     end
   end
 
   describe 'when deleted' do
     before do
-      allow(@listener).to receive(:deleted)
+      @listener.stub(:deleted)
       @proxy.onDeleted(@build)
     end
     it 'invokes the deleted callback' do
-      expect(@listener).to have_received(:deleted).with(@build)
+      @listener.should have_received(:deleted).with(@build)
     end
   end
 end

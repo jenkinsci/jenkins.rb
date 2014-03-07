@@ -8,11 +8,11 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
   end
 
   it "treats the plugin as transient" do
-    expect(@class.transient?(:plugin)).to be_true
+    @class.transient?(:plugin).should be_true
   end
 
   it "leaves other fields alone" do
-    expect(@class.transient?(:object)).to be_false
+    @class.transient?(:object).should be_false
   end
 
   describe "unmarshalling" do
@@ -20,37 +20,37 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
       @class.class_eval do
         attr_reader :plugin
       end
-      @plugin = double(Jenkins::Plugin)
+      @plugin = mock(Jenkins::Plugin)
       @impl = impl = Object.new
       @proxy = @class.allocate
       @proxy.instance_eval do
         @pluginid = "test-plugin"
         @object = impl
       end
-      @jenkins = double(Java.jenkins.model.Jenkins)
-      @java_plugin = double(:RubyPlugin, :getNativeRubyPlugin => @plugin)
-      allow(@jenkins).to receive(:getPlugin).with("test-plugin").and_return(@java_plugin)
-      allow(Java.jenkins.model.Jenkins).to receive(:getInstance).and_return(@jenkins)
+      @jenkins = mock(Java.jenkins.model.Jenkins)
+      @java_plugin = mock(:RubyPlugin, :getNativeRubyPlugin => @plugin)
+      @jenkins.stub(:getPlugin).with("test-plugin").and_return(@java_plugin)
+      Java.jenkins.model.Jenkins.stub(:getInstance).and_return(@jenkins)
     end
 
     it "reconstructs the @plugin field" do
-      expect(@plugin).to receive(:linkout).with(@impl, @proxy)
+      @plugin.should_receive(:linkout).with(@impl, @proxy)
       @proxy.read_completed
-      expect(@proxy.plugin).to be(@plugin)
+      @proxy.plugin.should be(@plugin)
     end
   end
 
   describe "specifiying which ruby class it proxies" do
     before do
       @proxies = Jenkins::Plugin::Proxies
-      allow(@proxies).to receive(:register)
+      @proxies.stub(:register)
       @class.class_eval do
         proxy_for String
       end
     end
 
     it 'registers it with the global proxy registry' do
-      expect(@proxies).to have_received(:register).with(String, @class)
+      @proxies.should have_received(:register).with(String, @class)
     end
   end
 end

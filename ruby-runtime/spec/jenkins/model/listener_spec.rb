@@ -10,24 +10,24 @@ describe Jenkins::Model::Listener do
 
   it "logs messages" do
     @listener.info('Hi')
-    expect(@output.toString).to eql "Hi\n"
+    @output.toString.should eql "Hi\n"
   end
 
   it "logs errors" do
     @listener.error('Oh no!')
-    expect(@output.toString).to match /^ERROR: Oh no/
+    @output.toString.should match /^ERROR: Oh no/
   end
 
   it "logs fatal errors" do
     @listener.fatal('boom!')
-    expect(@output.toString).to match /^FATAL: boom/
+    @output.toString.should match /^FATAL: boom/
   end
 
   it "logs if only severe" do
     @listener.level = Logger::INFO
     @listener.debug "debug"
     @listener.info "info"
-    expect(@output.toString).to eq("info\n")
+    @output.toString.should == "info\n"
   end
 end
 

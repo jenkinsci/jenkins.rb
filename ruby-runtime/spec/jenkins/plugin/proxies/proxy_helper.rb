@@ -5,15 +5,15 @@ module ProxyHelper
     super
     mod.class_eval do
       before do
-        @plugin = double(Jenkins::Plugin, :name => "test-plugin", :linkout => true)
+        @plugin = mock(Jenkins::Plugin, :name => "test-plugin", :linkout => true)
 
-        @jBuild = double(Java.hudson.model.AbstractBuild)
-        @jLauncher = double(Java.hudson.Launcher)
-        @jListener = double(Java.hudson.model.BuildListener)
+        @jBuild = mock(Java.hudson.model.AbstractBuild)
+        @jLauncher = mock(Java.hudson.Launcher)
+        @jListener = mock(Java.hudson.model.BuildListener)
 
-        @build = double(Jenkins::Model::Build)
-        @launcher = double(Jenkins::Launcher)
-        @listener = double(Jenkins::Model::Listener)
+        @build = mock(Jenkins::Model::Build)
+        @launcher = mock(Jenkins::Launcher)
+        @listener = mock(Jenkins::Model::Listener)
 
         @plugin.stub(:import).with(@jBuild).and_return(@build)
         @plugin.stub(:import).with(@jLauncher).and_return(@launcher)

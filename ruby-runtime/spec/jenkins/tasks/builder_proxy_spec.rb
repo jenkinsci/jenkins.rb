@@ -4,31 +4,31 @@ describe Jenkins::Tasks::BuilderProxy do
   include ProxyHelper
 
   before do
-    @object = double(Jenkins::Tasks::Builder)
+    @object = mock(Jenkins::Tasks::Builder)
     @builder = Jenkins::Tasks::BuilderProxy.new(@plugin, @object)
   end
 
   describe "prebuild" do
     it "calls through to its implementation" do
-      expect(@object).to receive(:prebuild).with(@build, @listener)
+      @object.should_receive(:prebuild).with(@build, @listener)
       @builder.prebuild(@jBuild, @jListener)
     end
 
     it "returns true whatever Ruby side impl returns" do
-      expect(@object).to receive(:prebuild).and_return(false)
-      expect(@builder.prebuild(@jBuild, @jListener)).to eq(true)
+      @object.should_receive(:prebuild).and_return(false)
+      @builder.prebuild(@jBuild, @jListener).should == true
     end
 
     it "returns false when Ruby side impl raise an Error" do
-      expect(@object).to receive(:prebuild).and_raise(NoMethodError)
-      expect(@jListener).to receive(:error)
-      expect(@builder.prebuild(@jBuild, @jListener)).to eq(false)
+      @object.should_receive(:prebuild).and_raise(NoMethodError)
+      @jListener.should_receive(:error)
+      @builder.prebuild(@jBuild, @jListener).should == false
     end
   end
 
   describe "perform" do
     it "calls through to its implementation" do
-      expect(@object).to receive(:perform).with(@build, @launcher, @listener)
+      @object.should_receive(:perform).with(@build, @launcher, @listener)
       @builder.perform(@jBuild, @jLauncher, @jListener)
     end
   end

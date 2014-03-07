@@ -4,20 +4,20 @@ describe Jenkins::Triggers::TriggerProxy do
   include ProxyHelper
 
   before do
-    @object = double(Jenkins::Triggers::Trigger)
+    @object = mock(Jenkins::Triggers::Trigger)
     @builder = Jenkins::Triggers::TriggerProxy.new(@plugin, @object)
   end
 
   describe "run" do
     it "calls through to its implementation" do
-      expect(@object).to receive(:run)
+      @object.should_receive(:run)
       @builder.run
     end
   end
 
   describe "stop" do
     it "calls through to its implementation" do
-      expect(@object).to receive(:stop)
+      @object.should_receive(:stop)
       @builder.stop
     end
   end

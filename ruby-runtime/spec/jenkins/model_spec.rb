@@ -7,8 +7,8 @@ describe Jenkins::Model do
     cls = new_model do
       display_name "One-Off Class"
     end
-    expect(cls.display_name).to eql "One-Off Class"
-    expect(cls.new.display_name).to eql "One-Off Class"
+    cls.display_name.should eql "One-Off Class"
+    cls.new.display_name.should eql "One-Off Class"
   end
 
   it "passes down display_name capabilities to subclasses" do
@@ -17,7 +17,7 @@ describe Jenkins::Model do
     child.class_eval do
       display_name "Child"
     end
-    expect(child.display_name).to eql "Child"
+    child.display_name.should eql "Child"
   end
 
   it "passes down display_name capabilities to submodules" do
@@ -26,8 +26,8 @@ describe Jenkins::Model do
     cls = Class.new
     cls.send(:include, submodule)
     cls.display_name "SubAwesome"
-    expect(cls.display_name).to eql "SubAwesome"
-    expect(cls.new.display_name).to eql "SubAwesome"
+    cls.display_name.should eql "SubAwesome"
+    cls.new.display_name.should eql "SubAwesome"
   end
 
   it "has a default display name of the class name" do
@@ -36,16 +36,16 @@ describe Jenkins::Model do
         "AwesomeClass"
       end
     end
-    expect(cls.display_name).to eql "AwesomeClass"
+    cls.display_name.should eql "AwesomeClass"
   end
 
   it "keeps a list of which of its properties are transient" do
     cls = new_model do
       transient :foo, :bar
     end
-    expect(cls).to be_transient(:foo)
-    expect(cls).to be_transient(:bar)
-    expect(cls).not_to be_transient(:baz)
+    cls.should be_transient(:foo)
+    cls.should be_transient(:bar)
+    cls.should_not be_transient(:baz)
   end
 
   it "includes parent classes's transient properties, but doesn't affect the parent property list" do
@@ -56,9 +56,9 @@ describe Jenkins::Model do
     child.class_eval do
       transient :bar
     end
-    expect(parent).not_to be_transient(:bar)
-    expect(child).to be_transient(:foo)
-    expect(child).to be_transient(:bar)
+    parent.should_not be_transient(:bar)
+    child.should be_transient(:foo)
+    child.should be_transient(:bar)
   end
 
   private
