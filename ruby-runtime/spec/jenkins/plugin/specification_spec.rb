@@ -15,7 +15,7 @@ describe Jenkins::Plugin::Specification do
       end
     end
     it "is valid" do
-      subject.validate!.should be_true
+      expect(subject.validate!).to be_true
     end
   end
 
@@ -29,7 +29,7 @@ describe Jenkins::Plugin::Specification do
 
   describe "find!" do
     it "looks for a .pluginspec in the current directory and loads it" do
-      Specification.find!(Pathname(__FILE__).dirname.to_s).name.should eql "the-name"
+      expect(Specification.find!(Pathname(__FILE__).dirname.to_s).name).to eql "the-name"
     end
     it "raises an exception if one cannot be found" do
       expect {Specification.find!('..')}.to raise_error Jenkins::Plugin::SpecificationNotFound

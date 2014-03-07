@@ -96,8 +96,8 @@ describe Jenkins::Plugin::Behavior do
       @class.send(:include, @module)
     end
     it 'reaches classes the module includes' do
-      @class.baz.should eql 'baz'
-      @class.new.foo.should eql 'foo'
+      expect(@class.baz).to eql 'baz'
+      expect(@class.new.foo).to eql 'foo'
     end
     its 'implementation callback is invoked for classes including that module' do
       OhBehave.implementations.should be_member @class

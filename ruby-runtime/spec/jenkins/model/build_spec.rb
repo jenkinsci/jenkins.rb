@@ -5,16 +5,16 @@ describe Jenkins::Model::Build do
   include SpecHelper
 
   before :each do
-    @native = mock(Java.hudson.model.AbstractBuild)
-    @native.stub(:buildEnvironments).and_return(java.util.ArrayList.new)
+    @native = double(Java.hudson.model.AbstractBuild)
+    allow(@native).to receive(:buildEnvironments).and_return(java.util.ArrayList.new)
     @build = Jenkins::Model::Build.new(@native)
   end
 
   it "returns workspace path" do
     fs = Jenkins::FilePath.new(nil)
-    fs.should_receive(:getRemote).and_return(".")
-    @native.should_receive(:getWorkspace).and_return(fs)
-    @build.workspace.to_s.should == "."
+    expect(fs).to receive(:getRemote).and_return(".")
+    expect(@native).to receive(:getWorkspace).and_return(fs)
+    expect(@build.workspace.to_s).to eq(".")
   end
 
   it "can halt" do
@@ -32,16 +32,16 @@ describe Jenkins::Model::Build do
     end
 
     it "gets" do
-      @build['val'].should be @val
+      expect(@build['val']).to be @val
     end
 
     it "sets" do
       @build['val'] = :foo
-      @build['val'].should be :foo
+      expect(@build['val']).to be :foo
     end
 
     it "has symbol/string indifferent access" do
-      @build[:val].should be @val
+      expect(@build[:val]).to be @val
     end
   end
 
@@ -54,11 +54,11 @@ describe Jenkins::Model::Build do
     end
 
     it "sets environment variables into the native build environment" do
-      @vars.get('FOO').should eql 'bar'
+      expect(@vars.get('FOO')).to eql 'bar'
     end
 
     it "capitalizes and stringifies keys and stringifies values" do
-      @vars.get('BAR').should eql 'baz'
+      expect(@vars.get('BAR')).to eql 'baz'
     end
   end
 
