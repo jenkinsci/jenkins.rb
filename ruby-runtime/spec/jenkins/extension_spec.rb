@@ -9,7 +9,7 @@ describe Jenkins::Extension do
 
   describe "when an order is not specified" do
     it "uses 0" do
-      @class.order.should eql 0
+      expect(@class.order).to eql 0
     end
   end
 
@@ -18,7 +18,7 @@ describe Jenkins::Extension do
       @class.order 3
     end
     it 'uses that order' do
-      @class.order.should eql 3
+      expect(@class.order).to eql 3
     end
 
     describe ". A subclass" do
@@ -26,14 +26,14 @@ describe Jenkins::Extension do
         @subclass = Class.new @class
       end
       it 'does not inherit the parents order' do
-        @subclass.order.should eql 0
+        expect(@subclass.order).to eql 0
       end
       describe 'specifying its own order' do
         before do
           @subclass.order 5
         end
         it 'uses that order' do
-          @subclass.order.should eql 5
+          expect(@subclass.order).to eql 5
         end
       end
     end

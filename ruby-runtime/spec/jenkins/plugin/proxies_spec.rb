@@ -4,10 +4,10 @@ describe Jenkins::Plugin::Proxies do
   Proxies = Jenkins::Plugin::Proxies
   before  do
     Proxies.clear
-    @plugin = mock(Jenkins::Plugin, :name => 'mock-plugin')
-    @plugin.stub(:linkout) {|*args| @proxies.linkout(*args)}
+    @plugin = double(Jenkins::Plugin, :name => 'mock-plugin')
+    allow(@plugin).to receive(:linkout) {|*args| @proxies.linkout(*args)}
     @proxies = Jenkins::Plugin::Proxies.new(@plugin)
-    Jenkins.stub(:plugin) {@plugin}
+    allow(Jenkins).to receive(:plugin) {@plugin}
   end
 
   describe "exporting a native ruby object" do
@@ -33,12 +33,12 @@ describe Jenkins::Plugin::Proxies do
         end
 
         it "instantiates the proxy" do
-          @export.should be_kind_of(@proxy_class)
+          expect(@export).to be_kind_of(@proxy_class)
         end
 
         it "passes in the plugin and the wrapped object" do
-          @export.plugin.should be(@plugin)
-          @export.object.should be(@object)
+          expect(@export.plugin).to be(@plugin)
+          expect(@export.object).to be(@object)
         end
       end
 
@@ -56,11 +56,11 @@ describe Jenkins::Plugin::Proxies do
       end
 
       it "finds the same proxy on export" do
-        @proxies.export(@object).should be(@proxy)
+        expect(@proxies.export(@object)).to be(@proxy)
       end
 
       it "finds associated Ruby object on import" do
-        @proxies.import(@proxy).should be(@object)
+        expect(@proxies.import(@proxy)).to be(@object)
       end
     end
 
@@ -84,12 +84,12 @@ describe Jenkins::Plugin::Proxies do
           end
 
           it "will create a proxy for the subclass" do
-            @proxies.export(@B.new).should be_kind_of(@p)
+            expect(@proxies.export(@B.new)).to be_kind_of(@p)
           end
 
           it "will create a native for the external class" do
             internal = @proxies.import(@p.new)
-            internal.should be_kind_of(@B)
+            expect(internal).to be_kind_of(@B)
           end
 
           it "will fail to create a proxy for the superclass" do
@@ -103,12 +103,12 @@ describe Jenkins::Plugin::Proxies do
             Proxies.register @A, @p
           end
           it "will create a proxy for the superclass" do
-            @proxies.export(@A.new).should be_kind_of(@p)
-            @proxies.import(@p.new).should be_kind_of(@A)
+            expect(@proxies.export(@A.new)).to be_kind_of(@p)
+            expect(@proxies.import(@p.new)).to be_kind_of(@A)
           end
 
           it "will create a proxy for the subclass" do
-            @proxies.export(@B.new).should be_kind_of(@p)
+            expect(@proxies.export(@B.new)).to be_kind_of(@p)
           end
         end
 
@@ -121,13 +121,13 @@ describe Jenkins::Plugin::Proxies do
             Proxies.register @B, @pB
           end
           it "will create a proxy for the subclass with its registered proxy class" do
-            @proxies.export(@A.new).should be_kind_of(@pA)
-            @proxies.import(@pA.new).should be_kind_of(@A)
+            expect(@proxies.export(@A.new)).to be_kind_of(@pA)
+            expect(@proxies.import(@pA.new)).to be_kind_of(@A)
           end
 
           it "will create a proxy for the superclass with its registered proxy class" do
-            @proxies.export(@B.new).should be_kind_of(@pB)
-            @proxies.import(@pB.new).should be_kind_of(@B)
+            expect(@proxies.export(@B.new)).to be_kind_of(@pB)
+            expect(@proxies.import(@pB.new)).to be_kind_of(@B)
           end
         end
       end
@@ -141,13 +141,13 @@ describe Jenkins::Plugin::Proxies do
       @import = @proxies.import(@umappable)
     end
     it "maps it to an opaque native java object structure" do
-      @import.native.should be @umappable
+      expect(@import.native).to be @umappable
     end
     it "reuses the same opaque proxy on subsequent imports" do
-      @proxies.import(@umappable).should be @import
+      expect(@proxies.import(@umappable)).to be @import
     end
     it "exports the object as the original java value" do
-      @proxies.export(@import).should be @umappable
+      expect(@proxies.export(@import)).to be @umappable
     end
   end
 
@@ -158,10 +158,10 @@ describe Jenkins::Plugin::Proxies do
     end
 
     it "just passes the java object through" do
-      @export.should be @java_object
+      expect(@export).to be @java_object
     end
     it "is idempotent" do
-      @proxies.export(@export).should be @export
+      expect(@proxies.export(@export)).to be @export
     end
   end
 
@@ -172,11 +172,11 @@ describe Jenkins::Plugin::Proxies do
     end
 
     it 'returns the proxied ruby object' do
-      @proxies.import(@proxy).should be @impl
+      expect(@proxies.import(@proxy)).to be @impl
     end
 
     it 'exports the proxy in lieu of the ruby implementation' do
-      @proxies.export(@impl).should be @proxy
+      expect(@proxies.export(@impl)).to be @proxy
     end
   end
 

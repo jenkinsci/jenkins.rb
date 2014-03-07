@@ -6,29 +6,29 @@ describe Jenkins::Model::Action do
     a = new_action do
       display_name "CoolAction"
     end
-    a.display_name.should eql "CoolAction"
+    expect(a.display_name).to eql "CoolAction"
   end
 
   describe "its icon_filename" do
     it "is nil by default" do
-      new_action.icon.should be_nil
+      expect(new_action.icon).to be_nil
     end
     it "can be configured" do
       action = new_action do
         icon "foo.png"
       end
-      action.new.icon.should == "foo.png"
+      expect(action.new.icon).to eq("foo.png")
     end
   end
 
   describe "url_path" do
     it "is nil by default" do
-      new_action.url_path.should be_nil
+      expect(new_action.url_path).to be_nil
     end
     it "can be configured" do
-      new_action do
+      expect(new_action do
         url_path "/foo/bar"
-      end.new.url_path.should eql "/foo/bar"
+      end.new.url_path).to eql "/foo/bar"
     end
   end
 
