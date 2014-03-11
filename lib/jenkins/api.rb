@@ -212,8 +212,7 @@ module Jenkins
       else
         default_options.merge!(
           :slave_port  => 22,
-          :slave_user  => 'deploy',
-          :slave_pass  => '',
+          :credentials_id => '',
           :master_key  => "/home/deploy/.ssh/id_rsa", # FIXME - hardcoded master username assumption
           :slave_fs    => "/data/jenkins-slave/",
           :description => "Automatically created by Jenkins.rb",
@@ -247,9 +246,7 @@ module Jenkins
             "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
             "host"          => slave_host,
             "port"          => options[:slave_port],
-            "username"      => options[:slave_user],
-            "password"      => options[:slave_pass],
-            "privatekey"    => options[:master_key],
+            "credentialsId"      => options[:credentials_id]
           }
         }.to_json
       }
