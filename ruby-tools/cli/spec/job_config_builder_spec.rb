@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe Jenkins::JobConfigBuilder do
   include ConfigFixtureLoaders
-  
+
   describe "explicit steps to match a ruby job" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -18,7 +18,7 @@ describe Jenkins::JobConfigBuilder do
       expect(steps.map(&:inner_text)).to eq(["step 1", "step 2"])
     end
   end
-  
+
   describe "rails job; single axis" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -29,7 +29,7 @@ describe Jenkins::JobConfigBuilder do
       expect(config_xml("rails", "single")).to eq(@config.to_xml)
     end
   end
-  
+
   describe "many rubies" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:ruby) do |c|
@@ -40,13 +40,13 @@ describe Jenkins::JobConfigBuilder do
     it "have have explicit rubies" do
       expect(config_xml("ruby", "multi")).to eq(@config.to_xml)
     end
-    
+
     it "and many labels/assigned_nodes" do
       @config.node_labels = %w[1.8.7 ubuntu]
       expect(config_xml("ruby", "multi-ruby-multi-labels")).to eq(@config.to_xml)
     end
   end
-  
+
   describe "assigned slave nodes for slave usage" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -59,7 +59,7 @@ describe Jenkins::JobConfigBuilder do
       expect(Hpricot.XML(@config.to_xml).search("canRoam").text).to eq("false")
     end
   end
-  
+
   describe "no specific slave nodes" do
     before do
       @config = Jenkins::JobConfigBuilder.new(:rails) do |c|
@@ -69,7 +69,7 @@ describe Jenkins::JobConfigBuilder do
       expect(Hpricot.XML(@config.to_xml).search("assignedNode").size).to eq(0)
     end
   end
-  
+
   describe "SCM behaviour" do
     describe "#public_scm = true => convert git@ into git:// until we have deploy keys" do
       before do
@@ -82,7 +82,7 @@ describe Jenkins::JobConfigBuilder do
         expect(config_xml("rails", "single")).to eq(@config.to_xml)
       end
     end
-    
+
     # <branches>
     #   <hudson.plugins.git.BranchSpec>
     #     <name>master</name>
@@ -217,6 +217,6 @@ describe Jenkins::JobConfigBuilder do
       expect(config_xml("erlang", "single")).to eq(@config.to_xml)
     end
   end
-  
-  
+
+
 end
