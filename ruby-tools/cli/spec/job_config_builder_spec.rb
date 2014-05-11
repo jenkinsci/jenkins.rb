@@ -14,7 +14,7 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      steps = Hpricot.XML(@config.to_xml).search("command")
+      steps = Nokogiri.XML(@config.to_xml).search("command")
       expect(steps.map(&:inner_text)).to eq(["step 1", "step 2"])
     end
   end
@@ -54,9 +54,9 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      expect(Hpricot.XML(@config.to_xml).search("assignedNode").size).to eq(1)
-      expect(Hpricot.XML(@config.to_xml).search("assignedNode").text).to eq("my-slave")
-      expect(Hpricot.XML(@config.to_xml).search("canRoam").text).to eq("false")
+      expect(Nokogiri.XML(@config.to_xml).search("assignedNode").size).to eq(1)
+      expect(Nokogiri.XML(@config.to_xml).search("assignedNode").text).to eq("my-slave")
+      expect(Nokogiri.XML(@config.to_xml).search("canRoam").text).to eq("false")
     end
   end
 
@@ -66,7 +66,7 @@ describe Jenkins::JobConfigBuilder do
       end
     end
     it "builds config.xml" do
-      expect(Hpricot.XML(@config.to_xml).search("assignedNode").size).to eq(0)
+      expect(Nokogiri.XML(@config.to_xml).search("assignedNode").size).to eq(0)
     end
   end
 
@@ -98,14 +98,14 @@ describe Jenkins::JobConfigBuilder do
         end
       end
       it "defaults to 'master'" do
-        branch_names = Hpricot.XML(@config.to_xml).search("branches name")
+        branch_names = Nokogiri.XML(@config.to_xml).search("branches name")
         expect(branch_names.size).to eq(1)
         expect(branch_names.text).to eq("master")
         expect(branch_names.first.parent.name).to eq("hudson.plugins.git.BranchSpec")
       end
       it "can have specific branches" do
         branches = @config.scm_branches = %w[master other branches]
-        branch_names = Hpricot.XML(@config.to_xml).search("branches name")
+        branch_names = Nokogiri.XML(@config.to_xml).search("branches name")
         expect(branch_names.size).to eq(3)
         expect(branch_names.map(&:inner_text)).to eq(branches)
       end
@@ -128,7 +128,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.plugins.envfile.EnvFileBuildWrapper>
         </buildWrappers>
       XML
-      expect(Hpricot.XML(@config.to_xml).search("buildWrappers").to_s).to eq(xml_bite.strip)
+      expect(Nokogiri.XML(@config.to_xml).search("buildWrappers").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -148,7 +148,7 @@ describe Jenkins::JobConfigBuilder do
           <artifactNumToKeep>-1</artifactNumToKeep>
         </logRotator>
       XML
-      expect(Hpricot.XML(@config.to_xml).search("logRotator").to_s).to eq(xml_bite.strip)
+      expect(Nokogiri.XML(@config.to_xml).search("logRotator").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -167,7 +167,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.triggers.TimerTrigger>
         </triggers>
       XML
-      expect(Hpricot.XML(@config.to_xml).search("triggers").to_s).to eq(xml_bite.strip)
+      expect(Nokogiri.XML(@config.to_xml).search("triggers").to_s).to eq(xml_bite.strip)
     end
   end
 
@@ -186,7 +186,7 @@ describe Jenkins::JobConfigBuilder do
       xml_bite = <<-XML.gsub(/^      /, '')
       <publishers>
           <hudson.plugins.chucknorris.CordellWalkerRecorder>
-            <factGenerator />
+            <factGenerator/>
           </hudson.plugins.chucknorris.CordellWalkerRecorder>
           <hudson.tasks.BuildTrigger>
             <childProjects>Dependent Job, Even more dependent job</childProjects>
@@ -203,7 +203,7 @@ describe Jenkins::JobConfigBuilder do
           </hudson.tasks.Mailer>
         </publishers>
       XML
-      expect(Hpricot.XML(@config.to_xml).search("publishers").to_s).to eq(xml_bite.strip)
+      expect(Nokogiri.XML(@config.to_xml).search("publishers").to_s).to eq(xml_bite.strip)
     end
   end
 

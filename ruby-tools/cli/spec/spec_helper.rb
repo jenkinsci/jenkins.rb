@@ -3,7 +3,7 @@ Bundler.setup
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'jenkins'
-require 'hpricot'
+require 'nokogiri'
 
 module ConfigFixtureLoaders
   def config_xml(name, variation = nil)
