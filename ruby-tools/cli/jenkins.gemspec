@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("term-ansicolor", ">= 1.3.0")
-  s.add_dependency("httparty", "~> 0.7.0")
+  s.add_dependency("httparty", "~> 0.7.0") # TODO: fails with >= 0.8.0
   s.add_dependency("builder", ">= 3.2.2")
   s.add_dependency("thor", ">= 0.15.0")
   s.add_dependency("nokogiri")
