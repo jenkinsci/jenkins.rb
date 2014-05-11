@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 - unreleased
+
+* moved Hpricot (unsupported) to Nokogiri
+* bumped a lot of gem dependencies
+* style cleanup
+* tests succeed on Ruby 1.9.3, Ruby 2.1.1 and JRuby 1.7.9
+
 ## 0.6.8 - 2011/12/30
 
 * re-releasing 0.6.7 which failed to register in RubyGems.org

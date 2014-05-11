@@ -11,9 +11,10 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/jenkinsci/jenkins.rb/tree/master/ruby-tools/cli"
   s.summary     = %q{Painless Continuous Integration with Jenkins Server}
   s.description = %q{A suite of utilities for bringing continous integration to your projects (not the other way around) with jenkins CI}
-
+  s.required_ruby_version = '>= 1.9.3'
   s.rubyforge_project = "jenkins"
 
+  s.licenses      = ['MIT']
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
