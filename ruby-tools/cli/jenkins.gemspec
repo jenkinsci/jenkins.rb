@@ -22,13 +22,14 @@ Gem::Specification.new do |s|
   s.add_dependency("term-ansicolor", ">= 1.0.4")
   s.add_dependency("httparty", "~> 0.7.0")
   s.add_dependency("builder", ">= 2.1.2")
-  s.add_dependency("thor", "~> 0.15.0")
-  s.add_dependency("hpricot")
+  s.add_dependency("thor", ">= 0.15.0")
+  s.add_dependency("nokogiri")
+  s.add_dependency("hpricot", "0.8.4")
   s.add_dependency("json_pure", ">= 1.5.1")
 
   s.add_development_dependency "jenkins-war", ">= 1.396"
   s.add_development_dependency "rake"
-  s.add_development_dependency "cucumber", "~> 1.0"
-  s.add_development_dependency "rspec", "~> 2.0"
+  s.add_development_dependency "cucumber", "~> 1.3.15"
+  s.add_development_dependency "rspec", "~> 2.14.1"
   s.add_development_dependency "awesome_print"
 end
