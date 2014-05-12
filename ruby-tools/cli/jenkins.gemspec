@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency("builder", ">= 3.2.2")
   s.add_dependency("thor", ">= 0.15.0")
   s.add_dependency("nokogiri")
-  s.add_dependency("hpricot", "0.8.4")
   s.add_dependency("json_pure", ">= 1.5.1")
 
   s.add_development_dependency "jenkins-war", ">= 1.514"
