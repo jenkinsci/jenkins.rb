@@ -102,15 +102,15 @@ end
 
 Then /^the job "([^"]*)" config "([^"]*)" should be:$/ do |job_name, xpath, string|
   raise "Cannot yet fetch XML config from non-localhost Jenkins" unless Jenkins::Api.base_uri =~ /localhost/
-  require "hpricot"
-  config = Hpricot.XML(File.read("#{test_jenkins_path}/jobs/#{job_name}/config.xml"))
+  require "nokogiri"
+  config = Nokogiri.XML(File.read("#{test_jenkins_path}/jobs/#{job_name}/config.xml"))
   config.search(xpath).to_s.should == string
 end
 
 Then /^the Jenkins config "([^"]*)" should be:$/ do |xpath, string|
   raise "Cannot yet fetch XML config from non-localhost Jenkins" unless Jenkins::Api.base_uri =~ /localhost/
-  require "hpricot"
-  config = Hpricot.XML(File.read("#{test_jenkins_path}/config.xml"))
+  require "nokogiri"
+  config = Nokogiri.XML(File.read("#{test_jenkins_path}/config.xml"))
   config.search(xpath).to_s.should == string
 end
 

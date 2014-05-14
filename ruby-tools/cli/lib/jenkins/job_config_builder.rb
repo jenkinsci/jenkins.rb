@@ -344,7 +344,7 @@ module Jenkins
     # </hudson.tasks.Shell>
     def build_shell_step(b, command)
       b.tag! "hudson.tasks.Shell" do
-        b.command command.to_xs.gsub("&amp;", '&') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+        b.command command.gsub("&amp;", '&') #.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
       end
     end
 
@@ -359,7 +359,7 @@ module Jenkins
     def build_ruby_step(b, command)
       b.tag! "hudson.plugins.ruby.Ruby" do
         b.command do
-          b << command.to_xs.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
+          b << command.gsub(%r{"}, '&quot;').gsub(%r{'}, '&apos;')
         end
       end
     end

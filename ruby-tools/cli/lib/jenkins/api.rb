@@ -7,8 +7,6 @@ require 'yaml'
 require 'jenkins/core_ext/hash'
 require 'jenkins/config'
 
-YAML::ENGINE.yamler = "syck" if RUBY_VERSION >= '1.9'
-
 module Jenkins
   module Api
     include HTTParty
@@ -240,8 +238,8 @@ module Jenkins
         # error message looks like:
         # <td id="main-panel">
         # <h1>Error</h1><p>Slave called 'localhost' already exists</p>
-        require "hpricot"
-        error = Hpricot(response.body).search("td#main-panel p").text
+        require "nokgori"
+        error = Nokogiri.HTML(response.body).search("td#main-panel p").text
         unless error.blank?
           puts error
         else
@@ -298,8 +296,8 @@ module Jenkins
     end
 
     def self.show_me_the_error(response)
-      require "hpricot"
-      doc = Hpricot(response.body)
+      require "nokogiri"
+      doc = Nokogiri.HTML(response.body)
       error_msg = doc.search("td#main-panel p")
       unless error_msg.inner_text.blank?
         $stderr.puts error_msg.inner_text
