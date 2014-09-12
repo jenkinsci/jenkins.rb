@@ -81,3 +81,25 @@ Feature: Adding slave nodes
           </slave>
         </slaves>
       """
+
+  Scenario: Delete slave node via CLI
+    When I create a new node with the following options on "http://localhost:3010":
+      | name       | remove_me_node        |
+      | label      | app1 app2 app3 |
+      | slave_host | foo1.bar.com   |
+      | slave_user | jenkins         |
+    When I run local executable "jenkins" with arguments "delete_node remove_me_node"
+    Then I should see exactly
+    """
+    Deleted slave node remove_me_node from http://localhost:3010
+    """
+    When I run local executable "jenkins" with arguments "nodes"
+    Then I should see exactly
+    """
+    master
+    """
+    When I run local executable "jenkins" with arguments "delete_node remove_me_node"
+    Then I should see exactly
+    """
+    ERROR: Failed to delete node remove_me_node from http://localhost:3010
+    """

@@ -262,6 +262,18 @@ module Jenkins
       end
     end
 
+    desc "delete_node SLAVE_NAME", "remove the specified slave node from server"
+    common_options
+    def delete_node(slave_name)
+      select_jenkins_server(options)
+      results = Jenkins::Api.delete_node(slave_name)
+      if results.kind_of? Net::HTTPFound
+        shell.say "Deleted slave node #{slave_name} from #{Jenkins::Api.base_uri}"
+      else
+        error "Failed to delete node #{slave_name} from #{Jenkins::Api.base_uri}"
+      end
+    end
+
     desc "default_host", "display current default host:port URI"
     def default_host
       if select_jenkins_server({})
