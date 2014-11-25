@@ -22,7 +22,6 @@ import org.kohsuke.stapler.lang.Klass;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -201,7 +200,7 @@ public class RubyPlugin extends PluginImpl {
 
         // The above URL representation will fail in a windows environment due to URL encoded
         // spaces in paths being escaped as ASCII "%20" characters.
-        // These can be manually changed to spaces for the paths to resolve below.
+        // These must be manually changed to spaces for the paths to resolve below.
         // For the moment only spaces were identified as being converted to ASCII characters
         // so they were replaced manually.
         // If more character conversions are identified in the future please replace the manual
