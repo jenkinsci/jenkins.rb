@@ -23,8 +23,12 @@ import org.kohsuke.stapler.lang.Klass;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 
 /**
@@ -173,7 +177,7 @@ public class RubyPlugin extends PluginImpl {
         if (v==null)        return null;
         return (RubyPlugin) v.toJava(RubyPlugin.class);
     }
-    
+
     public Klass<RubyModule> klassFor(RubyModule module) {
         return module!=null ? new Klass<RubyModule>(module,navigator) : null;
     }
@@ -190,13 +194,30 @@ public class RubyPlugin extends PluginImpl {
 	}
 
     private void unzipRubyClasses() throws Exception {
+        Logger logger = LogManager.getLogManager().getLogger("hudson.WebAppMain");
+        logger.addHandler(new ConsoleHandler());
         URL url = getWrapper().baseResourceURL;
         // we assume url to be file:// path because we later need to be able to enumerate them
         // to lift this limitation, we need build-time processing to enumerate all the rb files.
+
+        // The above URL representation will fail in a windows environment due to URL encoded
+        // spaces in paths being represented as ASCII "%20", these will need to be manually
+        // changed to spaces for the paths to resolve below
+
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
         File classesJar = new File(new File(url.getPath()), "WEB-INF/lib/classes.jar");
+//        classesJar = new File(classesJar.getAbsolutePath().replaceAll("%20"," "));
+        classesJar = new File(URLDecoder.decode(classesJar.getAbsolutePath(), "ASCII"));
+
+        logger.info("unzipRubyClasses method");
+        logger.info("!getScriptDir.exists: " + !getScriptDir().exists());
+        logger.info("classesJar path: " + classesJar.getAbsolutePath());
+        logger.info("classesJar.exists: " + classesJar.exists());
+        File fTest = new File("C:\\Program Files (x86)\\Jenkins\\plugins\\jenkins-rally-build-publisher\\WEB-INF\\lib\\classes.jar");
+        logger.info("fTest path: " + fTest.getAbsolutePath());
+        logger.info("fTest.exists: " + fTest.exists());
 
         if (!getScriptDir().exists() && classesJar.exists()) {
             Expand e = new Expand();
