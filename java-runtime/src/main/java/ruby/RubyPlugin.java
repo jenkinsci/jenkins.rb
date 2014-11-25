@@ -19,16 +19,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.jelly.jruby.RubyKlassNavigator;
 import org.kohsuke.stapler.lang.Klass;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 
 /**
@@ -194,30 +190,24 @@ public class RubyPlugin extends PluginImpl {
 	}
 
     private void unzipRubyClasses() throws Exception {
-        Logger logger = LogManager.getLogManager().getLogger("hudson.WebAppMain");
-        logger.addHandler(new ConsoleHandler());
         URL url = getWrapper().baseResourceURL;
         // we assume url to be file:// path because we later need to be able to enumerate them
         // to lift this limitation, we need build-time processing to enumerate all the rb files.
-
-        // The above URL representation will fail in a windows environment due to URL encoded
-        // spaces in paths being represented as ASCII "%20", these will need to be manually
-        // changed to spaces for the paths to resolve below
 
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
         File classesJar = new File(new File(url.getPath()), "WEB-INF/lib/classes.jar");
-//        classesJar = new File(classesJar.getAbsolutePath().replaceAll("%20"," "));
-        classesJar = new File(URLDecoder.decode(classesJar.getAbsolutePath(), "ASCII"));
 
-        logger.info("unzipRubyClasses method");
-        logger.info("!getScriptDir.exists: " + !getScriptDir().exists());
-        logger.info("classesJar path: " + classesJar.getAbsolutePath());
-        logger.info("classesJar.exists: " + classesJar.exists());
-        File fTest = new File("C:\\Program Files (x86)\\Jenkins\\plugins\\jenkins-rally-build-publisher\\WEB-INF\\lib\\classes.jar");
-        logger.info("fTest path: " + fTest.getAbsolutePath());
-        logger.info("fTest.exists: " + fTest.exists());
+        // The above URL representation will fail in a windows environment due to URL encoded
+        // spaces in paths being escaped as ASCII "%20" characters.
+        // These can be manually changed to spaces for the paths to resolve below.
+        // For the moment only spaces were identified as being converted to ASCII characters
+        // so they were replaced manually.
+        // If more character conversions are identified in the future please replace the manual
+        // replacement with the line below to automatically convert all ASCII chars.
+        // POSSIBLE REPLACEMENT => classesJar = new File(URLDecoder.decode(classesJar.getAbsolutePath(), "ASCII"));
+        classesJar = new File(classesJar.getAbsolutePath().replaceAll("%20", " "));
 
         if (!getScriptDir().exists() && classesJar.exists()) {
             Expand e = new Expand();
