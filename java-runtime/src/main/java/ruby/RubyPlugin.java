@@ -19,7 +19,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.jelly.jruby.RubyKlassNavigator;
 import org.kohsuke.stapler.lang.Klass;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -173,7 +172,7 @@ public class RubyPlugin extends PluginImpl {
         if (v==null)        return null;
         return (RubyPlugin) v.toJava(RubyPlugin.class);
     }
-    
+
     public Klass<RubyModule> klassFor(RubyModule module) {
         return module!=null ? new Klass<RubyModule>(module,navigator) : null;
     }
@@ -193,10 +192,21 @@ public class RubyPlugin extends PluginImpl {
         URL url = getWrapper().baseResourceURL;
         // we assume url to be file:// path because we later need to be able to enumerate them
         // to lift this limitation, we need build-time processing to enumerate all the rb files.
+
         if (!url.getProtocol().equals("file"))
             throw new IllegalStateException("Unexpected base resource URL: "+url);
 
         File classesJar = new File(new File(url.getPath()), "WEB-INF/lib/classes.jar");
+
+        // The above URL representation will fail in a windows environment due to URL encoded
+        // spaces in paths being escaped as ASCII "%20" characters.
+        // These must be manually changed to spaces for the paths to resolve below.
+        // For the moment only spaces were identified as being converted to ASCII characters
+        // so they were replaced manually.
+        // If more character conversions are identified in the future please replace the manual
+        // replacement with the line below to automatically convert all ASCII chars.
+        // POSSIBLE REPLACEMENT => classesJar = new File(URLDecoder.decode(classesJar.getAbsolutePath(), "ASCII"));
+        classesJar = new File(classesJar.getAbsolutePath().replaceAll("%20", " "));
 
         if (!getScriptDir().exists() && classesJar.exists()) {
             Expand e = new Expand();
