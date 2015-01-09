@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>1.7.16</version>
+      <version>1.7.17</version>
     </dependency>
     <dependency>
       <groupId>org.jruby.rack</groupId>
