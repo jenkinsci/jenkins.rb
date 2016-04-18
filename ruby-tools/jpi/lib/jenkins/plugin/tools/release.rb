@@ -49,7 +49,7 @@ module Jenkins
                   else
                     Net::HTTP
                   end
-          http = proxy.new("repo.jenkins-ci.org",8081)
+          http = proxy.new("repo.jenkins-ci.org")
 
           puts @snapshot ? "deploying as a snapshot. Run with the --release option to release it for real when you are ready" : "deploying as a release"
           puts "Generating POM"
