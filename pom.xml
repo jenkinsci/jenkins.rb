@@ -3,11 +3,16 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.509.2</version>
+    <version>2.3</version>
   </parent>
 
+  <properties>
+    <jenkins.version>1.609.1</jenkins.version>
+    <hpi-plugin.version>1.106</hpi-plugin.version>
+  </properties>
+
   <artifactId>ruby-runtime-parent</artifactId>
-  <version>0.13-SNAPSHOT</version>
+  <version>0.13</version>
   <description>Hosts runtime for enabling pure-Ruby plugins</description>
   <packaging>pom</packaging>
 
@@ -62,5 +67,6 @@
     <connection>scm:git:git://github.com/jenkinsci/jenkins.rb.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/jenkins.rb.git</developerConnection>
     <url>http://github.com/jenkinsci/jenkins.rb</url>
+    <tag>HEAD</tag>
   </scm>
 </project>
