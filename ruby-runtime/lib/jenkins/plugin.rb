@@ -202,7 +202,7 @@ module Jenkins
     private
 
     # Loads files in the specified directory.
-    # It seaches directories in depth first with loading files for each directory.
+    # It searches directories in depth first with loading files for each directory.
     def load_file_in_dir(dirpath)
       dirs = []
       Dir.new(dirpath).each do |entry|

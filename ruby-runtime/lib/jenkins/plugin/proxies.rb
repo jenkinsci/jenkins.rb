@@ -111,7 +111,7 @@ module Jenkins
       # collected. That allows us to maintain state on the Ruby object, and know
       # that the same state will be accessible wherever.
       #
-      # Only weak refereces are maintained to the external Java object.
+      # Only weak references are maintained to the external Java object.
       #
       # @param [Object] internal the object on the Ruby side of the link
       # @param [java.lang.Object] external the object on the Java side of the link
@@ -130,7 +130,7 @@ module Jenkins
       # Ruby object. In other words, The Java object will not be garbage
       # collected until the local Ruby object is.
       #
-      # Only weak refereces are maintained to the internal Ruby object.
+      # Only weak references are maintained to the internal Ruby object.
       #
       # @param [Object] internal the object on the Ruby side of the link
       # @param [java.lang.Object] external the object on the Java side of the link

@@ -11,7 +11,7 @@ module Jenkins
     # ability to define which of its attributes are transient,
     # so that they will not be persisted with the Jenkins serialization.
     # which attributes are tracked on a per-class basis, so we
-    # need a callback for each class in the inheritance hierachy.
+    # need a callback for each class in the inheritance hierarchy.
     #
     # class Foo
     #  include Model

@@ -40,7 +40,7 @@ describe "a class with #{Jenkins::Plugin::Proxy} mixed in" do
     end
   end
 
-  describe "specifiying which ruby class it proxies" do
+  describe "specifying which ruby class it proxies" do
     before do
       @proxies = Jenkins::Plugin::Proxies
       allow(@proxies).to receive(:register)

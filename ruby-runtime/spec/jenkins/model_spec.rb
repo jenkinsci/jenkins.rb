@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Jenkins::Model do
   Model = Jenkins::Model
 
-  it "has a display name which is settable via the class, and accessable via the class and instance" do
+  it "has a display name which is settable via the class, and accessible via the class and instance" do
     cls = new_model do
       display_name "One-Off Class"
     end

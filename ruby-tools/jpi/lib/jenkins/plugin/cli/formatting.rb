@@ -36,12 +36,12 @@ module Jenkins
         def help(shell, task)
           list = printable_tasks
           print shell.set_color("jpi", :black, true)
-          shell.say <<-USEAGE
+          shell.say <<-USAGE
  - tools to create, build, develop and release Jenkins plugins
 
 Usage: jpi command [arguments] [options]
 
-USEAGE
+USAGE
 
           shell.say "Commands:"
           shell.print_table(list, :indent => 2, :truncate => true)

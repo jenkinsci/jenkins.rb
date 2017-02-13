@@ -310,13 +310,13 @@ module Jenkins
 
     def self.help(shell, *)
       list = printable_tasks
-      shell.say <<-USEAGE
+      shell.say <<-USAGE
 Jenkins.rb is a smart set of utilities for making
 continuous integration as simple as possible
 
 Usage: jenkins command [arguments] [options]
 
-USEAGE
+USAGE
 
       shell.say "Commands:"
       shell.print_table(list, :indent => 2, :truncate => true)
