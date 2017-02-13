@@ -70,7 +70,7 @@ module Jenkins
             check_error(http.request(req))
           end
 
-          puts "See http://maven.jenkins-ci.org"+File.dirname(path)
+          puts "See http://repo.jenkins-ci.org"+File.dirname(path)
         end
       end
     end
