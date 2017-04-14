@@ -1,4 +1,3 @@
-
 module Jenkins::Model
   module ActionProxy
     include Jenkins::Plugin::Proxy

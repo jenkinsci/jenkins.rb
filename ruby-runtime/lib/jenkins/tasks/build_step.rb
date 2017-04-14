@@ -17,6 +17,18 @@ module Jenkins
       # @param [Jenkins::Model::Listener] listener the listener for this build.
       def perform(build, launcher, listener)
       end
+
+      ##
+      # @param [Jenkins::Model::Project]
+      # @return [Array<?>]
+      #def project_actions(project)
+      #end
+
+      ##
+      # @param [Jenkins::Model::Project]
+      # @return [?]
+      def project_action(project)
+      end
     end
   end
 end

@@ -60,6 +60,16 @@ module Jenkins
         FilePath.new(@native.getWorkspace())
       end
 
+      def project
+        Jenkins::Model::Project.new(@native.getProject())
+      end
+
+      # @param [Jenkins::Model::Action] action
+      def add_action(action)
+        puts "adding action: #{action}"
+        @native.addAction(action)
+      end
+
       # Halt the current build, without setting the result to failure
       #
       # @param [String] reason the reason for your halt, optional.

@@ -1,6 +1,6 @@
 module Jenkins
   module Model
-    class RootAction
+    class ProminentProjectAction
       include Jenkins::Model::Action
     end
   end

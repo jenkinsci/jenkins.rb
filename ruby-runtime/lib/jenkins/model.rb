@@ -69,3 +69,7 @@ require 'jenkins/model/root_action'
 require 'jenkins/model/root_action_proxy'
 require 'jenkins/model/build'
 require 'jenkins/model/listener'
+require 'jenkins/model/project'
+require 'jenkins/model/prominent_project_action'
+require 'jenkins/model/prominent_project_action_proxy'
+
