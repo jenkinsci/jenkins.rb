@@ -12,21 +12,21 @@ module Jenkins
 
       def initialize(native = nil)
         @native = native
-        @level = Logger::DEBUG
+        @level = Level::FINE
       end
 
-      def debug?; @level <= DEBUG; end
-      def info?;  @level <= INFO;  end
-      def warn?;  @level <= WARN;  end
-      def error?; @level <= ERROR; end
-      def fatal?; @level <= FATAL; end
+      def debug?; @level <= FINE;    end
+      def info?;  @level <= INFO;    end
+      def warn?;  @level <= WARNING; end
+      def error?; @level <= SEVERE;  end
+      def fatal?; @level <= FATAL;   end
 
-      def debug(msg = nil, &block);   add(Logger::DEBUG,   msg, &block); end
-      def info(msg = nil, &block);    add(Logger::INFO,    msg, &block); end
-      def warn(msg = nil, &block);    add(Logger::WARN,    msg, &block); end
-      def error(msg = nil, &block);   add(Logger::ERROR,   msg, &block); end
-      def fatal(msg = nil, &block);   add(Logger::FATAL,   msg, &block); end
-      def unknown(msg = nil, &block); add(Logger::UNKNOWN, msg, &block); end
+      def debug(msg = nil, &block);   add(Level::FINE,    msg, &block); end
+      def info(msg = nil, &block);    add(Level::INFO,    msg, &block); end
+      def warn(msg = nil, &block);    add(Level::WARNING, msg, &block); end
+      def error(msg = nil, &block);   add(Level::SEVERE,  msg, &block); end
+      def fatal(msg = nil, &block);   add(Level::FATAL,   msg, &block); end
+      def unknown(msg = nil, &block); add(Level::UNKNOWN, msg, &block); end
 
       def <<(msg)
         logger.println(msg.to_s)
@@ -35,16 +35,16 @@ module Jenkins
     private
 
       def add(severity, msg = nil, &block)
-        severity ||= Logger::UNKNOWN
+        severity ||= Level::UNKNOWN
         if msg.nil? && block_given?
           msg = yield
         end
         str = msg2str(msg)
         return true if severity < @level
         case severity
-        when Logger::DEBUG, Logger::INFO
+        when Level::FINE, Level::INFO
           logger.println(str)
-        when Logger::WARN, Logger::ERROR
+        when Level::WARNING, Level::SEVERE
           @native.error(str + "\n")
         else
           @native.fatalError(str + "\n")
