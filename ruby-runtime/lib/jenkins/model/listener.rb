@@ -66,7 +66,7 @@ module Jenkins
         @native.getLogger()
       end
 
-      Jenkins::Plugin::Proxies.register self, Java.hudson.util.AbstractTaskListener
+      Jenkins::Plugin::Proxies.register self, Java.hudson.util.StreamTaskListener
     end
   end
 end
